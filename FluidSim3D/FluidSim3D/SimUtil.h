@@ -6,59 +6,65 @@
 #include <glm/glm.hpp>
 
 namespace SimUtil {
-	class Mat2Di {
+	class Mat3Di {
 	public:
-		Mat2Di();
-		Mat2Di(int width, int height);
+		Mat3Di();
+		Mat3Di(int width, int height, int depth);
 		void initValues(int val);
-		void set(int width, int height, int val);
-		int get(int width, int height);
-		double dot(Mat2Di mat);
+		void set(int width, int height, int depth, int val);
+		int get(int width, int height, int depth);
+		double dot(Mat3Di mat);
 		int width();
 		int height();
+		int depth();
 		int max();
 		void deleteGrid();
-		~Mat2Di();
+		~Mat3Di();
 	private:
 		int m_width;
 		int m_height;
+		int m_depth;
 		int* m_grid;
 	};
-	class Mat2Df {
+	class Mat3Df {
 	public:
-		Mat2Df();
-		Mat2Df(int width, int height);
+		Mat3Df();
+		Mat3Df(int width, int height, int depth);
 		void initValues(float val);
-		void set(int width, int height, float val);
-		float get(int width, int height);
-		double dot(Mat2Df mat);
+		void set(int width, int height, int depth, float val);
+		float get(int width, int height, int depth);
+		double dot(Mat3Df mat);
 		int width();
 		int height();
+		int depth();
 		float max();
 		void deleteGrid();
-		~Mat2Df();
+		~Mat3Df();
 	private:
 		int m_width;
 		int m_height;
+		int m_depth;
 		float* m_grid;
 	};
-	class Mat2Dd {
+	class Mat3Dd {
 	public:
-		Mat2Dd();
-		Mat2Dd(int width, int height);
+		Mat3Dd();
+		Mat3Dd(int width, int height, int depth);
 		void initValues(double val);
-		void set(int width, int height, double val);
-		double get(int width, int height);
-		double dot(Mat2Dd mat);
+		void set(int width, int height, int depth, double val);
+		double get(int width, int height, int depth);
+		double dot(Mat3Dd mat);
 		int width();
 		int height();
+		int depth();
 		double max();
 		double *data();
 		void deleteGrid();
-		~Mat2Dd();
+		~Mat3Dd();
 	private:
 		int m_width;
 		int m_height;
+		int m_depth;
 		double* m_grid;
 	};
 
@@ -74,15 +80,15 @@ namespace SimUtil {
 	// Data Structures
 	//----------------------------------------------------------------------
 
-	struct Vec2 {
-		float x, y;
-		Vec2(float x, float y) : x(x), y(y) {}
+	struct Vec3 {
+		float x, y, z;
+		Vec3(float x, float y, float z) : x(x), y(y), z(z) {}
 	};
 
-	struct Particle2D {
-		Vec2 pos;
-		Vec2 vel;
-		Particle2D(Vec2 pos, Vec2 vel) : pos(pos), vel(vel) {}
+	struct Particle3D {
+		Vec3 pos;
+		Vec3 vel;
+		Particle3D(Vec3 pos, Vec3 vel) : pos(pos), vel(vel) {}
 	};
 
 	struct MarchingTrianglesData {
@@ -107,28 +113,29 @@ namespace SimUtil {
 	geomFile - the file containing the geometry
 	grid - the 2D array to put the initial grid in
 	*/
-	void readInGeom2D(int, int, std::string, SimUtil::Mat2Di&);
+	void readInGeom2D(int, int, int, std::string, SimUtil::Mat3Di&);
 
 	/*
-	Finds the physical location of the cell with index [x][y]
-	in a grid where [0][0] is the center of the bottom left cell, based on the given dx. 
+	Finds the physical location of the cell with index [x][y][z]
+	in a grid where [0][0][0] is the center of the bottom left cell, based on the given dx. 
 	Integer indices are treated in the center of cells while fractional indices may lie anywhere
 	in a grid cell.
 	Args:
 	i - x index of cell
 	j - y index of cell
+	k - z index of cell
 	dx - single cell dimension
 	Returns:
-	Vec2 (x, y) containing physical location from bottom left corner of grid.
+	Vec3 (x, y, z) containing physical location from bottom left corner of grid.
 	*/
-	Vec2 getGridCellPosition(float, float, float);
+	Vec3 getGridCellPosition(float, float, float, float);
 	/*
 	Returns array of size 2 that contains the integer grid cell with index [i][j] at its center that contains the given position.
 	Args:
 	pos - a Vec2 (x,y) coordinate containing the position to use based on the origin at the bottom left of the simulation.
 	dx - single cell dimension
 	*/
-	int* getGridCellIndex(Vec2 pos, float);
+	int* getGridCellIndex(Vec3 pos, float);
 
 	// vec operations
 
@@ -138,27 +145,27 @@ namespace SimUtil {
 	vec1 - first vector
 	vec2 - second vector
 	*/
-	Vec2 add(Vec2, Vec2);
+	Vec3 add(Vec3, Vec3);
 	/*
 	Calculates the difference of vec1 and vec2 (vec1 - vec2) and returns a new vector containing this subtraction.
 	Args
 	vec1 - first vector
 	vec2 - second vector
 	*/
-	Vec2 sub(Vec2, Vec2);
+	Vec3 sub(Vec3, Vec3);
 	/*
 	Scales the given vector by a scalar and returns the new scaled vector. 
 	Args
 	vec1 - the vector
 	scalar - the value to scale by
 	*/
-	Vec2 scale(Vec2, float);
+	Vec3 scale(Vec3, float);
 	/*
 	Calculates Euclidean norm of the given vector.
 	Args
 	vec - the vector to calculate norm of.
 	*/
-	float norm(Vec2);
+	float norm(Vec3);
 }
 
 #endif //SIM_UTIL_H

@@ -7,116 +7,136 @@
 
 namespace SimUtil {
 	//----------------------------------------------------------------------
-	// Mat2Di Class
+	// Mat3Di Class
 	//----------------------------------------------------------------------
-	Mat2Di::Mat2Di() {
+	Mat3Di::Mat3Di() {
 		m_width = 0;
 		m_height = 0;
+		m_depth = 0;
 		m_grid = 0;
 	}
-	Mat2Di::Mat2Di(int width, int height) {
+	Mat3Di::Mat3Di(int width, int height, int depth) {
 		m_width = width;
 		m_height = height;
-		m_grid = new int[width * height];
+		m_depth = depth;
+		m_grid = new int[width * height * depth];
 	}
 
-	void Mat2Di::initValues(int val) {
+	void Mat3Di::initValues(int val) {
 		for (int i = 0; i < m_width; i++) {
 			for (int j = 0; j < m_height; j++) {
-				m_grid[i + m_width * j] = val;
+				for (int k = 0; k < m_depth; k++) {
+					m_grid[i + m_width * j * k * m_width * m_height] = val;
+				}		
 			}
 		}
 	}
 
-	Mat2Di::~Mat2Di() {
+	Mat3Di::~Mat3Di() {
 	}
 
-	void Mat2Di::set(int i, int j, int val) {
-		m_grid[i + m_width * j] = val;
+	void Mat3Di::set(int i, int j, int k, int val) {
+		m_grid[i + m_width * j + k * m_width * m_height] = val;
 	}
 
-	int Mat2Di::get(int i, int j) {
-		return m_grid[i + m_width * j];
+	int Mat3Di::get(int i, int j, int k) {
+		return m_grid[i + m_width * j + k * m_width * m_height];
 	}
 
-	int Mat2Di::height() {
+	int Mat3Di::height() {
 		return m_height;
 	}
 
-	int Mat2Di::width() {
+	int Mat3Di::width() {
 		return m_width;
 	}
 
-	int Mat2Di::max() {
+	int Mat3Di::depth() {
+		return m_depth;
+	}
+
+	int Mat3Di::max() {
 		int maxVal = std::numeric_limits<int>::lowest();
 		for (int i = 0; i < m_width; i++) {
 			for (int j = 0; j < m_height; j++) {
-				if (m_grid[i + m_width * j] > maxVal) {
-					maxVal = m_grid[i + m_width * j];
-				}
+				for (int k = 0; k < m_depth; k++) {
+					if (m_grid[i + m_width * j + k * m_width * m_height] > maxVal) {
+						maxVal = m_grid[i + m_width * j + k * m_width * m_height];
+					}
+				}		
 			}
 		}
 		return maxVal;
 	}
 
-	double Mat2Di::dot(Mat2Di o_mat) {
+	double Mat3Di::dot(Mat3Di o_mat) {
 		double dotProd = 0.0;
 		for (int i = 0; i < m_width; i++) {
 			for (int j = 0; j < m_height; j++) {
-				dotProd += m_grid[i + m_width * j] * o_mat.get(i,j);
+				for (int k = 0; k < m_depth; k++) {
+					dotProd += m_grid[i + m_width * j + k * m_width * m_height] * o_mat.get(i, j, k);
+				}
 			}
 		}
 		return dotProd;
 	}
 
-	void Mat2Di::deleteGrid() {
+	void Mat3Di::deleteGrid() {
 		m_height = 0;
 		m_width = 0;
+		m_depth = 0;
 		delete[] m_grid;
 	}
 
 	//----------------------------------------------------------------------
-	// Mat2Df Class
+	// Mat3Df Class
 	//----------------------------------------------------------------------
-	Mat2Df::Mat2Df() {
+	Mat3Df::Mat3Df() {
 		m_width = 0;
 		m_height = 0;
 		m_grid = 0;
 	}
-	Mat2Df::Mat2Df(int width, int height) {
+	Mat3Df::Mat3Df(int width, int height, int depth) {
 		m_width = width;
 		m_height = height;
+		m_depth = depth;
 		m_grid = new float[width * height];
 	}
 
-	void Mat2Df::initValues(float val) {
+	void Mat3Df::initValues(float val) {
 		for (int i = 0; i < m_width; i++) {
 			for (int j = 0; j < m_height; j++) {
-				m_grid[i + m_width * j] = val;
+				for (int k = 0; k < m_depth; k++) {
+					m_grid[i + m_width * j * k * m_width * m_height] = val;
+				}
 			}
 		}
 	}
 
-	Mat2Df::~Mat2Df() {
+	Mat3Df::~Mat3Df() {
 	}
 
-	void Mat2Df::set(int i, int j, float val) {
-		m_grid[i + m_width * j] = val;
+	void Mat3Df::set(int i, int j, int k, float val) {
+		m_grid[i + m_width * j + k * m_width * m_height] = val;
 	}
 
-	float Mat2Df::get(int i, int j) {
-		return m_grid[i + m_width * j];
+	float Mat3Df::get(int i, int j, int k) {
+		return m_grid[i + m_width * j + k * m_width * m_height];
 	}
 
-	int Mat2Df::height() {
+	int Mat3Df::height() {
 		return m_height;
 	}
 
-	int Mat2Df::width() {
+	int Mat3Df::width() {
 		return m_width;
 	}
 
-	float Mat2Df::max() {
+	int Mat3Df::depth() {
+		return m_depth;
+	}
+
+	float Mat3Df::max() {
 		float maxVal = std::numeric_limits<float>::lowest();
 		for (int i = 0; i < m_width; i++) {
 			for (int j = 0; j < m_height; j++) {
@@ -128,64 +148,74 @@ namespace SimUtil {
 		return maxVal;
 	}
 
-	double Mat2Df::dot(Mat2Df o_mat) {
+	double Mat3Df::dot(Mat3Df o_mat) {
 		double dotProd = 0.0;
 		for (int i = 0; i < m_width; i++) {
 			for (int j = 0; j < m_height; j++) {
-				dotProd += m_grid[i + m_width * j] * o_mat.get(i, j);
+				for (int k = 0; k < m_depth; k++) {
+					dotProd += m_grid[i + m_width * j + k * m_width * m_height] * o_mat.get(i, j, k);
+				}
 			}
 		}
 		return dotProd;
 	}
 
-	void Mat2Df::deleteGrid() {
+	void Mat3Df::deleteGrid() {
 		m_height = 0;
 		m_width = 0;
+		m_depth = 0;
 		delete[] m_grid;
 	}
 
 	//----------------------------------------------------------------------
-	// Mat2Dd Class
+	// Mat3Dd Class
 	//----------------------------------------------------------------------
-	Mat2Dd::Mat2Dd() {
+	Mat3Dd::Mat3Dd() {
 		m_width = 0;
 		m_height = 0;
 		m_grid = 0;
 	}
-	Mat2Dd::Mat2Dd(int width, int height) {
+	Mat3Dd::Mat3Dd(int width, int height, int depth) {
 		m_width = width;
 		m_height = height;
+		m_depth = depth;
 		m_grid = new double[width * height];
 	}
 
-	void Mat2Dd::initValues(double val) {
+	void Mat3Dd::initValues(double val) {
 		for (int i = 0; i < m_width; i++) {
 			for (int j = 0; j < m_height; j++) {
-				m_grid[i + m_width * j] = val;
+				for (int k = 0; k < m_depth; k++) {
+					m_grid[i + m_width * j * k * m_width * m_height] = val;
+				}
 			}
 		}
 	}
 
-	Mat2Dd::~Mat2Dd() {
+	Mat3Dd::~Mat3Dd() {
 	}
 
-	void Mat2Dd::set(int i, int j, double val) {
-		m_grid[i + m_width * j] = val;
+	void Mat3Dd::set(int i, int j, int k, double val) {
+		m_grid[i + m_width * j + k * m_width * m_height] = val;
 	}
 
-	double Mat2Dd::get(int i, int j) {
-		return m_grid[i + m_width * j];
+	double Mat3Dd::get(int i, int j, int k) {
+		return m_grid[i + m_width * j + k * m_width * m_height];
 	}
 
-	int Mat2Dd::height() {
+	int Mat3Dd::height() {
 		return m_height;
 	}
 
-	int Mat2Dd::width() {
+	int Mat3Dd::width() {
 		return m_width;
 	}
 
-	double Mat2Dd::max() {
+	int Mat3Dd::depth() {
+		return m_depth;
+	}
+
+	double Mat3Dd::max() {
 		double maxVal = std::numeric_limits<double>::lowest();
 		for (int i = 0; i < m_width; i++) {
 			for (int j = 0; j < m_height; j++) {
@@ -197,29 +227,33 @@ namespace SimUtil {
 		return maxVal;
 	}
 
-	double Mat2Dd::dot(Mat2Dd o_mat) {
+	double Mat3Dd::dot(Mat3Dd o_mat) {
 		double dotProd = 0.0;
 		for (int i = 0; i < m_width; i++) {
 			for (int j = 0; j < m_height; j++) {
-				dotProd += m_grid[i + m_width * j] * o_mat.get(i, j);
+				for (int k = 0; k < m_depth; k++) {
+					dotProd += m_grid[i + m_width * j + k * m_width * m_height] * o_mat.get(i, j, k);
+				}
 			}
 		}
 		return dotProd;
 	}
 
-	double* Mat2Dd::data() {
+	double* Mat3Dd::data() {
 		return m_grid;
 	}
 
-	void Mat2Dd::deleteGrid() {
+	void Mat3Dd::deleteGrid() {
 		m_height = 0;
 		m_width = 0;
+		m_depth = 0;
 		delete[] m_grid;
 	}
 
-	void readInGeom2D(int x, int y, std::string geomFileName, Mat2Di &grid) {
+	void readInGeom2D(int x, int y, int z, std::string geomFileName, Mat3Di &grid) {
+		//TODO FIND SOME READ IN
 		// open the geometry file
-		std::ifstream geomFile(geomFileName);
+		/*std::ifstream geomFile(geomFileName);
 		if (geomFile.is_open()) {
 			std::string lineStr;
 			// parse file based on given dimensions, will error if file does not match these
@@ -241,32 +275,32 @@ namespace SimUtil {
 				}
 			}
 			geomFile.close();
-		}
+		}*/
 	}
 
-	Vec2 getGridCellPosition(float i, float j, float dx) {
-		return Vec2(i*dx + 0.5f*dx, j*dx + 0.5f*dx);
+	Vec3 getGridCellPosition(float i, float j, float k, float dx) {
+		return Vec3(i*dx + 0.5f*dx, j*dx + 0.5f*dx, k*dx + 0.0f*dx);
 	}
 
-	int* getGridCellIndex(Vec2 pos, float dx) {
-		int index[2] = { (int)(pos.x / dx), (int)(pos.y / dx) };
+	int* getGridCellIndex(Vec3 pos, float dx) {
+		int index[3] = { (int)(pos.x / dx), (int)(pos.y / dx), (int)(pos.z / dx) };
 		return index;
 	}
 
-	Vec2 add(Vec2 vec1, Vec2 vec2) {
-		return Vec2(vec1.x + vec2.x, vec1.y + vec2.y);
+	Vec3 add(Vec3 vec1, Vec3 vec2) {
+		return Vec3(vec1.x + vec2.x, vec1.y + vec2.y, vec1.z + vec2.z);
 	}
 
-	Vec2 sub(Vec2 vec1, Vec2 vec2) {
-		return Vec2(vec1.x - vec2.x, vec1.y - vec2.y);
+	Vec3 sub(Vec3 vec1, Vec3 vec2) {
+		return Vec3(vec1.x - vec2.x, vec1.y - vec2.y, vec1.z - vec2.z);
 	}
 
-	Vec2 scale(Vec2 vec1, float scalar) {
-		return Vec2(scalar * vec1.x, scalar * vec1.y);
+	Vec3 scale(Vec3 vec1, float scalar) {
+		return Vec3(scalar * vec1.x, scalar * vec1.y, scalar * vec1.z);
 	}
 
-	float norm(Vec2 vec) {
-		return sqrt(vec.x * vec.x + vec.y * vec.y);
+	float norm(Vec3 vec) {
+		return sqrt(vec.x * vec.x + vec.y * vec.y + vec.z * vec.z);
 	}
 
 }

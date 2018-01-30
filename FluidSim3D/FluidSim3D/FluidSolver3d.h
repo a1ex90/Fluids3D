@@ -22,26 +22,33 @@ private:
 	int m_gridWidth;
 	// ny
 	int m_gridHeight;
+	// nz
+	int m_gridDepth;
 	// distance between each grid cell
 	float m_dx;
 	// grid of cell labels, size (nx, ny)
-	SimUtil::Mat2Di m_label;
+	SimUtil::Mat3Di m_label;
 
 	// pressure and velocity are held in a MAC grid so that
 	// p(i, j, k) = p_i_j_k
 	// u(i, j, k) = u_i-1/2_j_k
 	// v(i, j, k) = v_i_j-1/2_k
+	// w(i, j, k) = w_i_j_k-1/2
 
-	// grid of pressures, size (nx, ny)
-	SimUtil::Mat2Df m_p;
-	// grid of vel x component, size (nx+1, ny)
-	SimUtil::Mat2Df m_u;
-	// grid of vel y component, size (nx, ny+1)
-	SimUtil::Mat2Df m_v;
-	// saved grid of vel x component for FLIP update, size (nx+1, ny)
-	SimUtil::Mat2Df m_uSaved;
-	// saved grid of vel y component for FLIP update, size (nx, ny+1)
-	SimUtil::Mat2Df m_vSaved;
+	// grid of pressures, size (nx, ny, nz)
+	SimUtil::Mat3Df m_p;
+	// grid of vel x component, size (nx+1, ny, nz)
+	SimUtil::Mat3Df m_u;
+	// grid of vel y component, size (nx, ny+1, nz)
+	SimUtil::Mat3Df m_v;
+	// grid of vel z component, size (nx, ny, nz+1)
+	SimUtil::Mat3Df m_w;
+	// saved grid of vel x component for FLIP update, size (nx+1, ny, nz)
+	SimUtil::Mat3Df m_uSaved;
+	// saved grid of vel y component for FLIP update, size (nx, ny+1, nz)
+	SimUtil::Mat3Df m_vSaved;
+	// saved grid of vel z component for FLIP update, size (nx, ny, nz + 1)
+	SimUtil::Mat3Df m_wSaved;
 
 	//----------------------------------------------------------------------
 	// Simulation Attributes
@@ -49,19 +56,17 @@ private:
 
 	const int VEL_UNKNOWN = INT_MIN;
 	// number of particles to seed in each cell at start of sim
-	const int PARTICLES_PER_CELL = 4;
+	const int PARTICLES_PER_CELL = 8;
 	// the amount of weight to give to PIC in PIC/FLIP update
 	const float PIC_WEIGHT = 0.02f;
 	// the maximum number of grid cells a particle should move when advected
 	const int ADVECT_MAX = 1;
 	// acceleration due to gravity
-	const SimUtil::Vec2 GRAVITY = { 0.0f, -9.81f };
+	const SimUtil::Vec3 GRAVITY = { 0.0f, -9.81f, 0.0f };
 	// density of the fluid (kg/m^3)
 	const float FLUID_DENSITY = 1000.0f;
 	// surface threshold for marching squares
 	const float SURFACE_THRESHOLD = 5.0f;
-	//defines if bSplines or hat function should be used for ParticleToGrid
-	const bool USE_BSPLINE = false;
 
 	// simulation time step
 	float m_dt;
@@ -71,7 +76,7 @@ private:
 	//----------------------------------------------------------------------
 
 	// list of all particles in the simulation
-	std::vector<SimUtil::Particle2D> *m_particles;
+	std::vector<SimUtil::Particle3D> *m_particles;
 
 	//----------------------------------------------------------------------
 	// For Timing purposes
@@ -88,10 +93,10 @@ private:
 
 	// solver steps
 
-	void seedParticles(int, std::vector<SimUtil::Particle2D>*);
+	void seedParticles(int, std::vector<SimUtil::Particle3D>*);
 	void labelGrid();
 	void particlesToGrid();
-	void extrapolateGridFluidData(SimUtil::Mat2Df&, int, int, int);
+	void extrapolateGridFluidData(Mat3Df &grid, int x, int y, int z, int extrapolationDepth);
 	void saveVelocityGrids();
 	void applyBodyForces();
 	void applyPressure();
@@ -100,17 +105,13 @@ private:
 	void cleanupParticles(float);
 
 	// helper functions
-	double trilinearHatKernel(SimUtil::Vec2);
+	double trilinearHatKernel(SimUtil::Vec3);
 	double hatFunction(double);
-	double quadBSplineKernel(SimUtil::Vec2);
-	double bSplineFunction(double);
-	std::vector<int> checkNeighbors(SimUtil::Mat2Di&, int[2], int[2], int[][2], int, int);
-	bool hasNeighbors(SimUtil::Mat2Di&, int[2], int[2], int[][2], int, int);
-	SimUtil::Vec2 interpVel(SimUtil::Mat2Df&, SimUtil::Mat2Df&, SimUtil::Vec2);
-	void RK3(SimUtil::Particle2D*, SimUtil::Vec2, float, SimUtil::Mat2Df&, SimUtil::Mat2Df&);
-	bool projectParticle(SimUtil::Particle2D *, float);
-	std::vector<glm::vec2> marchingSquares(SimUtil::Mat2Df& grid, int width, int height, float tol);
-	SimUtil::MarchingTrianglesData marchingSquaresTriangles(SimUtil::Mat2Df& grid, int width, int height, float tol);
+	std::vector<int> checkNeighbors(SimUtil::Mat3Di&, int[3], int[3], int[][3], int, int);
+	bool hasNeighbors(SimUtil::Mat3Di&, int[3], int[3], int[][3], int, int);
+	SimUtil::Vec3 interpVel(SimUtil::Mat3Df&, SimUtil::Mat3Df&, SimUtil::Mat3Df&, SimUtil::Vec3);
+	void RK3(SimUtil::Particle3D*, SimUtil::Vec3, float, SimUtil::Mat3Df&, SimUtil::Mat3Df&, SimUtil::Mat3Df&);
+	bool projectParticle(SimUtil::Particle3D *, float);
 	std::vector<std::string> split(std::string str, std::string token);
 
 public:
@@ -119,10 +120,11 @@ public:
 	Args:
 	width - width of the grid to use
 	height - height of the grid to use
+	depth - depth of the grid to use
 	dx - the grid cell width
 	dt - the timestep to use
 	*/
-	FluidSolver3D(int, int, float, float);
+	FluidSolver3D(int, int, int, float, float);
 	~FluidSolver3D();
 
 	/*
@@ -151,27 +153,11 @@ public:
 	LinesOut - pointer to file stream to use for output
 	*/
 	void saveParticleData(std::ofstream*);
-	void saveLineData(std::ofstream*);
-	void saveLineData(std::ofstream*, float);
-	void saveTriangleData(std::ofstream* vert, std::ofstream* ind, std::ofstream* opa);
-	void saveTriangleData(std::ofstream* vert, std::ofstream* ind, std::ofstream* opa, float);
 
 	/*
 	Returns the particles location as vectors
 	*/
 	std::vector<glm::vec2> particleData();
-	/*
-	Returns the line data of the isocontour in a given grid as a vertices.
-	each line has a startpoint and an end point stored as a vec2 in the vector
-	*/
-	std::vector<glm::vec2> marchingSquares();
-	/*
-	Returns the triangle data of the isocontour in the current pressure grid as a struct of 3 vectors.
-	first containing vertices as vec2
-	second containing vertex indices for index buffering
-	third containing opacity values per vertex for pressure dependend opacity
-	*/
-	SimUtil::MarchingTrianglesData marchingSquaresTriangles();
 	/*
 	Saves the average timing data for each sub-algorithm of the step algorithm
 	*/
