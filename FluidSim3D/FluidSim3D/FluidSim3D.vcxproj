@@ -165,7 +165,6 @@
     <None Include="basicShader.fs" />
     <None Include="basicShader.vs" />
     <None Include="frag.glsl" />
-    <None Include="kernels.cl" />
     <None Include="opacityShader.fs" />
     <None Include="opacityShader.vs" />
     <None Include="packages.config" />
@@ -196,17 +195,7 @@
     <ClInclude Include="timing.h" />
   </ItemGroup>
   <ItemGroup>
-    <Text Include="initial_geom2.txt" />
-    <Text Include="initial_geometry.txt" />
-    <Text Include="init_geom3.txt" />
-    <Text Include="init_geom4.txt" />
-  </ItemGroup>
-  <ItemGroup>
     <ResourceCompile Include="FluidSim3D.rc" />
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="background1.jpg" />
-    <Image Include="bricks.jpg" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

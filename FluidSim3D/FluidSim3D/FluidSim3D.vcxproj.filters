@@ -25,9 +25,6 @@
     <None Include="frag.glsl">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="kernels.cl">
-      <Filter>Resource Files</Filter>
-    </None>
     <None Include="basicShader.fs" />
     <None Include="basicShader.vs" />
     <None Include="opacityShader.fs" />
@@ -88,28 +85,6 @@
     <ClInclude Include="FluidRenderer3d.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="initial_geometry.txt">
-      <Filter>Resource Files</Filter>
-    </Text>
-    <Text Include="initial_geom2.txt">
-      <Filter>Resource Files</Filter>
-    </Text>
-    <Text Include="init_geom3.txt">
-      <Filter>Resource Files</Filter>
-    </Text>
-    <Text Include="init_geom4.txt">
-      <Filter>Resource Files</Filter>
-    </Text>
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="bricks.jpg">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="background1.jpg">
-      <Filter>Resource Files</Filter>
-    </Image>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="FluidSim3D.rc">

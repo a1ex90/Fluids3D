@@ -96,7 +96,7 @@ private:
 	void seedParticles(int, std::vector<SimUtil::Particle3D>*);
 	void labelGrid();
 	void particlesToGrid();
-	void extrapolateGridFluidData(Mat3Df &grid, int x, int y, int z, int extrapolationDepth);
+	void extrapolateGridFluidData(SimUtil::Mat3Df &grid, int x, int y, int z, int extrapolationDepth);
 	void saveVelocityGrids();
 	void applyBodyForces();
 	void applyPressure();

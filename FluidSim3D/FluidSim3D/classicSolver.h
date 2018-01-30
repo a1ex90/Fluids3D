@@ -13,22 +13,27 @@ private:
 	int m_gridWidth;
 	// ny
 	int m_gridHeight;
+	// nz
+	int m_gridDepth;
 	// distance between each grid cell
 	float m_dx;
 	// grid of cell labels, size (nx, ny)
-	SimUtil::Mat2Di *m_label;
+	SimUtil::Mat3Di *m_label;
 
 	// pressure and velocity are held in a MAC grid so that
 	// p(i, j, k) = p_i_j_k
 	// u(i, j, k) = u_i-1/2_j_k
 	// v(i, j, k) = v_i_j-1/2_k
+	// w(i, j, k) = w_i_j_k-1/2
 
 	// grid of pressures, size (nx, ny)
-	SimUtil::Mat2Df *m_p;
-	// grid of vel x component, size (nx+1, ny)
-	SimUtil::Mat2Df *m_u;
-	// grid of vel y component, size (nx, ny+1)
-	SimUtil::Mat2Df *m_v;
+	SimUtil::Mat3Df *m_p;
+	// grid of vel x component, size (nx+1, ny, nz)
+	SimUtil::Mat3Df *m_u;
+	// grid of vel y component, size (nx, ny+1, nz)
+	SimUtil::Mat3Df *m_v;
+	// grid of vel z component, size (nx, ny, nz+1)
+	SimUtil::Mat3Df *m_w;
 
 
 	// density of the fluid (kg/m^3)
@@ -44,14 +49,14 @@ private:
 	//----------------------------------------------------------------------
 	// Functions
 	//----------------------------------------------------------------------
-	void constructRHS(SimUtil::Mat2Dd&);
-	void constructA(SimUtil::Mat2Dd&, SimUtil::Mat2Dd&, SimUtil::Mat2Dd&);
-	void constructPrecon(SimUtil::Mat2Dd&, SimUtil::Mat2Dd&, SimUtil::Mat2Dd&, SimUtil::Mat2Dd&);
-	void PCG(SimUtil::Mat2Dd&, SimUtil::Mat2Dd&, SimUtil::Mat2Dd&, SimUtil::Mat2Dd&, SimUtil::Mat2Dd&);
-	void applyPrecon(SimUtil::Mat2Dd&, SimUtil::Mat2Dd&, SimUtil::Mat2Dd&, SimUtil::Mat2Dd&, SimUtil::Mat2Dd&, SimUtil::Mat2Dd&);
-	void applyA(SimUtil::Mat2Dd&, SimUtil::Mat2Dd&, SimUtil::Mat2Dd&, SimUtil::Mat2Dd&, SimUtil::Mat2Dd&);
+	void constructRHS(SimUtil::Mat3Dd&);
+	void constructA(SimUtil::Mat3Dd&, SimUtil::Mat3Dd&, SimUtil::Mat3Dd&, SimUtil::Mat3Dd&);
+	void constructPrecon(SimUtil::Mat3Dd&, SimUtil::Mat3Dd&, SimUtil::Mat3Dd&, SimUtil::Mat3Dd&, SimUtil::Mat3Dd&);
+	void PCG(SimUtil::Mat3Dd&, SimUtil::Mat3Dd&, SimUtil::Mat3Dd&, SimUtil::Mat3Dd&, SimUtil::Mat3Dd&, SimUtil::Mat3Dd&);
+	void applyPrecon(SimUtil::Mat3Dd&, SimUtil::Mat3Dd&, SimUtil::Mat3Dd&, SimUtil::Mat3Dd&, SimUtil::Mat3Dd&, SimUtil::Mat3Dd&, SimUtil::Mat3Dd&);
+	void applyA(SimUtil::Mat3Dd &z, SimUtil::Mat3Dd &s, SimUtil::Mat3Dd &Adiag, SimUtil::Mat3Dd &Ax, SimUtil::Mat3Dd &Ay, SimUtil::Mat3Dd &Az);
 public:
-	classicSolver(int, int, float, float, SimUtil::Mat2Di*, SimUtil::Mat2Df*, SimUtil::Mat2Df*, SimUtil::Mat2Df*);
+	classicSolver(int, int, int, float, float, SimUtil::Mat3Di*, SimUtil::Mat3Df*, SimUtil::Mat3Df*, SimUtil::Mat3Df*, SimUtil::Mat3Df*);
 	~classicSolver();
 
 	void pressureSolve();
