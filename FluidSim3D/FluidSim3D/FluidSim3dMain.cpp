@@ -38,8 +38,9 @@ const int VISUALIZATION_MODE = 3;
 //----------------------------------------------------------------------
 
 // resolution of the grid to use (width, height)
-const int GRID_WIDTH = 100;
-const int GRID_HEIGHT = 50;
+const int GRID_WIDTH = 50;
+const int GRID_HEIGHT = 25;
+const int GRID_DEPTH = 12;
 // grid cell width (in meters)
 const float GRID_CELL_WIDTH = 0.005f;
 // simulation time step (in seconds)
@@ -50,7 +51,7 @@ const float TIME_STEP = 0.01f;
 //----------------------------------------------------------------------
 
 // input file for initial system state - grid marked solid, fluid, or air
-const std::string INITIAL_GEOMETRY_FILE_IN = "geo1.txt";
+const std::string INITIAL_GEOMETRY_FILE_IN = "geo_small2.txt";
 // output file for watersurface line data
 const std::string DATA_FILES_OUT = "shit";
 
@@ -72,26 +73,26 @@ const float FRAME_TIME_STEP = 1.0f / FRAME_RATE;
 
 int main(int argc, char** argv) {
 	if (REALTIME_SIM) {
-		FluidSolver3D solver(GRID_WIDTH, GRID_HEIGHT, GRID_CELL_WIDTH, TIME_STEP);
+		FluidSolver3D solver(GRID_WIDTH, GRID_HEIGHT, GRID_DEPTH, GRID_CELL_WIDTH, TIME_STEP);
 		solver.init(INITIAL_GEOMETRY_FILE_IN);
 		FluidRenderer3D render{ INITIAL_GEOMETRY_FILE_IN, VISUALIZATION_MODE };
 		for (int frame = 0; frame < 4*NUM_SIM_FRAMES; frame++) {
 			auto start = std::chrono::system_clock::now();
 			solver.step();
 			if (VISUALIZATION_MODE == 0) {
-				render.draw(solver.marchingSquares());
+				//render.draw(solver.marchingSquares());
 			}
 			else if (VISUALIZATION_MODE == 3) {
 				render.drawP(solver.particleData());
 			}
 			else {
-				SimUtil::MarchingTrianglesData data = solver.marchingSquaresTriangles();
+				/*SimUtil::MarchingTrianglesData data = solver.marchingSquaresTriangles();
 				if (VISUALIZATION_MODE == 1) {
 					render.draw(data.vertices, data.indices);
 				}
 				else if (VISUALIZATION_MODE == 2) {
 					render.draw(data.vertices, data.indices, data.opacities);
-				}
+				}*/
 			}
 			bool sleep = true;
 			while (sleep) {
@@ -104,7 +105,7 @@ int main(int argc, char** argv) {
 		}
 	}
 
-	if (RUN_SIM) {
+	/*if (RUN_SIM) {
 		// open and clear output file
 		std::ofstream *particlesOut = new std::ofstream(DATA_FILES_OUT + "-part.csv", std::ofstream::trunc);
 		std::ofstream *linesOut = new std::ofstream(DATA_FILES_OUT + "-lines.csv", std::ofstream::trunc);
@@ -162,7 +163,7 @@ int main(int argc, char** argv) {
 	if (RUN_RENDERING) {
 		FluidRenderer3D render{ DATA_FILES_OUT, INITIAL_GEOMETRY_FILE_IN, VISUALIZATION_MODE };
 		render.run();
-	}
+	}*/
 
 	return 0;
 }

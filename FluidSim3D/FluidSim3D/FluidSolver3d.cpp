@@ -82,7 +82,7 @@ void FluidSolver3D::init(std::string initialGeometryFile){
 	m_w.initValues(VEL_UNKNOWN);
 
 	// read in initial geometry to populate label grid
-	readInGeom2D(m_gridWidth, m_gridHeight, m_gridDepth, initialGeometryFile, m_label);
+	readInGeom3D(m_gridWidth, m_gridHeight, m_gridDepth, initialGeometryFile, m_label);
 
 	// seed particles using label grid
 	seedParticles(PARTICLES_PER_CELL, m_particles);
@@ -244,10 +244,11 @@ void FluidSolver3D::seedParticles(int particlesPerCell, std::vector<Particle3D> 
 						// randomly jitter from subgrid center
 						// give a random factor from [-0.24, 0.24] multiplied by dx
 						float jitterX = ((float)((rand() % 49) - 24) / 100.0f) * m_dx;
-						//jitterX = 0.0f; //DEBUG ALEX
+						jitterX = 0.0f; //DEBUG ALEX
 						float jitterY = ((float)((rand() % 49) - 24) / 100.0f) * m_dx;
-						//jitterY = 0.0f; //DEBUG ALEX
+						jitterY = 0.0f; //DEBUG ALEX
 						float jitterZ = ((float)((rand() % 49) - 24) / 100.0f) * m_dx;
+						jitterZ = 0.0f; //DEBUG ALEX
 						Vec3 pos(subCenters[k % 8].x + jitterX, subCenters[k % 8].y + jitterY, subCenters[k % 8].z + jitterZ);
 						Vec3 vel(0.0f, 0.0f, 0.0f);
 						particleList->push_back(Particle3D(pos, vel));
@@ -700,7 +701,10 @@ void FluidSolver3D::advectParticles(int C) {
 			Vec3 curVel = interpVel(m_u, m_v, m_w, curParticle->pos);
 
 			// calc max substep size
-			float dT = (C * m_dx) / (norm(curVel) + FLT_MIN);
+			
+			//float dT = (C * m_dx) / (norm(curVel) + FLT_MIN);
+			// SET TEMPORARY
+			float dT = m_dt / 4.999f;
 			// update substep time so we don't go past normal time step
 			if (subTime + dT >= m_dt) {
 				dT = m_dt - subTime;
@@ -712,9 +716,11 @@ void FluidSolver3D::advectParticles(int C) {
 			RK3(curParticle, curVel, dT, m_u, m_v, m_w);
 			subTime += dT;
 
-			if (curParticle->pos.x < 0 || curParticle->pos.y < 0 || curParticle->pos.z < 0 || isnan(curParticle->pos.x) || isnan(curParticle->pos.y) || isnan(curParticle->pos.z)) {
+			if (curParticle->pos.x < 0 || curParticle->pos.y < 0 || curParticle->pos.z < 0 ||
+				 curParticle->pos.x > m_gridWidth * m_dx || curParticle->pos.y > m_gridHeight * m_dx || curParticle->pos.z > m_gridDepth * m_dx ||
+				isnan(curParticle->pos.x) || isnan(curParticle->pos.y) || isnan(curParticle->pos.z)) {
 				// there's been an error in RK3, just skip it
-				std::cout << "RK3 error...skipping particle" << std::endl;
+				std::cout << "RK3 error...skipping particle 1" << std::endl;
 				break;
 			}
 
@@ -725,7 +731,7 @@ void FluidSolver3D::advectParticles(int C) {
 			if (m_label.get(j, k, l) == SOLID) {
 				//std::cout << "Advected into SOLID, projecting back!\n";
 				if (!projectParticle(curParticle, m_dx / 4.0f)) {
-					std::cout << "RK3 error...skipping particle" << std::endl;
+					std::cout << "RK3 error...skipping particle 2" << std::endl;
 					break;
 				}
 			}
@@ -765,7 +771,10 @@ void FluidSolver3D::cleanupParticles(float dx) {
 				if (i >= m_particles->size()) {
 					finished = true;
 				}
-			} 
+			}
+			else {
+				i++;
+			}
 		} else {
 			i++;
 			if (i >= m_particles->size()) {
@@ -988,7 +997,7 @@ bool FluidSolver3D::projectParticle(Particle3D *particle, float dx) {
 	Vec3 closestVec(0.0f, 0.0f, 0.0f);
 	for (int j = 0; j < neighborInd.size(); j++) {
 		// get vec from particle to neighbor ind
-		int ind[3] = { cell[0] + neighbors[neighborInd.at(j)][0], cell[1] + neighbors[neighborInd.at(j)][1], cell[2] + neighbors[neighborInd.at(j)][2] };
+		int ind[3] = { index[0] + neighbors[neighborInd.at(j)][0], index[1] + neighbors[neighborInd.at(j)][1], index[2] + neighbors[neighborInd.at(j)][2] };
 		Vec3 cellPos = getGridCellPosition(ind[0], ind[1], ind[2], m_dx);
 		Vec3 distVec = sub(cellPos, particle->pos);
 		float dist = norm(distVec);

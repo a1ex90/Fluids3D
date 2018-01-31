@@ -26,7 +26,7 @@ namespace SimUtil {
 		for (int i = 0; i < m_width; i++) {
 			for (int j = 0; j < m_height; j++) {
 				for (int k = 0; k < m_depth; k++) {
-					m_grid[i + m_width * j * k * m_width * m_height] = val;
+					m_grid[i + m_width * j + k * m_width * m_height] = val;
 				}		
 			}
 		}
@@ -100,14 +100,14 @@ namespace SimUtil {
 		m_width = width;
 		m_height = height;
 		m_depth = depth;
-		m_grid = new float[width * height];
+		m_grid = new float[width * height * depth];
 	}
 
 	void Mat3Df::initValues(float val) {
 		for (int i = 0; i < m_width; i++) {
 			for (int j = 0; j < m_height; j++) {
 				for (int k = 0; k < m_depth; k++) {
-					m_grid[i + m_width * j * k * m_width * m_height] = val;
+					m_grid[i + m_width * j + k * m_width * m_height] = val;
 				}
 			}
 		}
@@ -179,14 +179,14 @@ namespace SimUtil {
 		m_width = width;
 		m_height = height;
 		m_depth = depth;
-		m_grid = new double[width * height];
+		m_grid = new double[width * height * depth];
 	}
 
 	void Mat3Dd::initValues(double val) {
 		for (int i = 0; i < m_width; i++) {
 			for (int j = 0; j < m_height; j++) {
 				for (int k = 0; k < m_depth; k++) {
-					m_grid[i + m_width * j * k * m_width * m_height] = val;
+					m_grid[i + m_width * j + k * m_width * m_height] = val;
 				}
 			}
 		}
@@ -250,10 +250,26 @@ namespace SimUtil {
 		delete[] m_grid;
 	}
 
-	void readInGeom2D(int x, int y, int z, std::string geomFileName, Mat3Di &grid) {
+	void readInGeom3D(int x, int y, int z, std::string geomFileName, Mat3Di &grid) {
+		for (int i = 0; i < x; i++) {
+			for (int j = 0; j < y; j++) {
+				grid.set(i, j, 0, SimUtil::SOLID);
+				grid.set(i, j, 1, SimUtil::SOLID);
+				grid.set(i, j, 2, SimUtil::SOLID);
+				grid.set(i, j, z - 3, SimUtil::SOLID);
+				grid.set(i, j, z - 2, SimUtil::SOLID);
+				grid.set(i, j, z - 1, SimUtil::SOLID);
+			}
+		}
+		for (int k = 3; k < z - 3; k++) {
+			readInGeom2D(x, y, k, geomFileName, grid);
+		}	
+	}
+
+	void readInGeom2D(int x, int y, int fixedZ, std::string geomFileName, Mat3Di &grid) {
 		//TODO FIND SOME READ IN
 		// open the geometry file
-		/*std::ifstream geomFile(geomFileName);
+		std::ifstream geomFile(geomFileName);
 		if (geomFile.is_open()) {
 			std::string lineStr;
 			// parse file based on given dimensions, will error if file does not match these
@@ -263,19 +279,19 @@ namespace SimUtil {
 				for (int j = 0; j < x; j++) {
 					switch (lineStr[j]) {
 					case 'f':
-						grid.set(j, i, SimUtil::FLUID);
+						grid.set(j, i, fixedZ, SimUtil::FLUID);
 						break;
 					case 's':
-						grid.set(j, i, SimUtil::SOLID);
+						grid.set(j, i, fixedZ, SimUtil::SOLID);
 						break;
 					case 'a':
-						grid.set(j, i, SimUtil::AIR);
+						grid.set(j, i, fixedZ, SimUtil::AIR);
 						break;
 					}
 				}
 			}
 			geomFile.close();
-		}*/
+		}
 	}
 
 	Vec3 getGridCellPosition(float i, float j, float k, float dx) {

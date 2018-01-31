@@ -114,6 +114,7 @@ namespace SimUtil {
 	grid - the 2D array to put the initial grid in
 	*/
 	void readInGeom2D(int, int, int, std::string, SimUtil::Mat3Di&);
+	void readInGeom3D(int, int, int, std::string, SimUtil::Mat3Di&);
 
 	/*
 	Finds the physical location of the cell with index [x][y][z]
