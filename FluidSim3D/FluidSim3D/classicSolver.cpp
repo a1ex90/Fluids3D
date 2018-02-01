@@ -396,7 +396,7 @@ void classicSolver::applyPrecon(Mat3Dd &z, Mat3Dd &r, Mat3Dd &precon, Mat3Dd &Ad
 							q_ijm1k = q.get(i, j - 1, k);
 						}
 					}
-					if (k - 1 >= 0 && k - 1 < m_gridHeight) {
+					if (k - 1 >= 0 && k - 1 < m_gridDepth) {
 						if (m_label->get(i, j, k - 1) == FLUID) {
 							Az_ijkm1 = Az.get(i, j, k - 1);
 							precon_ijkm1 = precon.get(i, j, k - 1);
@@ -439,7 +439,7 @@ void classicSolver::applyPrecon(Mat3Dd &z, Mat3Dd &r, Mat3Dd &precon, Mat3Dd &Ad
 							z_ijp1k = z.get(i, j + 1, k);
 						}
 					}
-					if (k + 1 >= 0 && k + 1 < m_gridHeight) {
+					if (k + 1 >= 0 && k + 1 < m_gridDepth) {
 						if (m_label->get(i, j, k + 1) == FLUID) {
 							z_ijkp1 = z.get(i, j, k + 1);
 						}
