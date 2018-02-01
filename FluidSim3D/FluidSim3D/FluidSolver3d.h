@@ -114,6 +114,10 @@ private:
 	bool projectParticle(SimUtil::Particle3D *, float);
 	std::vector<std::string> split(std::string str, std::string token);
 
+	// debugging functions
+	void gridValues(SimUtil::Mat3Df &grid, std::string name, int x, int y, int z);
+	void strangeParticles();
+
 public:
 	/*
 	Creates a new 2D fluid solver.

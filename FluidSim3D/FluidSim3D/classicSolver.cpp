@@ -228,6 +228,7 @@ void classicSolver::constructPrecon(Mat3Dd &precon, Mat3Dd &Adiag, Mat3Dd &Ax, M
 							Ax_ijkm1 = Ax.get(i, j, k - 1);
 							Ay_ijkm1 = Ay.get(i, j, k - 1);
 							Az_ijkm1 = Az.get(i, j, k - 1);
+							precon_ijkm1 = precon.get(i, j, k - 1);
 						}
 					}
 

@@ -261,9 +261,17 @@ namespace SimUtil {
 				grid.set(i, j, z - 1, SimUtil::SOLID);
 			}
 		}
-		for (int k = 3; k < z - 3; k++) {
+		for (int k = 3; k < 6; k++) {
+			readInGeom2D(x, y, k, "geo_small3e.txt", grid);
+			readInGeom2D(x, y, z - k - 1, "geo_small3e.txt", grid);
+		}
+		for (int k = 6; k < z - 6; k++) {
 			readInGeom2D(x, y, k, geomFileName, grid);
-		}	
+		}
+
+		/*for (int k = 3; k < z - 3; k++) {
+			readInGeom2D(x, y, k, geomFileName, grid);
+		}	*/
 	}
 
 	void readInGeom2D(int x, int y, int fixedZ, std::string geomFileName, Mat3Di &grid) {

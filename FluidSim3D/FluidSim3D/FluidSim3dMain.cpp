@@ -38,9 +38,9 @@ const int VISUALIZATION_MODE = 3;
 //----------------------------------------------------------------------
 
 // resolution of the grid to use (width, height)
-const int GRID_WIDTH = 50;
+const int GRID_WIDTH = 25;
 const int GRID_HEIGHT = 25;
-const int GRID_DEPTH = 12;
+const int GRID_DEPTH = 25;
 // grid cell width (in meters)
 const float GRID_CELL_WIDTH = 0.005f;
 // simulation time step (in seconds)
@@ -51,7 +51,7 @@ const float TIME_STEP = 0.01f;
 //----------------------------------------------------------------------
 
 // input file for initial system state - grid marked solid, fluid, or air
-const std::string INITIAL_GEOMETRY_FILE_IN = "geo_small2.txt";
+const std::string INITIAL_GEOMETRY_FILE_IN = "geo_small3.txt";
 // output file for watersurface line data
 const std::string DATA_FILES_OUT = "shit";
 

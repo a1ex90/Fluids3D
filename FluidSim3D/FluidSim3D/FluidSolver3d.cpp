@@ -107,15 +107,33 @@ void FluidSolver3D::step() {
 
 	// apply pressure force
 	applyPressure();
+	/*gridValues(m_uSaved, m_gridWidth + 1, m_gridHeight, m_gridDepth);
+	gridValues(m_vSaved, m_gridWidth, m_gridHeight + 1, m_gridDepth);
+	gridValues(m_wSaved, m_gridWidth, m_gridHeight, m_gridDepth + 1);*/
 	// transfer grid velocities back to particles
-	gridToParticles(PIC_WEIGHT);
+	//gridToParticles(PIC_WEIGHT);
+
+	strangeParticles();
 	// advect particles
 	extrapolateGridFluidData(m_u, m_gridWidth + 1, m_gridHeight, m_gridDepth, m_gridWidth);
-	extrapolateGridFluidData(m_v, m_gridWidth, m_gridHeight + 1, m_gridDepth, m_gridHeight);
-	extrapolateGridFluidData(m_w, m_gridWidth, m_gridHeight, m_gridDepth + 1, m_gridDepth);
+	//extrapolateGridFluidData(m_v, m_gridWidth, m_gridHeight + 1, m_gridDepth, m_gridHeight);
+	extrapolateGridFluidData(m_v, m_gridWidth, m_gridHeight + 1, m_gridDepth, m_gridWidth);
+	//extrapolateGridFluidData(m_w, m_gridWidth, m_gridHeight, m_gridDepth + 1, m_gridDepth);
+	extrapolateGridFluidData(m_w, m_gridWidth, m_gridHeight, m_gridDepth + 1, m_gridWidth);
+
+	gridToParticles(PIC_WEIGHT);
+	
+	/*gridValues(m_u, "m_u", m_gridWidth + 1, m_gridHeight, m_gridDepth);
+	gridValues(m_v, "m_v", m_gridWidth, m_gridHeight + 1, m_gridDepth);
+	gridValues(m_w, "m_w", m_gridWidth, m_gridHeight, m_gridDepth + 1);*/
+
 	advectParticles(ADVECT_MAX);
+
+	//strangeParticles();
 	// detect particles that have penetrated solid boundary and move back inside fluid
 	cleanupParticles(m_dx / 4.0f);
+
+	//strangeParticles();
 }
 
 void FluidSolver3D::stepTiming() {
@@ -201,7 +219,8 @@ std::vector<glm::vec2> FluidSolver3D::particleData() {
 	for (int i = 0; i < m_particles->size(); i++) {
 		float x = 2 * m_particles->at(i).pos.x / (m_gridWidth * m_dx) - 1;
 		float y = 2 * m_particles->at(i).pos.y / (m_gridHeight * m_dx) - 1;
-		glm::vec2 p_i{ x,y };
+		float z = 2 * m_particles->at(i).pos.z / (m_gridDepth * m_dx) - 1;
+		glm::vec2 p_i{ x,z };
 		particles.push_back(p_i);
 	}
 	return particles;
@@ -244,11 +263,11 @@ void FluidSolver3D::seedParticles(int particlesPerCell, std::vector<Particle3D> 
 						// randomly jitter from subgrid center
 						// give a random factor from [-0.24, 0.24] multiplied by dx
 						float jitterX = ((float)((rand() % 49) - 24) / 100.0f) * m_dx;
-						jitterX = 0.0f; //DEBUG ALEX
+						//jitterX = 0.0f; //DEBUG ALEX
 						float jitterY = ((float)((rand() % 49) - 24) / 100.0f) * m_dx;
-						jitterY = 0.0f; //DEBUG ALEX
+						//jitterY = 0.0f; //DEBUG ALEX
 						float jitterZ = ((float)((rand() % 49) - 24) / 100.0f) * m_dx;
-						jitterZ = 0.0f; //DEBUG ALEX
+						//jitterZ = 0.0f; //DEBUG ALEX
 						Vec3 pos(subCenters[k % 8].x + jitterX, subCenters[k % 8].y + jitterY, subCenters[k % 8].z + jitterZ);
 						Vec3 vel(0.0f, 0.0f, 0.0f);
 						particleList->push_back(Particle3D(pos, vel));
@@ -466,10 +485,10 @@ void FluidSolver3D::extrapolateGridFluidData(Mat3Df &grid, int x, int y, int z, 
 			// average neighbors
 			float avg = 0.0f;
 			int numUsed = 0;
-			for (int i = 0; i < numNeighbors; i++) {
-				int offsetX = neighbors[i][0];
-				int offsetY = neighbors[i][1];
-				int offsetZ = neighbors[i][2];
+			for (int j = 0; j < numNeighbors; j++) {
+				int offsetX = neighbors[j][0];
+				int offsetY = neighbors[j][1];
+				int offsetZ = neighbors[j][2];
 				int neighborX = ind.x + offsetX;
 				int neighborY = ind.y + offsetY;
 				int neighborZ = ind.z + offsetZ;
@@ -702,9 +721,9 @@ void FluidSolver3D::advectParticles(int C) {
 
 			// calc max substep size
 			
-			//float dT = (C * m_dx) / (norm(curVel) + FLT_MIN);
+			float dT = (C * m_dx) / (norm(curVel) + FLT_MIN);
 			// SET TEMPORARY
-			float dT = m_dt / 4.999f;
+			//float dT = m_dt / 4.999f;
 			// update substep time so we don't go past normal time step
 			if (subTime + dT >= m_dt) {
 				dT = m_dt - subTime;
@@ -720,7 +739,7 @@ void FluidSolver3D::advectParticles(int C) {
 				 curParticle->pos.x > m_gridWidth * m_dx || curParticle->pos.y > m_gridHeight * m_dx || curParticle->pos.z > m_gridDepth * m_dx ||
 				isnan(curParticle->pos.x) || isnan(curParticle->pos.y) || isnan(curParticle->pos.z)) {
 				// there's been an error in RK3, just skip it
-				std::cout << "RK3 error...skipping particle 1" << std::endl;
+				std::cout << "RK3 error...skipping particle outside of grid" << std::endl;
 				break;
 			}
 
@@ -731,9 +750,10 @@ void FluidSolver3D::advectParticles(int C) {
 			if (m_label.get(j, k, l) == SOLID) {
 				//std::cout << "Advected into SOLID, projecting back!\n";
 				if (!projectParticle(curParticle, m_dx / 4.0f)) {
-					std::cout << "RK3 error...skipping particle 2" << std::endl;
+					std::cout << "RK3 error...skipping particle in solid can't bring back" << std::endl;
 					break;
 				}
+
 			}
 
 		}
@@ -906,10 +926,12 @@ Vec3 FluidSolver3D::interpVel(SimUtil::Mat3Df &uGrid, SimUtil::Mat3Df &vGrid, Si
 		float w1 = wGrid.get(i, j, k);
 		float w2 = wGrid.get(i, j, k + 1);
 
+
 		// the interpolated values
 		float u = ((x2 - pos.x) / (x2 - x1)) * u1 + ((pos.x - x1) / (x2 - x1)) * u2;
 		float v = ((y2 - pos.y) / (y2 - y1)) * v1 + ((pos.y - y1) / (y2 - y1)) * v2;
 		float w = ((z2 - pos.z) / (z2 - z1)) * w1 + ((pos.z - z1) / (z2 - z1)) * w2;
+
 		return Vec3(u, v, w);
 	} else {
 		return Vec3(VEL_UNKNOWN, VEL_UNKNOWN, VEL_UNKNOWN);
@@ -1017,7 +1039,7 @@ bool FluidSolver3D::projectParticle(Particle3D *particle, float dx) {
 		Vec3 projectVec(0.0f, 0.0f, 0.0f);
 		switch (closestInd)
 		{
-		case 0:
+		/*case 0:
 			projectVec.x = closestVec.x + (-dx + (m_dx / 2.0f));
 			projectVec.y = closestVec.y + (dx - (m_dx / 2.0f));
 			projectVec.z = closestVec.z + (-dx + (m_dx / 2.0f));
@@ -1124,6 +1146,114 @@ bool FluidSolver3D::projectParticle(Particle3D *particle, float dx) {
 			projectVec.z = closestVec.z + (dx - (m_dx / 2.0f));
 			break;
 		default:
+			break;*/
+		case 0:
+			projectVec.x = closestVec.x + (-dx + (m_dx / 2.0f));
+			projectVec.y = closestVec.y + (dx - (m_dx / 2.0f));
+			projectVec.z = closestVec.z + (dx - (m_dx / 2.0f));
+			break;
+		case 1:
+			projectVec.x = closestVec.x + (-dx + (m_dx / 2.0f));
+			projectVec.z = closestVec.z + (dx - (m_dx / 2.0f));
+			break;
+		case 2:
+			projectVec.x = closestVec.x + (-dx + (m_dx / 2.0f));
+			projectVec.y = closestVec.y + (-dx + (m_dx / 2.0f));
+			projectVec.z = closestVec.z + (dx - (m_dx / 2.0f));
+			break;
+		case 3:
+			projectVec.y = closestVec.y + (dx - (m_dx / 2.0f));
+			projectVec.z = closestVec.z + (dx - (m_dx / 2.0f));
+			break;
+		case 4:
+			projectVec.z = closestVec.z + (dx - (m_dx / 2.0f));
+			break;
+		case 5:
+			projectVec.y = closestVec.y + (-dx + (m_dx / 2.0f));
+			projectVec.z = closestVec.z + (dx - (m_dx / 2.0f));
+			break;
+		case 6:
+			projectVec.x = closestVec.x + (dx - (m_dx / 2.0f));
+			projectVec.y = closestVec.y + (dx - (m_dx / 2.0f));
+			projectVec.z = closestVec.z + (dx - (m_dx / 2.0f));
+			break;
+		case 7:
+			projectVec.x = closestVec.x + (dx - (m_dx / 2.0f));
+			projectVec.z = closestVec.z + (dx - (m_dx / 2.0f));
+			break;
+		case 8:
+			projectVec.x = closestVec.x + (dx - (m_dx / 2.0f));
+			projectVec.y = closestVec.y + (-dx + (m_dx / 2.0f));
+			projectVec.z = closestVec.z + (dx - (m_dx / 2.0f));
+			break;
+		case 9:
+			projectVec.x = closestVec.x + (-dx + (m_dx / 2.0f));
+			projectVec.y = closestVec.y + (dx - (m_dx / 2.0f));
+			break;
+		case 10:
+			projectVec.x = closestVec.x + (-dx + (m_dx / 2.0f));
+			break;
+		case 11:
+			projectVec.x = closestVec.x + (-dx + (m_dx / 2.0f));
+			projectVec.y = closestVec.y + (-dx + (m_dx / 2.0f));
+			break;
+		case 12:
+			projectVec.y = closestVec.y + (dx - (m_dx / 2.0f));
+			break;
+		case 13:
+			projectVec.y = closestVec.y + (-dx + (m_dx / 2.0f));
+			break;
+		case 14:
+			projectVec.x = closestVec.x + (dx - (m_dx / 2.0f));
+			projectVec.y = closestVec.y + (dx - (m_dx / 2.0f));
+			break;
+		case 15:
+			projectVec.x = closestVec.x + (dx - (m_dx / 2.0f));
+			break;
+		case 16:
+			projectVec.x = closestVec.x + (dx - (m_dx / 2.0f));
+			projectVec.y = closestVec.y + (-dx + (m_dx / 2.0f));
+			break;
+		case 17:
+			projectVec.x = closestVec.x + (-dx + (m_dx / 2.0f));
+			projectVec.y = closestVec.y + (dx - (m_dx / 2.0f));
+			projectVec.z = closestVec.z + (-dx + (m_dx / 2.0f));
+			break;
+		case 18:
+			projectVec.x = closestVec.x + (-dx + (m_dx / 2.0f));
+			projectVec.z = closestVec.z + (-dx + (m_dx / 2.0f));
+			break;
+		case 19:
+			projectVec.x = closestVec.x + (-dx + (m_dx / 2.0f));
+			projectVec.y = closestVec.y + (-dx + (m_dx / 2.0f));
+			projectVec.z = closestVec.z + (-dx + (m_dx / 2.0f));
+			break;
+		case 20:
+			projectVec.y = closestVec.y + (dx - (m_dx / 2.0f));
+			projectVec.z = closestVec.z + (-dx + (m_dx / 2.0f));
+			break;
+		case 21:
+			projectVec.z = closestVec.z + (-dx + (m_dx / 2.0f));
+			break;
+		case 22:
+			projectVec.y = closestVec.y + (-dx + (m_dx / 2.0f));
+			projectVec.z = closestVec.z + (-dx + (m_dx / 2.0f));
+			break;
+		case 23:
+			projectVec.x = closestVec.x + (dx - (m_dx / 2.0f));
+			projectVec.y = closestVec.y + (dx - (m_dx / 2.0f));
+			projectVec.z = closestVec.z + (-dx + (m_dx / 2.0f));
+			break;
+		case 24:
+			projectVec.x = closestVec.x + (dx - (m_dx / 2.0f));
+			projectVec.z = closestVec.z + (-dx + (m_dx / 2.0f));
+			break;
+		case 25:
+			projectVec.x = closestVec.x + (dx - (m_dx / 2.0f));
+			projectVec.y = closestVec.y + (-dx + (m_dx / 2.0f));
+			projectVec.z = closestVec.z + (-dx + (m_dx / 2.0f));
+			break;
+		default:
 			break;
 		}
 
@@ -1154,5 +1284,33 @@ std::vector<std::string> FluidSolver3D::split(std::string str, std::string token
 		}
 	}
 	return result;
+}
+
+//----------------------------------------------------------------------
+// Debugging Functions
+//----------------------------------------------------------------------
+void FluidSolver3D::gridValues(Mat3Df &grid, std::string name, int x, int y, int z) {
+	int count = 0;
+	for (int i = 0; i < x; i++) {
+		for (int j = 0; j < y; j++) {
+			for (int k = 0; k < z; k++) {
+				if (abs(grid.get(i, j, k)) > 1000) {
+					//std::cout << "Strange Gridvalues at (" << i << ", " << j << ", " << k << ") of " << grid.get(i, j, k) << "\n";
+					count++;
+				}
+			}
+		}
+	}
+	std::cout << "Count of high velocities in "<< name << ": " << count << "\n";
+}
+void FluidSolver3D::strangeParticles() {
+	for (int i = 0; i < m_particles->size(); i++) {
+		if (abs(m_particles->at(i).pos.x) > 2 * m_gridWidth * m_dx || abs(m_particles->at(i).pos.y) > 2 * m_gridHeight * m_dx || abs(m_particles->at(i).pos.z) > 2 * m_gridDepth * m_dx) {
+			std::cout << "Strange Particle NO" << i << "Pos (" << m_particles->at(i).pos.x << ", " << m_particles->at(i).pos.y << ", " << m_particles->at(i).pos.z << "\n";
+		}
+		if (abs(m_particles->at(i).vel.x) > 1000 || abs(m_particles->at(i).vel.y) > 1000 || abs(m_particles->at(i).vel.z) > 1000) {
+			std::cout << "Strange Particle NO" << i << "Vel (" << m_particles->at(i).vel.x << ", " << m_particles->at(i).vel.y << ", " << m_particles->at(i).vel.z << "\n";
+		}
+	}
 }
 
