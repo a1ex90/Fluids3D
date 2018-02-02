@@ -85,6 +85,8 @@ void FluidRenderer3D::drawP(std::vector<glm::vec3> particles) {
 	m_pointShader->bind();
 	m_pointShader->update(transform1, camera1);
 
+	m_borderSolid->draw();
+
 	Point point{ particles };
 	point.draw();
 
@@ -422,6 +424,7 @@ void FluidRenderer3D::initGeom(SimUtil::Mat3Di *label, int x, int y, int z) {
 		}
 	}
 
+	initBorderLines(x, y, z, maxGridSize);
 	m_meshSolid = new Mesh{ vertSolid , normalsSolid, indSolid };
 }
 void FluidRenderer3D::initGeom(std::string file) {
@@ -486,6 +489,66 @@ void FluidRenderer3D::initGeom(std::string file) {
 		}
 	}
 	m_meshSolid = new Mesh{ vertSolid , texCoordsSolid, indSolid };
+}
+
+void FluidRenderer3D::initBorderLines(int x, int y, int z, int maxGridSize) {
+	std::vector<glm::vec3> lines;
+	//inner
+	bottomLineAt(lines, 3, 3, x, y, z, maxGridSize);
+	sideLineAt(lines, 3, 3, 3, 0, x, y, z, maxGridSize);
+	sideLineAt(lines, x - 3, 3, 3, 0, x, y, z, maxGridSize);
+	frontLineAt(lines, 3, 3, 3, 0, x, y, z, maxGridSize);
+	frontLineAt(lines, z - 3, 3, 3, 0, x, y, z, maxGridSize);
+	//outer
+	/*bottomLineAt(lines, 0, 0, x, y, z, maxGridSize);
+	sideLineAt(lines, 0, 0, 0, 0, x, y, z, maxGridSize);
+	sideLineAt(lines, x, 0, 0, 0, x, y, z, maxGridSize);
+	frontLineAt(lines, 0, 0, 0, 0, x, y, z, maxGridSize);
+	frontLineAt(lines, z, 0, 0, 0, x, y, z, maxGridSize);*/
+
+	m_borderSolid = new Line{ lines };
+}
+
+void FluidRenderer3D::bottomLineAt(std::vector<glm::vec3> &lines, int yLoc, int crop, int x, int y, int z, int maxGridSize) {
+	lines.push_back(glm::vec3(2.0 * crop / maxGridSize - 1.0, 2.0 * yLoc / maxGridSize - 1.0, 2.0 * crop / maxGridSize - 1.0));
+	lines.push_back(glm::vec3(2.0 * (x - crop) / maxGridSize - 1.0, 2.0 * yLoc / maxGridSize - 1.0, 2.0 * crop / maxGridSize - 1.0));
+
+	lines.push_back(glm::vec3(2.0 * (x - crop) / maxGridSize - 1.0, 2.0 * yLoc / maxGridSize - 1.0, 2.0 * crop / maxGridSize - 1.0));
+	lines.push_back(glm::vec3(2.0 * (x - crop) / maxGridSize - 1.0, 2.0 * yLoc / maxGridSize - 1.0, 2.0 * (z - crop) / maxGridSize - 1.0));
+
+	lines.push_back(glm::vec3(2.0 * (x - crop) / maxGridSize - 1.0, 2.0 * yLoc / maxGridSize - 1.0, 2.0 * (z - crop) / maxGridSize - 1.0));
+	lines.push_back(glm::vec3(2.0 * crop / maxGridSize - 1.0, 2.0 * yLoc / maxGridSize - 1.0, 2.0 * (z - crop) / maxGridSize - 1.0));
+
+	lines.push_back(glm::vec3(2.0 * crop / maxGridSize - 1.0, 2.0 * yLoc / maxGridSize - 1.0, 2.0 * (z - crop) / maxGridSize - 1.0));
+	lines.push_back(glm::vec3(2.0 * crop / maxGridSize - 1.0, 2.0 * yLoc / maxGridSize - 1.0, 2.0 * crop / maxGridSize - 1.0));
+}
+
+void FluidRenderer3D::sideLineAt(std::vector<glm::vec3> &lines, int xLoc, int crop, int bottomCrop, int topCrop, int x, int y, int z, int maxGridSize) {
+	lines.push_back(glm::vec3(2.0 * xLoc / maxGridSize - 1.0, 2.0 * bottomCrop / maxGridSize - 1.0, 2.0 * crop / maxGridSize - 1.0));
+	lines.push_back(glm::vec3(2.0 * xLoc / maxGridSize - 1.0, 2.0 * bottomCrop / maxGridSize - 1.0, 2.0 * (z - crop) / maxGridSize - 1.0));
+
+	lines.push_back(glm::vec3(2.0 * xLoc / maxGridSize - 1.0, 2.0 * bottomCrop / maxGridSize - 1.0, 2.0 * (z - crop) / maxGridSize - 1.0));
+	lines.push_back(glm::vec3(2.0 * xLoc / maxGridSize - 1.0, 2.0 * (y - topCrop) / maxGridSize - 1.0, 2.0 * (z - crop) / maxGridSize - 1.0));
+
+	lines.push_back(glm::vec3(2.0 * xLoc / maxGridSize - 1.0, 2.0 * (y - topCrop) / maxGridSize - 1.0, 2.0 * (z - crop) / maxGridSize - 1.0));
+	lines.push_back(glm::vec3(2.0 * xLoc / maxGridSize - 1.0, 2.0 * (y - topCrop) / maxGridSize - 1.0, 2.0 * crop / maxGridSize - 1.0));
+
+	lines.push_back(glm::vec3(2.0 * xLoc / maxGridSize - 1.0, 2.0 * (y - topCrop) / maxGridSize - 1.0, 2.0 * crop / maxGridSize - 1.0));
+	lines.push_back(glm::vec3(2.0 * xLoc / maxGridSize - 1.0, 2.0 * bottomCrop / maxGridSize - 1.0, 2.0 * crop / maxGridSize - 1.0));
+}
+
+void FluidRenderer3D::frontLineAt(std::vector<glm::vec3> &lines, int zLoc, int crop, int bottomCrop, int topCrop, int x, int y, int z, int maxGridSize) {
+	lines.push_back(glm::vec3(2.0 * crop / maxGridSize - 1.0, 2.0 * bottomCrop / maxGridSize - 1.0, 2.0 * zLoc / maxGridSize - 1.0));
+	lines.push_back(glm::vec3(2.0 * crop / maxGridSize - 1.0, 2.0 * (y - topCrop) / maxGridSize - 1.0, 2.0 * zLoc / maxGridSize - 1.0));
+
+	lines.push_back(glm::vec3(2.0 * crop / maxGridSize - 1.0, 2.0 * (y - topCrop) / maxGridSize - 1.0, 2.0 * zLoc / maxGridSize - 1.0));
+	lines.push_back(glm::vec3(2.0 * (x - crop) / maxGridSize - 1.0, 2.0 * (y - topCrop) / maxGridSize - 1.0, 2.0 * zLoc / maxGridSize - 1.0));
+
+	lines.push_back(glm::vec3(2.0 * (x - crop) / maxGridSize - 1.0, 2.0 * (y - topCrop) / maxGridSize - 1.0, 2.0 * zLoc / maxGridSize - 1.0));
+	lines.push_back(glm::vec3(2.0 * (x - crop) / maxGridSize - 1.0, 2.0 * bottomCrop / maxGridSize - 1.0, 2.0 * zLoc / maxGridSize - 1.0));
+
+	lines.push_back(glm::vec3(2.0 * (x - crop) / maxGridSize - 1.0, 2.0 * bottomCrop / maxGridSize - 1.0, 2.0 * zLoc / maxGridSize - 1.0));
+	lines.push_back(glm::vec3(2.0 * crop / maxGridSize - 1.0, 2.0 * bottomCrop / maxGridSize - 1.0, 2.0 * zLoc / maxGridSize - 1.0));
 }
 
 /*

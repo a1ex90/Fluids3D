@@ -70,6 +70,8 @@ private:
 
 	//Mesh with the geometry of the solids
 	Mesh *m_meshSolid;
+	//Line for the edges of the solids
+	Line *m_borderSolid;
 	//Mesh for background display
 	Mesh *m_meshBackground;
 
@@ -89,7 +91,8 @@ private:
 
 	void readLines(std::string file, std::vector<std::string> &lines);
 	void initGeom(std::string geoFileName);
-	void FluidRenderer3D::initGeom(SimUtil::Mat3Di *label, int x, int y, int z);
+	void initGeom(SimUtil::Mat3Di *label, int x, int y, int z);
+	void initBorderLines(int x, int y, int z, int maxGridSize);
 	void initBackground(std::string backgroundFileName);
 	void capturePicture(int frame);
 	std::vector<glm::vec2> returnVecVertices(std::string lines);
@@ -97,5 +100,11 @@ private:
 	std::vector<float> returnOpacity(std::string lines);
 	std::vector<std::string> split(std::string str, std::string token);
 	float uvFloor(float number);
+
+	void bottomLineAt(std::vector<glm::vec3> &lines, int yLoc, int crop, int x, int y, int z, int maxGridSize);
+	void sideLineAt(std::vector<glm::vec3> &lines, int xLoc, int crop, int bottomCrop, int topCrop, int x, int y, int z, int maxGridSize);
+	void frontLineAt(std::vector<glm::vec3> &lines, int zLoc, int crop, int bottomCrop, int topCrop, int x, int y, int z, int maxGridSize);
+
+
 };
 

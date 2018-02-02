@@ -61,6 +61,7 @@ private:
 class Line {
 public:
 	Line(std::vector<glm::vec2> vertices);
+	Line(std::vector<glm::vec3> vertices);
 	
 	void draw();
 

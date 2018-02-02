@@ -234,6 +234,23 @@ Line::Line(std::vector<glm::vec2> vertices) {
 	glBindVertexArray(0);
 }
 
+Line::Line(std::vector<glm::vec3> vertices) {
+	m_verticesCount = vertices.size();
+
+	glGenVertexArrays(1, &m_vertexArrayObject);
+	glBindVertexArray(m_vertexArrayObject);
+
+	glGenBuffers(NUM_BUFFERS, m_vertexArrayBuffers);
+
+	glBindBuffer(GL_ARRAY_BUFFER, m_vertexArrayBuffers[POSITION_VB]);
+	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(vertices[0]), vertices.data(), GL_STATIC_DRAW);
+
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
+
+	glBindVertexArray(0);
+}
+
 Line::~Line() {
 	glDeleteBuffers(NUM_BUFFERS, m_vertexArrayBuffers);
 	glDeleteVertexArrays(1, &m_vertexArrayObject);
@@ -243,7 +260,7 @@ void Line::draw() {
 	glBindVertexArray(m_vertexArrayObject);
 
 	glEnable(GL_LINE_SMOOTH);
-	glLineWidth(2);
+	glLineWidth(1);
 	glDrawArrays(GL_LINES, 0, m_verticesCount);
 
 	glBindVertexArray(0);
