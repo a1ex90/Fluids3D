@@ -165,8 +165,8 @@
     <None Include="basicShader.fs" />
     <None Include="basicShader.vs" />
     <None Include="frag.glsl" />
-    <None Include="opacityShader.fs" />
-    <None Include="opacityShader.vs" />
+    <None Include="solidsShader.fs" />
+    <None Include="solidsShader.vs" />
     <None Include="packages.config" />
     <None Include="pointShader.fs" />
     <None Include="pointShader.vs" />

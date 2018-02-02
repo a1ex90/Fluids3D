@@ -106,6 +106,36 @@ Mesh::Mesh(std::vector<glm::vec2> vertices, std::vector<int> indices) {
 	glBindVertexArray(0);
 }
 
+Mesh::Mesh(std::vector<glm::vec3> vertices, std::vector<glm::vec3> normals, std::vector<int> indices) {
+	m_drawCount = indices.size();
+
+	glGenVertexArrays(1, &m_vertexArrayObject);
+	glBindVertexArray(m_vertexArrayObject);
+
+	glGenBuffers(NUM_BUFFERS, m_vertexArrayBuffers);
+
+	glBindBuffer(GL_ARRAY_BUFFER, m_vertexArrayBuffers[POSITION_VB]);
+	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(vertices[0]), vertices.data(), GL_STATIC_DRAW);
+
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
+
+	glBindBuffer(GL_ARRAY_BUFFER, m_vertexArrayBuffers[NORMAL_VB]);
+	glBufferData(GL_ARRAY_BUFFER, normals.size() * sizeof(normals[0]), normals.data(), GL_STATIC_DRAW);
+
+	glEnableVertexAttribArray(2);
+	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0, 0);
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_vertexArrayBuffers[INDEX_VB]);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(indices[0]), indices.data(), GL_STATIC_DRAW);
+
+	glBindVertexArray(0);
+
+	//needs to be enabled to active opacity rendering
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+}
+
 Mesh::Mesh(std::vector<glm::vec2> vertices, std::vector<glm::vec2> textureCoords, std::vector<int> indices) {
 	m_drawCount = indices.size();
 
@@ -146,7 +176,7 @@ Mesh::Mesh(std::vector<glm::vec2> vertices, std::vector<int> indices, std::vecto
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, 0);
 
-	glBindBuffer(GL_ARRAY_BUFFER, m_vertexArrayBuffers[OPACITY_VB]);
+	glBindBuffer(GL_ARRAY_BUFFER, m_vertexArrayBuffers[NORMAL_VB]);
 	glBufferData(GL_ARRAY_BUFFER, opacities.size() * sizeof(opacities[0]), opacities.data(), GL_STATIC_DRAW);
 
 	glEnableVertexAttribArray(2);

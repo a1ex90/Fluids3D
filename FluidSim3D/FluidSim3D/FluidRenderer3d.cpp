@@ -32,86 +32,26 @@ FluidRenderer3D::FluidRenderer3D(std::string geoFileName, int mode) {
 	m_currentFrame = 0;
 }
 
-FluidRenderer3D::FluidRenderer3D(std::string FileName, std::string geoFileName, int mode) {
+FluidRenderer3D::FluidRenderer3D(SimUtil::Mat3Di *labels, int gridWidth, int gridHeight, int gridDepth, int mode) {
 	m_visualizationMode = mode;
 
 	m_display = new Display{ WIDTH, HEIGHT, "2D Fluid Simulation" };
 
-	m_pointShader = new Shader{"./pointShader"};
+	//m_pointShader = new Shader{ "./pointShader" };
+	m_pointShader = new Shader{ "./basicShader" };
 	m_colorShader = new Shader{ "./basicShader" };
-	m_opacityShader = new Shader{ "./opacityShader" };
-	m_solidsTexShader = new Shader{ "./textureShader" };
+	m_opacityShader = new Shader{ "./solidsShader" };
+	m_solidsTexShader = new Shader{ "./solidsShader" };
 
 	m_texSolids = new Texture("./sand-texture.jpg");
 
-	m_geoFileName = geoFileName;
+	//m_geoFileName = geoFileName;
 
-	initGeom(geoFileName);
+	//initGeom(geoFileName);
+	initGeom(labels, gridWidth, gridHeight, gridDepth);
 	initBackground("./background-dune.png");
 
 	m_currentFrame = 0;
-
-	if (mode == 0) {
-		std::vector<std::string> linesFluid;
-		readLines(FileName + "-lines.csv", linesFluid);
-		m_numberOfFrames = linesFluid.size();
-		for (int i = 0; i < linesFluid.size(); i++) {
-			m_vertFluid.push_back(returnVecVertices(linesFluid[i]));
-		}
-	}
-	else if (mode == 1) {
-		std::vector<std::string> vertFluid;
-		std::vector<std::string> indFluid;
-		readLines(FileName + "-vert.csv", vertFluid);
-		readLines(FileName + "-ind.csv", indFluid);
-		m_numberOfFrames = vertFluid.size();
-		for (int i = 0; i < vertFluid.size(); i++) {
-			m_vertFluid.push_back(returnVecVertices(vertFluid[i]));
-		}
-		for (int i = 0; i < indFluid.size(); i++) {
-			m_indFluid.push_back(returnIndices(indFluid[i]));
-		}
-	}
-	else if (mode == 2) {
-		std::vector<std::string> vertFluid;
-		std::vector<std::string> indFluid;
-		std::vector<std::string> opaFluid;
-		readLines(FileName + "-vert.csv", vertFluid);
-		readLines(FileName + "-ind.csv", indFluid);
-		readLines(FileName + "-opacity.csv", opaFluid);
-		m_numberOfFrames = vertFluid.size();
-		for (int i = 0; i < vertFluid.size(); i++) {
-			m_vertFluid.push_back(returnVecVertices(vertFluid[i]));
-			m_opaFluid.push_back(returnOpacity(opaFluid[i]));
-		}
-		for (int i = 0; i < indFluid.size(); i++) {
-			m_indFluid.push_back(returnIndices(indFluid[i]));
-		}
-	}
-	else if (mode == 3) {
-		std::vector<std::string> partFluid;
-		readLines(FileName + "-part.csv", partFluid);
-		m_numberOfFrames = partFluid.size();
-		for (int i = 0; i < partFluid.size(); i++) {
-			m_partFluid.push_back(returnVecVertices(partFluid[i]));
-		}
-	}
-	else if (mode == 4) {
-		std::vector<std::string> partFluid;
-		readLines(FileName + "-part.csv", partFluid);
-		m_numberOfFrames = partFluid.size();
-		for (int i = 0; i < partFluid.size(); i++) {
-			m_partFluid.push_back(returnVecVertices(partFluid[i]));
-		}
-		std::vector<std::string> linesFluid;
-		readLines(FileName + "-lines.csv", linesFluid);
-		for (int i = 0; i < linesFluid.size(); i++) {
-			m_vertFluid.push_back(returnVecVertices(linesFluid[i]));
-		}
-	}
-	else {
-		std::cout << "Renderer invalid mode selected \n";
-	}
 }
 
 FluidRenderer3D::~FluidRenderer3D() {
@@ -120,52 +60,6 @@ FluidRenderer3D::~FluidRenderer3D() {
 //----------------------------------------------------------------------
 // Public Functions
 //----------------------------------------------------------------------
-
-void FluidRenderer3D::run() {
-	while (!m_display->isClosed()) {
-		//m_display->clear(0.686f, 0.933f, 0.933f, 1.0f);
-		m_solidsTexShader->bind();
-		m_texImgBackground->bind(1);
-		m_solidsTexShader->setTexture(1);
-		m_meshBackground->draw();
-
-		if (m_visualizationMode == 0) {
-			drawLines(m_vertFluid[m_currentFrame]);
-		}
-		else if (m_visualizationMode == 1) {
-			drawTriangles(m_vertFluid[m_currentFrame], m_indFluid[m_currentFrame]);
-		}
-		else if (m_visualizationMode == 2) {
-			drawOpacityTriangles(m_vertFluid[m_currentFrame], m_indFluid[m_currentFrame], m_opaFluid[m_currentFrame]);
-		}
-		else if (m_visualizationMode == 3) {
-			drawPoints(m_partFluid[m_currentFrame]);
-		}
-		else if (m_visualizationMode == 4) {
-			drawPoints(m_partFluid[m_currentFrame]);
-			drawLines(m_vertFluid[m_currentFrame]);
-		}
-
-		//m_colorShader->setColor(0.741f, 0.718f, 0.420f);
-		m_solidsTexShader->bind();
-		m_texSolids->bind(0);		
-		m_solidsTexShader->setTexture(0);
-		m_meshSolid->draw();
-
-		m_display->update();
-
-		//Picture Capturing
-		//capturePicture(m_currentFrame);
-		//End Picture Capturing
-
-		m_currentFrame++;
-		if (m_currentFrame >= m_numberOfFrames) {
-			m_currentFrame = 0;
-		}
-
-		SDL_Delay(1000 / FRAME_RATE);
-	}
-}
 
 void FluidRenderer3D::drawP(std::vector<glm::vec2> particles) {
 	m_solidsTexShader->bind();
@@ -185,15 +79,19 @@ void FluidRenderer3D::drawP(std::vector<glm::vec2> particles) {
 
 void FluidRenderer3D::drawP(std::vector<glm::vec3> particles) {
 	m_display->clear(0.686f, 0.933f, 0.933f, 1.0f);
-	camera camera1(glm::vec3(0, 0, -3), 70.0f, (float)WIDTH / (float)HEIGHT, 0.01f, 1000.0f);
+	camera camera1(glm::vec3(0, 0, -4), 70.0f, (float)WIDTH / (float)HEIGHT, 0.01f, 1000.0f);
 	transform transform1;
 
 	m_pointShader->bind();
-	//m_pointShader->setColor(0.000f, 0.000f, 0.804f);
 	m_pointShader->update(transform1, camera1);
 
 	Point point{ particles };
 	point.draw();
+
+	m_solidsTexShader->bind();
+	m_solidsTexShader->update(transform1, camera1);
+
+	m_meshSolid->draw();
 
 	m_display->update();
 }
@@ -298,6 +196,7 @@ void FluidRenderer3D::drawTriangles(std::vector<glm::vec2> vertices, std::vector
 	meshFluid.draw();
 }
 
+
 /*
 Draws the given vertices as a opaque triangle mesh
 Args:
@@ -338,6 +237,193 @@ in a vector
 Args:
 file - name of the .txt file containing initial geometry
 */
+void FluidRenderer3D::initGeom(SimUtil::Mat3Di *label, int x, int y, int z) {
+	std::vector<glm::vec3> vertSolid;
+	std::vector<glm::vec3> normalsSolid;
+	std::vector<int> indSolid;
+	int maxGridSize;
+	int currentInd = 0;
+	//get maximum grid size for scaling
+	if (x > y) {
+		if (x > z)
+			maxGridSize = x;
+		else
+			maxGridSize = z;
+	}
+	else {
+		if (y > z)
+			maxGridSize = y;
+		else
+			maxGridSize = z;
+	}
+	for (int i = 0; i < x; i++) {
+		for (int j = 0; j < y; j++) {
+			for (int k = 0; k < z; k++) {
+				//only draw solids
+				if (label->get(i, j, k) == SimUtil::SOLID) {
+					float x1 = 2.0f * i / (maxGridSize)-1.0f;
+					float x2 = 2.0f * (i + 1) / (maxGridSize)-1.0f;
+					float y1 = 2.0f * j / (maxGridSize)-1.0f;
+					float y2 = 2.0f * (j + 1) / (maxGridSize)-1.0f;
+					float z1 = 2.0f * k / (maxGridSize)-1.0f;
+					float z2 = 2.0f * (k + 1) / (maxGridSize)-1.0f;
+					//left-side
+					if (i == 0 || label->get(i - 1, j, k) != SimUtil::SOLID) {
+						//bottom-left
+						vertSolid.push_back(glm::vec3(x1, y1, z2));
+						normalsSolid.push_back(glm::vec3(-1, 0, 0));
+						indSolid.push_back(currentInd);
+						//top-left
+						vertSolid.push_back(glm::vec3(x1, y2, z2));
+						normalsSolid.push_back(glm::vec3(-1, 0, 0));
+						indSolid.push_back(currentInd + 1);
+						//top-right
+						vertSolid.push_back(glm::vec3(x1, y2, z1));
+						normalsSolid.push_back(glm::vec3(-1, 0, 0));
+						indSolid.push_back(currentInd + 2);
+						//bottom-left
+						indSolid.push_back(currentInd);
+						//top-right
+						indSolid.push_back(currentInd + 2);
+						//bottom-right
+						vertSolid.push_back(glm::vec3(x1, y1, z1));
+						normalsSolid.push_back(glm::vec3(-1, 0, 0));
+						indSolid.push_back(currentInd + 3);
+
+						currentInd += 4;
+					}
+					//right-side
+					if (i == x - 1 || label->get(i + 1, j, k) != SimUtil::SOLID) {
+						//bottom-left
+						vertSolid.push_back(glm::vec3(x2, y1, z2));
+						normalsSolid.push_back(glm::vec3(1, 0, 0));
+						indSolid.push_back(currentInd);
+						//top-left
+						vertSolid.push_back(glm::vec3(x2, y2, z2));
+						normalsSolid.push_back(glm::vec3(1, 0, 0));
+						indSolid.push_back(currentInd + 1);
+						//top-right
+						vertSolid.push_back(glm::vec3(x2, y2, z1));
+						normalsSolid.push_back(glm::vec3(1, 0, 0));
+						indSolid.push_back(currentInd + 2);
+						//bottom-left
+						indSolid.push_back(currentInd);
+						//top-right
+						indSolid.push_back(currentInd + 2);
+						//bottom-right
+						vertSolid.push_back(glm::vec3(x2, y1, z1));
+						normalsSolid.push_back(glm::vec3(1, 0, 0));
+						indSolid.push_back(currentInd + 3);
+
+						currentInd += 4;
+					}
+					//front-side
+					if (k == 0 || label->get(i, j, k - 1) != SimUtil::SOLID) {
+						//bottom-left
+						vertSolid.push_back(glm::vec3(x1, y1, z1));
+						normalsSolid.push_back(glm::vec3(0, 0, -1));
+						indSolid.push_back(currentInd);
+						//top-left
+						vertSolid.push_back(glm::vec3(x1, y2, z1));
+						normalsSolid.push_back(glm::vec3(0, 0, -1));
+						indSolid.push_back(currentInd + 1);
+						//top-right
+						vertSolid.push_back(glm::vec3(x2, y2, z1));
+						normalsSolid.push_back(glm::vec3(0, 0, -1));
+						indSolid.push_back(currentInd + 2);
+						//bottom-left
+						indSolid.push_back(currentInd);
+						//top-right
+						indSolid.push_back(currentInd + 2);
+						//bottom-right
+						vertSolid.push_back(glm::vec3(x2, y1, z1));
+						normalsSolid.push_back(glm::vec3(0, 0, -1));
+						indSolid.push_back(currentInd + 3);
+
+						currentInd += 4;
+					}
+					//back-side
+					if (k == z - 1 || label->get(i, j, k + 1) != SimUtil::SOLID) {
+						//bottom-left
+						vertSolid.push_back(glm::vec3(x1, y1, z2));
+						normalsSolid.push_back(glm::vec3(0, 0, 1));
+						indSolid.push_back(currentInd);
+						//top-left
+						vertSolid.push_back(glm::vec3(x1, y2, z2));
+						normalsSolid.push_back(glm::vec3(0, 0, 1));
+						indSolid.push_back(currentInd + 1);
+						//top-right
+						vertSolid.push_back(glm::vec3(x2, y2, z2));
+						normalsSolid.push_back(glm::vec3(0, 0, 1));
+						indSolid.push_back(currentInd + 2);
+						//bottom-left
+						indSolid.push_back(currentInd);
+						//top-right
+						indSolid.push_back(currentInd + 2);
+						//bottom-right
+						vertSolid.push_back(glm::vec3(x2, y1, z2));
+						normalsSolid.push_back(glm::vec3(0, 0, 1));
+						indSolid.push_back(currentInd + 3);
+
+						currentInd += 4;
+					}
+					//bottom-side
+					if (j == 0 || label->get(i, j - 1, k) != SimUtil::SOLID) {
+						//bottom-left
+						vertSolid.push_back(glm::vec3(x1, y1, z2));
+						normalsSolid.push_back(glm::vec3(0, -1, 0));
+						indSolid.push_back(currentInd);
+						//top-left
+						vertSolid.push_back(glm::vec3(x1, y1, z1));
+						normalsSolid.push_back(glm::vec3(0, -1, 0));
+						indSolid.push_back(currentInd + 1);
+						//top-right
+						vertSolid.push_back(glm::vec3(x2, y1, z1));
+						normalsSolid.push_back(glm::vec3(0, -1, 0));
+						indSolid.push_back(currentInd + 2);
+						//bottom-left
+						indSolid.push_back(currentInd);
+						//top-right
+						indSolid.push_back(currentInd + 2);
+						//bottom-right
+						vertSolid.push_back(glm::vec3(x2, y1, z2));
+						normalsSolid.push_back(glm::vec3(0, -1, 0));
+						indSolid.push_back(currentInd + 3);
+
+						currentInd += 4;
+					}
+					//top-side
+					if (j == y - 1 || label->get(i, j + 1, k) != SimUtil::SOLID) {
+						//bottom-left
+						vertSolid.push_back(glm::vec3(x1, y2, z2));
+						normalsSolid.push_back(glm::vec3(0, 1, 0));
+						indSolid.push_back(currentInd);
+						//top-left
+						vertSolid.push_back(glm::vec3(x1, y2, z1));
+						normalsSolid.push_back(glm::vec3(0, 1, 0));
+						indSolid.push_back(currentInd + 1);
+						//top-right
+						vertSolid.push_back(glm::vec3(x2, y2, z1));
+						normalsSolid.push_back(glm::vec3(0, 1, 0));
+						indSolid.push_back(currentInd + 2);
+						//bottom-left
+						indSolid.push_back(currentInd);
+						//top-right
+						indSolid.push_back(currentInd + 2);
+						//bottom-right
+						vertSolid.push_back(glm::vec3(x2, y2, z2));
+						normalsSolid.push_back(glm::vec3(0, 1, 0));
+						indSolid.push_back(currentInd + 3);
+
+						currentInd += 4;
+					}
+				}
+			}
+		}
+	}
+
+	m_meshSolid = new Mesh{ vertSolid , normalsSolid, indSolid };
+}
 void FluidRenderer3D::initGeom(std::string file) {
 	//defines how often the texture should get repeated in x
 	int xRepitions = 3;

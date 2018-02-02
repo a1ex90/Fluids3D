@@ -22,6 +22,18 @@ FluidSolver3D::FluidSolver3D(int width, int height, int depth, float dx, float d
 	m_gridWidth = width;
 	m_gridHeight = height;
 	m_gridDepth = depth;
+	if (width > height) {
+		if (width > depth)
+			m_maxGridSize = width;
+		else
+			m_maxGridSize = depth;
+	}
+	else {
+		if (height > depth)
+			m_maxGridSize = height;
+		else
+			m_maxGridSize = depth;
+	}
 	m_dx = dx;
 	m_dt = dt;
 
@@ -35,8 +47,8 @@ FluidSolver3D::FluidSolver3D(int width, int height, int depth, float dx, float d
 			"applyBodyForces",
 			"pressureSolve",
 			"applyPressure",
-			"gridToParticles",
 			"extrapolateDepthN",
+			"gridToParticles",
 			"advectParticles",
 			"cleanupParticles"
 		};
@@ -104,36 +116,19 @@ void FluidSolver3D::step() {
 	// solve for pressure
 	classicSolver solver(m_gridWidth, m_gridHeight, m_gridDepth, m_dx, m_dt, &m_label, &m_p, &m_u, &m_v, &m_w);
 	solver.pressureSolve();
-
 	// apply pressure force
-	applyPressure();
-	/*gridValues(m_uSaved, m_gridWidth + 1, m_gridHeight, m_gridDepth);
-	gridValues(m_vSaved, m_gridWidth, m_gridHeight + 1, m_gridDepth);
-	gridValues(m_wSaved, m_gridWidth, m_gridHeight, m_gridDepth + 1);*/
+	applyPressure();	
+	// extrapolate fluid data for the whole grid
+	extrapolateGridFluidData(m_u, m_gridWidth + 1, m_gridHeight, m_gridDepth, m_maxGridSize);
+	extrapolateGridFluidData(m_v, m_gridWidth, m_gridHeight + 1, m_gridDepth, m_maxGridSize);
+	extrapolateGridFluidData(m_w, m_gridWidth, m_gridHeight, m_gridDepth + 1, m_maxGridSize);
 	// transfer grid velocities back to particles
-	//gridToParticles(PIC_WEIGHT);
-
-	strangeParticles();
-	// advect particles
-	extrapolateGridFluidData(m_u, m_gridWidth + 1, m_gridHeight, m_gridDepth, m_gridWidth);
-	//extrapolateGridFluidData(m_v, m_gridWidth, m_gridHeight + 1, m_gridDepth, m_gridHeight);
-	extrapolateGridFluidData(m_v, m_gridWidth, m_gridHeight + 1, m_gridDepth, m_gridWidth);
-	//extrapolateGridFluidData(m_w, m_gridWidth, m_gridHeight, m_gridDepth + 1, m_gridDepth);
-	extrapolateGridFluidData(m_w, m_gridWidth, m_gridHeight, m_gridDepth + 1, m_gridWidth);
-
 	gridToParticles(PIC_WEIGHT);
-	
-	/*gridValues(m_u, "m_u", m_gridWidth + 1, m_gridHeight, m_gridDepth);
-	gridValues(m_v, "m_v", m_gridWidth, m_gridHeight + 1, m_gridDepth);
-	gridValues(m_w, "m_w", m_gridWidth, m_gridHeight, m_gridDepth + 1);*/
-
+	// advect particles
 	advectParticles(ADVECT_MAX);
-
-	//strangeParticles();
 	// detect particles that have penetrated solid boundary and move back inside fluid
 	cleanupParticles(m_dx / 4.0f);
 
-	//strangeParticles();
 }
 
 void FluidSolver3D::stepTiming() {
@@ -164,22 +159,21 @@ void FluidSolver3D::stepTiming() {
 	classicSolver solver(m_gridWidth, m_gridHeight, m_gridDepth, m_dx, m_dt, &m_label, &m_p, &m_u, &m_v, &m_w);
 	solver.pressureSolve();
 	m_timer->stop();
-
 	// apply pressure force
 	m_timer->start();
 	applyPressure();
+	m_timer->stop();
+	// advect particles
+	m_timer->start();
+	extrapolateGridFluidData(m_u, m_gridWidth + 1, m_gridHeight, m_gridDepth, m_maxGridSize);
+	extrapolateGridFluidData(m_v, m_gridWidth, m_gridHeight + 1, m_gridDepth, m_maxGridSize);
+	extrapolateGridFluidData(m_w, m_gridWidth, m_gridHeight, m_gridDepth + 1, m_maxGridSize);
 	m_timer->stop();
 	// transfer grid velocities back to particles
 	m_timer->start();
 	gridToParticles(PIC_WEIGHT);
 	m_timer->stop();
 	// advect particles
-	m_timer->start();
-	extrapolateGridFluidData(m_u, m_gridWidth + 1, m_gridHeight, m_gridDepth, m_gridWidth);
-	extrapolateGridFluidData(m_v, m_gridWidth, m_gridHeight + 1, m_gridDepth, m_gridHeight);
-	extrapolateGridFluidData(m_w, m_gridWidth, m_gridHeight, m_gridDepth + 1, m_gridDepth);
-	m_timer->stop();
-
 	m_timer->start();
 	advectParticles(ADVECT_MAX);
 	m_timer->stop();
@@ -217,9 +211,9 @@ std::vector<glm::vec3> FluidSolver3D::particleData() {
 	std::vector<glm::vec3> particles;
 	particles.reserve(m_particles->size());
 	for (int i = 0; i < m_particles->size(); i++) {
-		float x = 2 * m_particles->at(i).pos.x / (m_gridWidth * m_dx) - 1;
-		float y = 2 * m_particles->at(i).pos.y / (m_gridHeight * m_dx) - 1;
-		float z = 2 * m_particles->at(i).pos.z / (m_gridDepth * m_dx) - 1;
+		float x = 2 * m_particles->at(i).pos.x / (m_maxGridSize * m_dx) - 1;
+		float y = 2 * m_particles->at(i).pos.y / (m_maxGridSize * m_dx) - 1;
+		float z = 2 * m_particles->at(i).pos.z / (m_maxGridSize * m_dx) - 1;
 		glm::vec3 p_i{ x,y,z };
 		particles.push_back(p_i);
 	}

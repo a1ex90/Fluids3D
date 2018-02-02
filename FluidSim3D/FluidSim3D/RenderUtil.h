@@ -34,6 +34,7 @@ private:
 class Mesh {
 public:
 	Mesh(std::vector<glm::vec2> vertices, std::vector<int> indices);
+	Mesh(std::vector<glm::vec3> vertices, std::vector<glm::vec3> normals, std::vector<int> indices);
 	Mesh(std::vector<glm::vec2> vertices, std::vector<glm::vec2> textureCoords, std::vector<int> indices);
 	Mesh(std::vector<glm::vec2> vertices, std::vector<int> indices, std::vector<float> opacites);
 
@@ -44,7 +45,7 @@ private:
 	enum {
 		POSITION_VB,
 		TEXCOORD_VB,
-		OPACITY_VB,	
+		NORMAL_VB,	
 		INDEX_VB,
 		NUM_BUFFERS
 	};

@@ -75,7 +75,8 @@ int main(int argc, char** argv) {
 	if (REALTIME_SIM) {
 		FluidSolver3D solver(GRID_WIDTH, GRID_HEIGHT, GRID_DEPTH, GRID_CELL_WIDTH, TIME_STEP);
 		solver.init(INITIAL_GEOMETRY_FILE_IN);
-		FluidRenderer3D render{ INITIAL_GEOMETRY_FILE_IN, VISUALIZATION_MODE };
+		//FluidRenderer3D render{ INITIAL_GEOMETRY_FILE_IN, VISUALIZATION_MODE };
+		FluidRenderer3D render( solver.getGeometry(),GRID_WIDTH, GRID_HEIGHT, GRID_DEPTH, VISUALIZATION_MODE );
 		for (int frame = 0; frame < 4*NUM_SIM_FRAMES; frame++) {
 			auto start = std::chrono::system_clock::now();
 			solver.step();

@@ -24,6 +24,8 @@ private:
 	int m_gridHeight;
 	// nz
 	int m_gridDepth;
+	// the max of depth, height and width
+	int m_maxGridSize;
 	// distance between each grid cell
 	float m_dx;
 	// grid of cell labels, size (nx, ny)
@@ -166,6 +168,10 @@ public:
 	Saves the average timing data for each sub-algorithm of the step algorithm
 	*/
 	void saveTimingData(std::ofstream*);
+
+	SimUtil::Mat3Di* getGeometry() {
+		return &m_label;
+	};
 };
 
 #endif //FLUID_SOLVER_3D_H_

@@ -1,6 +1,7 @@
 #pragma once
 #include <vector>
 #include "RenderUtil.h"
+#include "SimUtil.h"
 
 class FluidRenderer3D
 {
@@ -11,8 +12,8 @@ public:
 	lineFileName - name of the .csv file with the line data of the watersurface
 	geoFileName - name of the .txt file containing initial geometry				
 	*/
-	FluidRenderer3D(std::string lineFileName, std::string geoFileName, int mode);
 	FluidRenderer3D(std::string geoFileName, int mode);
+	FluidRenderer3D::FluidRenderer3D(SimUtil::Mat3Di *labels, int gridWidth, int gridHeight, int gridDepth, int mode);
 	~FluidRenderer3D();
 	/*
 	Draws the fluid for at each frame automatically on repeat. 
@@ -32,6 +33,7 @@ public:
 	Draws the given vertices as a mesh
 	*/
 	void draw(std::vector<glm::vec2> vertices, std::vector<int> indicies);
+	void draw(std::vector<glm::vec3> vertices, std::vector<int> indicies);
 	/*
 	Draws the given vertices as a mesh with given opacities
 	*/
@@ -87,6 +89,7 @@ private:
 
 	void readLines(std::string file, std::vector<std::string> &lines);
 	void initGeom(std::string geoFileName);
+	void FluidRenderer3D::initGeom(SimUtil::Mat3Di *label, int x, int y, int z);
 	void initBackground(std::string backgroundFileName);
 	void capturePicture(int frame);
 	std::vector<glm::vec2> returnVecVertices(std::string lines);
