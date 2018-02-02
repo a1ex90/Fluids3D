@@ -23,6 +23,7 @@ public:
 	Draws the given particles as dots
 	*/
 	void drawP(std::vector<glm::vec2> particles);
+	void drawP(std::vector<glm::vec3> particles);
 	/*
 	Draws the given vertices as a line
 	*/
@@ -78,6 +79,7 @@ private:
 	std::string m_geoFileName;
 
 	void drawPoints(std::vector<glm::vec2> points);
+	void drawPoints(std::vector<glm::vec3> points);
 	void drawLines(std::vector<glm::vec2> vertices);
 	void drawTriangles(std::vector<glm::vec2> vertices, std::vector<int> indicies);
 	void drawOpacityTriangles(std::vector<glm::vec2> vertices, std::vector<int> indicies, std::vector<float> opacities);

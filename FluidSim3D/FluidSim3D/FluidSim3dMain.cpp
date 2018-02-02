@@ -94,6 +94,10 @@ int main(int argc, char** argv) {
 					render.draw(data.vertices, data.indices, data.opacities);
 				}*/
 			}
+			if (frame == 0) {
+				//Wait for keypress to start
+				std::cin.ignore();
+			}
 			bool sleep = true;
 			while (sleep) {
 				auto now = std::chrono::system_clock::now();

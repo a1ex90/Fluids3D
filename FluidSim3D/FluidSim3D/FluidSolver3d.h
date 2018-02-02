@@ -161,7 +161,7 @@ public:
 	/*
 	Returns the particles location as vectors
 	*/
-	std::vector<glm::vec2> particleData();
+	std::vector<glm::vec3> particleData();
 	/*
 	Saves the average timing data for each sub-algorithm of the step algorithm
 	*/

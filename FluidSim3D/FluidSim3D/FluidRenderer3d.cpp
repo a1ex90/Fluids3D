@@ -16,7 +16,8 @@ FluidRenderer3D::FluidRenderer3D(std::string geoFileName, int mode) {
 
 	m_display = new Display{ WIDTH, HEIGHT, "2D Fluid Simulation" };
 
-	m_pointShader = new Shader{ "./pointShader" };
+	//m_pointShader = new Shader{ "./pointShader" };
+	m_pointShader = new Shader{ "./basicShader" };
 	m_colorShader = new Shader{ "./basicShader" };
 	m_opacityShader = new Shader{ "./opacityShader" };
 	m_solidsTexShader = new Shader{ "./textureShader" };
@@ -182,6 +183,21 @@ void FluidRenderer3D::drawP(std::vector<glm::vec2> particles) {
 	m_display->update();
 }
 
+void FluidRenderer3D::drawP(std::vector<glm::vec3> particles) {
+	m_display->clear(0.686f, 0.933f, 0.933f, 1.0f);
+	camera camera1(glm::vec3(0, 0, -3), 70.0f, (float)WIDTH / (float)HEIGHT, 0.01f, 1000.0f);
+	transform transform1;
+
+	m_pointShader->bind();
+	//m_pointShader->setColor(0.000f, 0.000f, 0.804f);
+	m_pointShader->update(transform1, camera1);
+
+	Point point{ particles };
+	point.draw();
+
+	m_display->update();
+}
+
 void FluidRenderer3D::draw(std::vector<glm::vec2> vertices) {
 	m_solidsTexShader->bind();
 	m_texImgBackground->bind(1);
@@ -242,6 +258,14 @@ points - array of 2d points
 void FluidRenderer3D::drawPoints(std::vector<glm::vec2> points) {
 	m_pointShader->bind();
 	m_pointShader->setColor(0.000f, 0.000f, 0.804f);
+
+	Point point{ points };
+	point.draw();
+}
+
+void FluidRenderer3D::drawPoints(std::vector<glm::vec3> points) {
+	m_pointShader->bind();
+	//m_pointShader->setColor(0.000f, 0.000f, 0.804f);
 
 	Point point{ points };
 	point.draw();

@@ -213,14 +213,14 @@ void FluidSolver3D::saveTimingData(std::ofstream *timingOut) {
 	m_timer->writeTiming(timingOut);
 }
 
-std::vector<glm::vec2> FluidSolver3D::particleData() {
-	std::vector<glm::vec2> particles;
+std::vector<glm::vec3> FluidSolver3D::particleData() {
+	std::vector<glm::vec3> particles;
 	particles.reserve(m_particles->size());
 	for (int i = 0; i < m_particles->size(); i++) {
 		float x = 2 * m_particles->at(i).pos.x / (m_gridWidth * m_dx) - 1;
 		float y = 2 * m_particles->at(i).pos.y / (m_gridHeight * m_dx) - 1;
 		float z = 2 * m_particles->at(i).pos.z / (m_gridDepth * m_dx) - 1;
-		glm::vec2 p_i{ x,z };
+		glm::vec3 p_i{ x,y,z };
 		particles.push_back(p_i);
 	}
 	return particles;

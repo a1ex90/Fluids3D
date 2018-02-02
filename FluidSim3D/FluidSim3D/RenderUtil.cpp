@@ -249,6 +249,23 @@ Point::Point(std::vector<glm::vec2> points) {
 	glBindVertexArray(0);
 }
 
+Point::Point(std::vector<glm::vec3> points) {
+	m_pointsCount = points.size();
+
+	glGenVertexArrays(1, &m_vertexArrayObject);
+	glBindVertexArray(m_vertexArrayObject);
+
+	glGenBuffers(NUM_BUFFERS, m_vertexArrayBuffers);
+
+	glBindBuffer(GL_ARRAY_BUFFER, m_vertexArrayBuffers[POSITION_VB]);
+	glBufferData(GL_ARRAY_BUFFER, points.size() * sizeof(points[0]), points.data(), GL_STATIC_DRAW);
+
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
+
+	glBindVertexArray(0);
+}
+
 Point::~Point() {
 	glDeleteBuffers(NUM_BUFFERS, m_vertexArrayBuffers);
 	glDeleteVertexArrays(1, &m_vertexArrayObject);
@@ -283,13 +300,15 @@ Shader::Shader(const std::string& fileName) {
 
 	glBindAttribLocation(m_program, 0, "position");
 	glBindAttribLocation(m_program, 1, "texCoord");
-	glBindAttribLocation(m_program, 2, "opacity");
+	glBindAttribLocation(m_program, 2, "normal");
 
 	glLinkProgram(m_program);
 	glValidateProgram(m_program);
 
-	m_uniforms[0] = glGetUniformLocation(m_program, "Color");
-	m_uniforms[1] = glGetUniformLocation(m_program, "Diffuse");
+	//m_uniforms[0] = glGetUniformLocation(m_program, "Color");
+	//needed for texture
+	//m_uniforms[1] = glGetUniformLocation(m_program, "Diffuse");
+	m_uniforms[TRANSFORM_U] = glGetUniformLocation(m_program, "transform");
 }
 
 Shader::~Shader() {
@@ -304,12 +323,18 @@ void Shader::bind() {
 	glUseProgram(m_program);
 }
 
+void Shader::update(const transform& transform1, const camera& camera1) {
+	glm::mat4 model = camera1.getViewProjection() * transform1.GetModel();
+
+	glUniformMatrix4fv(m_uniforms[TRANSFORM_U], 1, GL_FALSE, &model[0][0]);
+}
+
 void Shader::setColor(float r, float g, float b) {
-	glUniform3f(m_uniforms[0], r, g, b);
+	//glUniform3f(m_uniforms[0], r, g, b);
 }
 
 void Shader::setTexture(int unit) {
-	glUniform1i(m_uniforms[1], unit);
+	//glUniform1i(m_uniforms[1], unit);
 }
 
 std::string loadShader(const std::string& fileName)
