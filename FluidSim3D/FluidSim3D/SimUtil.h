@@ -98,6 +98,13 @@ namespace SimUtil {
 		MarchingTrianglesData(std::vector<glm::vec2> vert, std::vector<int> ind, std::vector<float> opa) : vertices(vert), indices(ind), opacities(opa) {}
 	};
 
+	struct Mesh3D {
+		std::vector<glm::vec3> vertices;
+		std::vector<glm::vec3> normals;
+		std::vector<int> indices;
+		Mesh3D(std::vector<glm::vec3> vert, std::vector<glm::vec3> norm, std::vector<int> ind) : vertices(vert), normals(norm), indices(ind) {}
+	};
+
 	//----------------------------------------------------------------------
 	// Functions
 	//----------------------------------------------------------------------

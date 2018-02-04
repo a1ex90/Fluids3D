@@ -220,6 +220,10 @@ std::vector<glm::vec3> FluidSolver3D::particleData() {
 	return particles;
 }
 
+Mesh3D FluidSolver3D::meshData() {
+	return meshData(m_p, m_gridWidth, m_gridHeight, m_gridDepth, SURFACE_THRESHOLD);
+}
+
 
 //----------------------------------------------------------------------
 // Private Main Solver Step Functions
@@ -1033,114 +1037,6 @@ bool FluidSolver3D::projectParticle(Particle3D *particle, float dx) {
 		Vec3 projectVec(0.0f, 0.0f, 0.0f);
 		switch (closestInd)
 		{
-		/*case 0:
-			projectVec.x = closestVec.x + (-dx + (m_dx / 2.0f));
-			projectVec.y = closestVec.y + (dx - (m_dx / 2.0f));
-			projectVec.z = closestVec.z + (-dx + (m_dx / 2.0f));
-			break;
-		case 1:
-			projectVec.x = closestVec.x + (-dx + (m_dx / 2.0f));
-			projectVec.z = closestVec.z + (-dx + (m_dx / 2.0f));
-			break;
-		case 2:
-			projectVec.x = closestVec.x + (-dx + (m_dx / 2.0f));
-			projectVec.y = closestVec.y + (-dx + (m_dx / 2.0f));
-			projectVec.z = closestVec.z + (-dx + (m_dx / 2.0f));
-			break;
-		case 3:
-			projectVec.y = closestVec.y + (dx - (m_dx / 2.0f));
-			projectVec.z = closestVec.z + (-dx + (m_dx / 2.0f));
-			break;
-		case 4:
-			projectVec.z = closestVec.z + (-dx + (m_dx / 2.0f));
-			break;
-		case 5:
-			projectVec.y = closestVec.y + (-dx + (m_dx / 2.0f));
-			projectVec.z = closestVec.z + (-dx + (m_dx / 2.0f));
-			break;
-		case 6:
-			projectVec.x = closestVec.x + (dx - (m_dx / 2.0f));
-			projectVec.y = closestVec.y + (dx - (m_dx / 2.0f));
-			projectVec.z = closestVec.z + (-dx + (m_dx / 2.0f));
-			break;
-		case 7:
-			projectVec.x = closestVec.x + (dx - (m_dx / 2.0f));
-			projectVec.z = closestVec.z + (-dx + (m_dx / 2.0f));
-			break;
-		case 8:
-			projectVec.x = closestVec.x + (dx - (m_dx / 2.0f));
-			projectVec.y = closestVec.y + (-dx + (m_dx / 2.0f));
-			projectVec.z = closestVec.z + (-dx + (m_dx / 2.0f));
-			break;	
-		case 9:
-			projectVec.x = closestVec.x + (-dx + (m_dx / 2.0f));
-			projectVec.y = closestVec.y + (dx - (m_dx / 2.0f));
-			break;
-		case 10:
-			projectVec.x = closestVec.x + (-dx + (m_dx / 2.0f));
-			break;
-		case 11:
-			projectVec.x = closestVec.x + (-dx + (m_dx / 2.0f));
-			projectVec.y = closestVec.y + (-dx + (m_dx / 2.0f));
-			break;
-		case 12:
-			projectVec.y = closestVec.y + (dx - (m_dx / 2.0f));
-			break;
-		case 13:
-			projectVec.y = closestVec.y + (-dx + (m_dx / 2.0f));
-			break;
-		case 14:
-			projectVec.x = closestVec.x + (dx - (m_dx / 2.0f));
-			projectVec.y = closestVec.y + (dx - (m_dx / 2.0f));
-			break;
-		case 15:
-			projectVec.x = closestVec.x + (dx - (m_dx / 2.0f));
-			break;
-		case 16:
-			projectVec.x = closestVec.x + (dx - (m_dx / 2.0f));
-			projectVec.y = closestVec.y + (-dx + (m_dx / 2.0f));
-			break;
-		case 17:
-			projectVec.x = closestVec.x + (-dx + (m_dx / 2.0f));
-			projectVec.y = closestVec.y + (dx - (m_dx / 2.0f));
-			projectVec.z = closestVec.z + (dx - (m_dx / 2.0f));
-			break;
-		case 18:
-			projectVec.x = closestVec.x + (-dx + (m_dx / 2.0f));
-			projectVec.z = closestVec.z + (dx - (m_dx / 2.0f));
-			break;
-		case 19:
-			projectVec.x = closestVec.x + (-dx + (m_dx / 2.0f));
-			projectVec.y = closestVec.y + (-dx + (m_dx / 2.0f));
-			projectVec.z = closestVec.z + (dx - (m_dx / 2.0f));
-			break;
-		case 20:
-			projectVec.y = closestVec.y + (dx - (m_dx / 2.0f));
-			projectVec.z = closestVec.z + (dx - (m_dx / 2.0f));
-			break;
-		case 21:
-			projectVec.z = closestVec.z + (dx - (m_dx / 2.0f));
-			break;
-		case 22:
-			projectVec.y = closestVec.y + (-dx + (m_dx / 2.0f));
-			projectVec.z = closestVec.z + (dx - (m_dx / 2.0f));
-			break;
-		case 23:
-			projectVec.x = closestVec.x + (dx - (m_dx / 2.0f));
-			projectVec.y = closestVec.y + (dx - (m_dx / 2.0f));
-			projectVec.z = closestVec.z + (dx - (m_dx / 2.0f));
-			break;
-		case 24:
-			projectVec.x = closestVec.x + (dx - (m_dx / 2.0f));
-			projectVec.z = closestVec.z + (dx - (m_dx / 2.0f));
-			break;
-		case 25:
-			projectVec.x = closestVec.x + (dx - (m_dx / 2.0f));
-			projectVec.y = closestVec.y + (-dx + (m_dx / 2.0f));
-			projectVec.z = closestVec.z + (dx - (m_dx / 2.0f));
-			break;
-		default:
-			break;*/
 		case 0:
 			projectVec.x = closestVec.x + (-dx + (m_dx / 2.0f));
 			projectVec.y = closestVec.y + (dx - (m_dx / 2.0f));
@@ -1255,6 +1151,126 @@ bool FluidSolver3D::projectParticle(Particle3D *particle, float dx) {
 
 		return true;
 	}
+}
+
+Mesh3D FluidSolver3D::meshData(SimUtil::Mat3Df &grid, int width, int height, int depth, float tol) {
+	std::vector<glm::vec3> vertices;
+	std::vector<glm::vec3> normals;
+	std::vector<int> globalIndices;
+	int curInd = 0;
+
+	for (int i = 0; i < width - 1; i++) {
+		for (int j = 0; j < height - 1; j++) {
+			for (int k = 0; k < depth - 1; k++) {
+				//determine which of the 256 different cases for one square exists
+				int selectCase = 0;
+				if (grid.get(i, j, k + 1) > tol)
+					selectCase += 128;
+				if (grid.get(i + 1, j, k + 1) > tol)
+					selectCase += 64;
+				if (grid.get(i + 1, j + 1, k + 1) > tol)
+					selectCase += 32;
+				if (grid.get(i, j + 1, k + 1) > tol)
+					selectCase += 16;
+				if (grid.get(i, j, k) > tol)
+					selectCase += 8;
+				if (grid.get(i + 1, j, k) > tol)
+					selectCase += 4;
+				if (grid.get(i + 1, j + 1, k) > tol)
+					selectCase += 2;
+				if (grid.get(i, j + 1, k) > tol)
+					selectCase += 1;
+				for (int l = 0; l < m_cubeIndices[selectCase].size(); l++) {
+					globalIndices.push_back(m_cubeIndices[selectCase][l] + curInd);
+				}
+				for (int l = 0; l < m_cubeCases[selectCase].size(); l++) {
+					float offsetX = m_cubeCases[selectCase][l].x;
+					float offsetY = m_cubeCases[selectCase][l].y;
+					float offsetZ = m_cubeCases[selectCase][l].z;
+
+					glm::vec3 normal;
+					//the offset of 0.5f indicates that this axis needs interpolation
+					if (offsetX == 0.5f) {
+						int offsetJ = (int)offsetY;
+						int offsetK = (int)offsetZ;
+						offsetX = 1 / (grid.get(i + 1, j + offsetJ, k + offsetK) - grid.get(i, j + offsetJ, + k + offsetK)) * (tol - grid.get(i, j + offsetJ, + k + offsetK));
+
+						normal.x = offsetX * grid.get(i, j + offsetJ, k + offsetK) - (1.0f - offsetX) * grid.get(i + 1, j + offsetJ, k + offsetK);
+						normal.y = offsetX * (grid.get(i, j + offsetJ - 1, k + offsetK) - grid.get(i, j + offsetJ + 1, k + offsetK)) / 2.0 + 
+							(1.0f - offsetX) * (grid.get(i + 1, j + offsetJ - 1, k + offsetK) - grid.get(i + 1, j + offsetJ + 1, k + offsetK)) / 2.0;
+						normal.z = offsetX * (grid.get(i, j + offsetJ, k + offsetK - 1) - grid.get(i, j + offsetJ, k + offsetK + 1)) / 2.0 +
+							(1.0f - offsetX) * (grid.get(i + 1, j + offsetJ, k + offsetK - 1) - grid.get(i + 1, j + offsetJ, k + offsetK + 1)) / 2.0;
+							
+					}
+					else if (offsetY == 0.5f) {
+						int offsetI = (int)offsetX;
+						int offsetK = (int)offsetZ;
+						offsetY = 1 / (grid.get(i + offsetI, j + 1, k + offsetK) - grid.get(i + offsetI, j, k + offsetK)) * (tol - grid.get(i + offsetI, j, k + offsetK));
+
+						normal.y = offsetY * grid.get(i + offsetI, j, k + offsetK) - (1.0f - offsetY) * grid.get(i + offsetI, j + 1, k + offsetK);
+						normal.x = offsetY * (grid.get(i + offsetI - 1, j, k + offsetK) - grid.get(i + offsetI + 1, j, k + offsetK)) / 2.0 +
+							(1.0f - offsetY) * (grid.get(i + offsetI - 1, j + 1, k + offsetK) - grid.get(i + offsetI + 1, j + 1, k + offsetK)) / 2.0;
+						normal.z = offsetY * (grid.get(i + offsetI, j, k + offsetK - 1) - grid.get(i + offsetI, j, k + offsetK + 1)) / 2.0 +
+							(1.0f - offsetY) * (grid.get(i + offsetI, j + 1, k + offsetK - 1) - grid.get(i + offsetI, j + 1, k + offsetK + 1)) / 2.0;
+					}
+					else if (offsetZ == 0.5f) {
+						int offsetI = (int)offsetX;
+						int offsetJ = (int)offsetY;
+						offsetY = 1 / (grid.get(i + offsetI, j + offsetJ, k + 1) - grid.get(i + offsetI, j + offsetJ, k)) * (tol - grid.get(i + offsetI, j + offsetJ, k));
+
+						normal.z = offsetZ * grid.get(i + offsetI, j + offsetJ, k) - (1.0f - offsetZ) * grid.get(i + offsetI, j + offsetJ, k + 1);
+						normal.x = offsetZ * (grid.get(i + offsetI - 1, j + offsetJ, k) - grid.get(i + offsetI + 1, j + offsetJ, k)) / 2.0 +
+							(1.0f - offsetZ) * (grid.get(i + offsetI - 1, j + offsetJ, k + 1) - grid.get(i + offsetI + 1, j + offsetJ, k + 1)) / 2.0;
+						normal.y = offsetZ * (grid.get(i + offsetI, j + offsetJ - 1, k) - grid.get(i + offsetI, j + offsetJ + 1, k)) / 2.0 +
+							(1.0f - offsetZ) * (grid.get(i + offsetI, j + offsetJ - 1, k + 1) - grid.get(i + offsetI, j + offsetJ + 1, k + 1)) / 2.0;
+					}
+
+					float x = 2.0f * (i + offsetX) / (m_maxGridSize - 1) - 1;
+					float y = 2.0f * (j + offsetY) / (m_maxGridSize - 1) - 1;
+					float z = 2.0f * (j + offsetZ) / (m_maxGridSize - 1) - 1;
+
+					//normalize normals vector
+					glm::normalize(normal);
+
+					vertices.push_back(glm::vec3{ x,y,z });
+					normals.push_back(normal);
+
+					//increment the current Index
+					curInd++;
+				}
+			}
+		}
+	}
+	return Mesh3D(vertices, normals, globalIndices);
+}
+
+void FluidSolver3D::initMarchingCubesCases(std::vector<std::vector<glm::vec3>> &points, std::vector<std::vector<int>> &indices) {
+	points.reserve(256);
+	indices.reserve(256);
+	//There are 15 ambigious cases for the 256 total cases
+	// ---CASE 0------------
+	points[0] = std::vector<glm::vec3>{};
+	indices[0] = std::vector<int>{};
+	points[255] = std::vector<glm::vec3>{};
+	indices[255] = std::vector<int>{};
+	// ---CASE 1------------
+	points[1] = std::vector<glm::vec3>{ glm::vec3 {0.5f, 0.0f, 0.0f }, glm::vec3{ 1.0f, 0.5f, 0.0f }, glm::vec3{ 1.0f, 0.0f, 0.5f } };
+	indices[1] = std::vector<int>{ 0,1,2 };
+	points[2] = std::vector<glm::vec3>{ glm::vec3{ 0.5f, 1.0f, 0.0f }, glm::vec3{ 1.0f, 0.5f, 0.0f }, glm::vec3{ 1.0f, 1.0f, 0.5f } };
+	indices[2] = std::vector<int>{ 0,1,2 };
+	points[4] = std::vector<glm::vec3>{ glm::vec3{ 0.5f, 0.0f, 0.0f }, glm::vec3{ 1.0f, 0.0f, 0.5f }, glm::vec3{ 1.0f, 0.5f, 0.0f } };
+	indices[4] = std::vector<int>{ 0,1,2 };
+	points[8] = std::vector<glm::vec3>{ glm::vec3{ 0.5f, 0.0f, 0.0f }, glm::vec3{ 0.0f, 0.0f, 0.5f }, glm::vec3{ 0.0f, 0.5f, 0.0f } };
+	indices[8] = std::vector<int>{ 0,1,2 };
+	points[16] = std::vector<glm::vec3>{ glm::vec3{ 0.0f, 1.0f, 0.5f }, glm::vec3{ 0.5f, 1.0f, 1.0f }, glm::vec3{ 0.0f, 0.5f, 1.0f } };
+	indices[16] = std::vector<int>{ 0,1,2 };
+	points[32] = std::vector<glm::vec3>{ glm::vec3{ 0.5f, 1.0f, 1.0f }, glm::vec3{ 1.0f, 1.0f, 0.5f }, glm::vec3{ 1.0f, 0.5f, 1.0f } };
+	indices[32] = std::vector<int>{ 0,1,2 };
+	points[64] = std::vector<glm::vec3>{ glm::vec3{ 1.0f, 0.0f, 0.5f }, glm::vec3{ 0.5f, 0.0f, 1.0f }, glm::vec3{ 1.0f, 0.5f, 1.0f } };
+	indices[64] = std::vector<int>{ 0,1,2 };
+	points[128] = std::vector<glm::vec3>{ glm::vec3{ 0.0f, 0.0f, 0.5f }, glm::vec3{ 0.5f, 0.0f, 1.0f }, glm::vec3{ 0.0f, 0.5f, 1.0f } };
+	indices[128] = std::vector<int>{ 0,1,2 };
+	// ---CASE 2------------
 }
 
 /*

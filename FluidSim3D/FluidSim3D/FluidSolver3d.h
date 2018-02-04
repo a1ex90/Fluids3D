@@ -81,12 +81,20 @@ private:
 	std::vector<SimUtil::Particle3D> *m_particles;
 
 	//----------------------------------------------------------------------
-	// For Timing purposes
+	// For Output Purposes
+	//----------------------------------------------------------------------
+
+	// list of all cases for marching cubes
+	std::vector<std::vector<glm::vec3>> m_cubeCases;
+	std::vector<std::vector<int>> m_cubeIndices;
+
+	//----------------------------------------------------------------------
+	// For Timing Purposes
 	//----------------------------------------------------------------------
 	
-	//timing class object
+	// timing class object
 	timing *m_timer;
-	//definies if timing class is initialized
+	// definies if timing class is initialized
 	const bool ENABLE_TIMING = true;
 
 	//----------------------------------------------------------------------
@@ -114,7 +122,10 @@ private:
 	SimUtil::Vec3 interpVel(SimUtil::Mat3Df&, SimUtil::Mat3Df&, SimUtil::Mat3Df&, SimUtil::Vec3);
 	void RK3(SimUtil::Particle3D*, SimUtil::Vec3, float, SimUtil::Mat3Df&, SimUtil::Mat3Df&, SimUtil::Mat3Df&);
 	bool projectParticle(SimUtil::Particle3D *, float);
+	SimUtil::Mesh3D meshData(SimUtil::Mat3Df &grid, int width, int height, int depth, float tol);
+	void initMarchingCubesCases(std::vector<std::vector<glm::vec3>> &points, std::vector<std::vector<int>> &indices);
 	std::vector<std::string> split(std::string str, std::string token);
+	
 
 	// debugging functions
 	void gridValues(SimUtil::Mat3Df &grid, std::string name, int x, int y, int z);
@@ -164,6 +175,15 @@ public:
 	Returns the particles location as vectors
 	*/
 	std::vector<glm::vec3> particleData();
+
+	/*
+	Returns the triangle data of the isocontour where the pressure is zero in the 
+	current pressure grid as a struct of 3 vectors.
+	first containing vertices as vec3
+	second containing normals as vec3
+	third containing vertex indices for index buffering
+	*/
+	SimUtil::Mesh3D meshData();
 	/*
 	Saves the average timing data for each sub-algorithm of the step algorithm
 	*/
