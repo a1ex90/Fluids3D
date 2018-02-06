@@ -1254,7 +1254,7 @@ void FluidSolver3D::initMarchingCubesCases(std::vector<std::vector<glm::vec3>> &
 	points[255] = std::vector<glm::vec3>{};
 	indices[255] = std::vector<int>{};
 	// ---CASE 1------------
-	points[1] = std::vector<glm::vec3>{ glm::vec3 {0.5f, 0.0f, 0.0f }, glm::vec3{ 1.0f, 0.5f, 0.0f }, glm::vec3{ 1.0f, 0.0f, 0.5f } };
+	points[1] = std::vector<glm::vec3>{ glm::vec3 {0.5f, 1.0f, 0.0f }, glm::vec3{ 0.0f, 0.5f, 0.0f }, glm::vec3{ 0.0f, 1.0f, 0.5f } };
 	indices[1] = std::vector<int>{ 0,1,2 };
 	points[2] = std::vector<glm::vec3>{ glm::vec3{ 0.5f, 1.0f, 0.0f }, glm::vec3{ 1.0f, 0.5f, 0.0f }, glm::vec3{ 1.0f, 1.0f, 0.5f } };
 	indices[2] = std::vector<int>{ 0,1,2 };
@@ -1271,6 +1271,158 @@ void FluidSolver3D::initMarchingCubesCases(std::vector<std::vector<glm::vec3>> &
 	points[128] = std::vector<glm::vec3>{ glm::vec3{ 0.0f, 0.0f, 0.5f }, glm::vec3{ 0.5f, 0.0f, 1.0f }, glm::vec3{ 0.0f, 0.5f, 1.0f } };
 	indices[128] = std::vector<int>{ 0,1,2 };
 	// ---CASE 2------------
+	points[3] = std::vector<glm::vec3>{ glm::vec3{ 0.0f, 1.0f, 0.5f }, glm::vec3{ 1.0f, 1.0f, 0.5f }, glm::vec3{ 0.0f, 0.5f, 0.0f }, glm::vec3{ 1.0f, 0.5f, 0.0f } };
+	indices[3] = std::vector<int>{ 0,1,2,1,2,3 };
+	points[6] = std::vector<glm::vec3>{ glm::vec3{ 1.0f, 0.0f, 0.5f }, glm::vec3{ 0.5f, 0.0f, 1.0f }, glm::vec3{ 1.0f, 1.0f, 0.5f }, glm::vec3{ 0.5f, 1.0f, 1.0f } };
+	indices[6] = std::vector<int>{ 0,1,2,1,2,3 };
+	points[9] = std::vector<glm::vec3>{ glm::vec3{ 0.0f, 0.0f, 0.5f }, glm::vec3{ 0.5f, 0.0f, 1.0f }, glm::vec3{ 0.0f, 1.0f, 0.5f }, glm::vec3{ 0.5f, 1.0f, 1.0f } };
+	indices[9] = std::vector<int>{ 0,1,2,1,2,3 };
+	points[12] = std::vector<glm::vec3>{ glm::vec3{ 0.0f, 0.0f, 0.5f }, glm::vec3{ 1.0f, 0.0f, 0.5f }, glm::vec3{ 0.0f, 0.5f, 0.0f }, glm::vec3{ 1.0f, 0.5f, 0.0f } };
+	indices[12] = std::vector<int>{ 0,1,2,1,2,3 };
+	points[17] = std::vector<glm::vec3>{ glm::vec3{ 0.5f, 1.0f, 0.0f }, glm::vec3{ 0.5f, 1.0f, 1.0f }, glm::vec3{ 0.0f, 0.5f, 0.0f }, glm::vec3{ 0.0f, 0.5f, 1.0f } };
+	indices[17] = std::vector<int>{ 0,1,2,1,2,3 };
+	points[34] = std::vector<glm::vec3>{ glm::vec3{ 0.5f, 1.0f, 0.0f }, glm::vec3{ 0.5f, 1.0f, 1.0f }, glm::vec3{ 1.0f, 0.5f, 0.0f }, glm::vec3{ 1.0f, 0.5f, 1.0f } };
+	indices[34] = std::vector<int>{ 0,1,2,1,2,3 };
+	points[48] = std::vector<glm::vec3>{ glm::vec3{ 0.0f, 1.0f, 0.5f }, glm::vec3{ 1.0f, 1.0f, 0.5f }, glm::vec3{ 0.0f, 0.5f, 1.0f }, glm::vec3{ 1.0f, 0.5f, 1.0f } };
+	indices[48] = std::vector<int>{ 0,1,2,1,2,3 };	
+	points[68] = std::vector<glm::vec3>{ glm::vec3{ 0.5f, 0.0f, 0.0f }, glm::vec3{ 0.5f, 0.0f, 1.0f }, glm::vec3{ 1.0f, 0.5f, 0.0f }, glm::vec3{ 1.0f, 0.5f, 1.0f } };
+	indices[68] = std::vector<int>{ 0,1,2,1,2,3 };
+	points[96] = std::vector<glm::vec3>{ glm::vec3{ 1.0f, 0.0f, 0.5f }, glm::vec3{ 0.5f, 0.0f, 1.0f }, glm::vec3{ 1.0f, 1.0f, 0.5f }, glm::vec3{ 0.5f, 1.0f, 1.0f } };
+	indices[96] = std::vector<int>{ 0,1,2,1,2,3 };
+	points[136] = std::vector<glm::vec3>{ glm::vec3{ 0.5f, 0.0f, 0.0f }, glm::vec3{ 0.5f, 0.0f, 1.0f }, glm::vec3{ 0.0f, 0.5f, 0.0f }, glm::vec3{ 0.0f, 0.5f, 1.0f } };
+	indices[136] = std::vector<int>{ 0,1,2,1,2,3 };
+	points[144] = std::vector<glm::vec3>{ glm::vec3{ 0.0f, 0.0f, 0.5f }, glm::vec3{ 0.5f, 0.0f, 1.0f }, glm::vec3{ 0.0f, 1.0f, 0.5f }, glm::vec3{ 0.5f, 1.0f, 1.0f } };
+	indices[144] = std::vector<int>{ 0,1,2,1,2,3 };
+	points[192] = std::vector<glm::vec3>{ glm::vec3{ 0.0f, 0.0f, 0.5f }, glm::vec3{ 1.0f, 0.0f, 0.5f }, glm::vec3{ 0.0f, 0.5f, 1.0f }, glm::vec3{ 1.0f, 0.5f, 1.0f } };
+	indices[192] = std::vector<int>{ 0,1,2,1,2,3 };
+	// ---CASE 3------------
+	points[5] = std::vector<glm::vec3>{ glm::vec3{ 0.5f, 1.0f, 0.0f }, glm::vec3{ 0.0f, 0.5f, 0.0f }, glm::vec3{ 0.0f, 1.0f, 0.5f }, glm::vec3{ 0.5f, 0.0f, 0.0f }, glm::vec3{ 1.0f, 0.0f, 0.5f }, glm::vec3{ 1.0f, 0.5f, 0.0f } };
+	indices[5] = std::vector<int>{ 0,1,2,3,4,5 };
+	points[10] = std::vector<glm::vec3>{ glm::vec3{ 0.5f, 1.0f, 0.0f }, glm::vec3{ 1.0f, 0.5f, 0.0f }, glm::vec3{ 1.0f, 1.0f, 0.5f }, glm::vec3{ 0.5f, 0.0f, 0.0f }, glm::vec3{ 0.0f, 0.0f, 0.5f }, glm::vec3{ 0.0f, 0.5f, 0.0f } };
+	indices[10] = std::vector<int>{ 0,1,2,3,4,5 };
+	points[24] = std::vector<glm::vec3>{ glm::vec3{ 0.5f, 0.0f, 0.0f }, glm::vec3{ 0.0f, 0.0f, 0.5f }, glm::vec3{ 0.0f, 0.5f, 0.0f }, glm::vec3{ 0.0f, 1.0f, 0.5f }, glm::vec3{ 0.5f, 1.0f, 1.0f }, glm::vec3{ 0.0f, 0.5f, 1.0f } };
+	indices[24] = std::vector<int>{ 0,1,2,3,4,5 };
+	points[38] = std::vector<glm::vec3>{ glm::vec3{ 0.5f, 0.0f, 0.0f }, glm::vec3{ 1.0f, 0.0f, 0.5f }, glm::vec3{ 1.0f, 0.5f, 0.0f }, glm::vec3{ 0.5f, 1.0f, 1.0f }, glm::vec3{ 1.0f, 1.0f, 0.5f }, glm::vec3{ 1.0f, 0.5f, 1.0f } };
+	indices[38] = std::vector<int>{ 0,1,2,3,4,5 };
+	points[66] = std::vector<glm::vec3>{ glm::vec3{ 0.5f, 1.0f, 0.0f }, glm::vec3{ 1.0f, 0.5f, 0.0f }, glm::vec3{ 1.0f, 1.0f, 0.5f }, glm::vec3{ 1.0f, 0.0f, 0.5f }, glm::vec3{ 0.5f, 0.0f, 1.0f }, glm::vec3{ 1.0f, 0.5f, 1.0f } };
+	indices[66] = std::vector<int>{ 0,1,2,3,4,5 };
+	points[80] = std::vector<glm::vec3>{ glm::vec3{ 0.0f, 1.0f, 0.5f }, glm::vec3{ 0.5f, 1.0f, 1.0f }, glm::vec3{ 0.0f, 0.5f, 1.0f }, glm::vec3{ 1.0f, 0.0f, 0.5f }, glm::vec3{ 0.5f, 0.0f, 1.0f }, glm::vec3{ 1.0f, 0.5f, 1.0f } };
+	indices[80] = std::vector<int>{ 0,1,2,3,4,5 };
+	points[129] = std::vector<glm::vec3>{ glm::vec3{ 0.5f, 1.0f, 0.0f }, glm::vec3{ 0.0f, 0.5f, 0.0f }, glm::vec3{ 0.0f, 1.0f, 0.5f }, glm::vec3{ 0.0f, 0.0f, 0.5f }, glm::vec3{ 0.5f, 0.0f, 1.0f }, glm::vec3{ 0.0f, 0.5f, 1.0f } };
+	indices[129] = std::vector<int>{ 0,1,2,3,4,5 };
+	points[160] = std::vector<glm::vec3>{ glm::vec3{ 0.5f, 1.0f, 1.0f }, glm::vec3{ 1.0f, 1.0f, 0.5f }, glm::vec3{ 1.0f, 0.5f, 1.0f }, glm::vec3{ 0.0f, 0.0f, 0.5f }, glm::vec3{ 0.5f, 0.0f, 1.0f }, glm::vec3{ 0.0f, 0.5f, 1.0f } };
+	indices[160] = std::vector<int>{ 0,1,2,3,4,5 };
+	// ---CASE 4------------
+	points[19] = std::vector<glm::vec3>{ glm::vec3{ 1.0f, 1.0f, 0.5f }, glm::vec3{ 1.0f, 0.5f, 0.0f }, glm::vec3{ 0.5f, 1.0f, 1.0f }, glm::vec3{ 0.0f, 0.5f, 1.0f }, glm::vec3{ 0.0f, 0.5f, 0.0f } };
+	indices[19] = std::vector<int>{ 0,1,2,1,2,3,1,3,4 };
+	points[50] = std::vector<glm::vec3>{ glm::vec3{ 0.5f, 1.0f, 0.0f }, glm::vec3{ 1.0f, 0.5f, 0.0f }, glm::vec3{ 0.0f, 1.0f, 0.5f }, glm::vec3{ 0.0f, 0.5f, 1.0f }, glm::vec3{ 1.0f, 0.5f, 1.0f } };
+	indices[50] = std::vector<int>{ 0,1,2,1,2,3,1,3,4 };
+
+	points[140] = std::vector<glm::vec3>{ glm::vec3{ 1.0f, 0.0f, 0.5f }, glm::vec3{ 1.0f, 0.5f, 0.0f }, glm::vec3{ 0.5f, 0.0f, 1.0f }, glm::vec3{ 0.0f, 0.5f, 1.0f }, glm::vec3{ 0.0f, 0.5f, 0.0f } };
+	indices[140] = std::vector<int>{ 0,1,2,1,2,3,1,3,4 };
+	points[196] = std::vector<glm::vec3>{ glm::vec3{ 0.5f, 0.0f, 0.0f }, glm::vec3{ 1.0f, 0.5f, 0.0f }, glm::vec3{ 0.0f, 0.0f, 0.5f }, glm::vec3{ 0.0f, 0.5f, 1.0f }, glm::vec3{ 1.0f, 0.5f, 1.0f } };
+	indices[196] = std::vector<int>{ 0,1,2,1,2,3,1,3,4 };
+
+	
+
+
+	// ---CASE 5------------
+	points[15] = std::vector<glm::vec3>{ glm::vec3{ 0.0f, 0.0f, 0.5f }, glm::vec3{ 1.0f, 0.0f, 0.5f }, glm::vec3{ 0.0f, 1.0f, 0.5f }, glm::vec3{ 1.0f, 1.0f, 0.5f } };
+	indices[15] = std::vector<int>{ 0,1,2,1,3,2 };
+	points[51] = std::vector<glm::vec3>{ glm::vec3{ 0.0f, 0.5f, 0.0f }, glm::vec3{ 1.0f, 0.5f, 0.0f }, glm::vec3{ 1.0f, 0.5f, 1.0f }, glm::vec3{ 0.0f, 0.5f, 1.0f } };
+	indices[51] = std::vector<int>{ 0,1,2,0,2,3 };
+	points[102] = std::vector<glm::vec3>{ glm::vec3{ 0.5f, 0.0f, 0.0f }, glm::vec3{ 0.5f, 0.0f, 1.0f }, glm::vec3{ 0.5f, 1.0f, 0.0f }, glm::vec3{ 0.5f, 1.0f, 1.0f } };
+	indices[102] = std::vector<int>{ 0,1,2,1,2,3 };
+	points[153] = std::vector<glm::vec3>{ glm::vec3{ 0.5f, 0.0f, 0.0f }, glm::vec3{ 0.5f, 0.0f, 1.0f }, glm::vec3{ 0.5f, 1.0f, 0.0f }, glm::vec3{ 0.5f, 1.0f, 1.0f } };
+	indices[153] = std::vector<int>{ 0,1,2,1,2,3 };
+	points[204] = std::vector<glm::vec3>{ glm::vec3{ 0.0f, 0.5f, 0.0f }, glm::vec3{ 1.0f, 0.5f, 0.0f }, glm::vec3{ 1.0f, 0.5f, 1.0f }, glm::vec3{ 0.0f, 0.5f, 1.0f } };
+	indices[204] = std::vector<int>{ 0,1,2,0,2,3 };
+	points[240] = std::vector<glm::vec3>{ glm::vec3{ 0.0f, 0.0f, 0.5f }, glm::vec3{ 1.0f, 0.0f, 0.5f }, glm::vec3{ 0.0f, 1.0f, 0.5f }, glm::vec3{ 1.0f, 1.0f, 0.5f } };
+	indices[240] = std::vector<int>{ 0,1,2,1,3,2 };
+	
+	// ---CASE 7------------
+	points[90] = std::vector<glm::vec3>{ glm::vec3{ 0.5f, 1.0f, 0.0f }, glm::vec3{ 1.0f, 0.5f, 0.0f }, glm::vec3{ 1.0f, 1.0f, 0.5f }, glm::vec3{ 0.5f, 0.0f, 0.0f }, glm::vec3{ 0.0f, 0.0f, 0.5f }, glm::vec3{ 0.0f, 0.5f, 0.0f }, glm::vec3{ 0.0f, 1.0f, 0.5f }, glm::vec3{ 0.5f, 1.0f, 1.0f }, glm::vec3{ 0.0f, 0.5f, 1.0f }, glm::vec3{ 1.0f, 0.0f, 0.5f }, glm::vec3{ 0.5f, 0.0f, 1.0f }, glm::vec3{ 1.0f, 0.5f, 1.0f } };
+	indices[90] = std::vector<int>{ 0,1,2,3,4,5,6,7,8,9,10,11 };
+	points[165] = std::vector<glm::vec3>{ glm::vec3{ 0.5f, 1.0f, 0.0f }, glm::vec3{ 0.0f, 0.5f, 0.0f }, glm::vec3{ 0.0f, 1.0f, 0.5f }, glm::vec3{ 0.5f, 0.0f, 0.0f }, glm::vec3{ 1.0f, 0.0f, 0.5f }, glm::vec3{ 1.0f, 0.5f, 0.0f }, glm::vec3{ 0.5f, 1.0f, 1.0f }, glm::vec3{ 1.0f, 1.0f, 0.5f }, glm::vec3{ 1.0f, 0.5f, 1.0f }, glm::vec3{ 0.0f, 0.0f, 0.5f }, glm::vec3{ 0.5f, 0.0f, 1.0f }, glm::vec3{ 0.0f, 0.5f, 1.0f } };
+	indices[165] = std::vector<int>{ 0,1,2,3,4,5,6,7,8,9,10,11 };
+
+
+	// ---CASE 10------------
+	points[20] = std::vector<glm::vec3>{ glm::vec3{ 0.5f, 0.0f, 0.0f }, glm::vec3{ 1.0f, 0.0f, 0.5f }, glm::vec3{ 1.0f, 0.5f, 0.0f }, glm::vec3{ 0.0f, 1.0f, 0.5f }, glm::vec3{ 0.5f, 1.0f, 1.0f }, glm::vec3{ 0.0f, 0.5f, 1.0f } };
+	indices[20] = std::vector<int>{ 0,1,2,3,4,5 };
+	points[40] = std::vector<glm::vec3>{ glm::vec3{ 0.5f, 0.0f, 0.0f }, glm::vec3{ 0.0f, 0.0f, 0.5f }, glm::vec3{ 0.0f, 0.5f, 0.0f }, glm::vec3{ 0.5f, 1.0f, 1.0f }, glm::vec3{ 1.0f, 1.0f, 0.5f }, glm::vec3{ 1.0f, 0.5f, 1.0f } };
+	indices[40] = std::vector<int>{ 0,1,2,3,4,5 };
+	points[65] = std::vector<glm::vec3>{ glm::vec3{ 0.5f, 1.0f, 0.0f }, glm::vec3{ 0.0f, 0.5f, 0.0f }, glm::vec3{ 0.0f, 1.0f, 0.5f }, glm::vec3{ 1.0f, 0.0f, 0.5f }, glm::vec3{ 0.5f, 0.0f, 1.0f }, glm::vec3{ 1.0f, 0.5f, 1.0f } };
+	indices[65] = std::vector<int>{ 0,1,2,3,4,5 };
+	points[130] = std::vector<glm::vec3>{ glm::vec3{ 0.5f, 1.0f, 0.0f }, glm::vec3{ 1.0f, 0.5f, 0.0f }, glm::vec3{ 1.0f, 1.0f, 0.5f }, glm::vec3{ 0.0f, 0.0f, 0.5f }, glm::vec3{ 0.5f, 0.0f, 1.0f }, glm::vec3{ 0.0f, 0.5f, 1.0f } };
+	indices[130] = std::vector<int>{ 0,1,2,3,4,5 };
+	// ---CASE 11------------
+	points[21] = std::vector<glm::vec3>{ glm::vec3{ 0.5f, 1.0f, 0.0f }, glm::vec3{ 0.5f, 1.0f, 1.0f }, glm::vec3{ 0.0f, 0.5f, 0.0f }, glm::vec3{ 0.0f, 0.5f, 1.0f }, glm::vec3{ 0.5f, 0.0f, 0.0f }, glm::vec3{ 1.0f, 0.0f, 0.5f }, glm::vec3{ 1.0f, 0.5f, 0.0f } };
+	indices[21] = std::vector<int>{ 0,1,2,1,2,3,4,5,6 };
+	points[22] = std::vector<glm::vec3>{ glm::vec3{ 1.0f, 0.0f, 0.5f }, glm::vec3{ 0.5f, 0.0f, 1.0f }, glm::vec3{ 1.0f, 1.0f, 0.5f }, glm::vec3{ 0.5f, 1.0f, 1.0f }, glm::vec3{ 0.0f, 1.0f, 0.5f }, glm::vec3{ 0.5f, 1.0f, 1.0f }, glm::vec3{ 0.0f, 0.5f, 1.0f } };
+	indices[22] = std::vector<int>{ 0,1,2,1,2,3,4,5,6 };
+	points[28] = std::vector<glm::vec3>{ glm::vec3{ 0.0f, 0.0f, 0.5f }, glm::vec3{ 1.0f, 0.0f, 0.5f }, glm::vec3{ 0.0f, 0.5f, 0.0f }, glm::vec3{ 1.0f, 0.5f, 0.0f }, glm::vec3{ 0.0f, 1.0f, 0.5f }, glm::vec3{ 0.5f, 1.0f, 1.0f }, glm::vec3{ 0.0f, 0.5f, 1.0f } };
+	indices[28] = std::vector<int>{ 0,1,2,1,2,3,4,5,6 };
+	points[41] = std::vector<glm::vec3>{ glm::vec3{ 0.0f, 0.0f, 0.5f }, glm::vec3{ 0.5f, 0.0f, 1.0f }, glm::vec3{ 0.0f, 1.0f, 0.5f }, glm::vec3{ 0.5f, 1.0f, 1.0f }, glm::vec3{ 0.5f, 1.0f, 1.0f }, glm::vec3{ 1.0f, 1.0f, 0.5f }, glm::vec3{ 1.0f, 0.5f, 1.0f } };
+	indices[41] = std::vector<int>{ 0,1,2,1,2,3,4,5,6 };
+	points[42] = std::vector<glm::vec3>{ glm::vec3{ 0.5f, 1.0f, 0.0f }, glm::vec3{ 0.5f, 1.0f, 1.0f }, glm::vec3{ 1.0f, 0.5f, 0.0f }, glm::vec3{ 1.0f, 0.5f, 1.0f }, glm::vec3{ 0.5f, 0.0f, 0.0f }, glm::vec3{ 0.0f, 0.0f, 0.5f }, glm::vec3{ 0.0f, 0.5f, 0.0f } };
+	indices[42] = std::vector<int>{ 0,1,2,1,2,3,4,5,6 };
+	points[44] = std::vector<glm::vec3>{ glm::vec3{ 0.0f, 0.0f, 0.5f }, glm::vec3{ 1.0f, 0.0f, 0.5f }, glm::vec3{ 0.0f, 0.5f, 0.0f }, glm::vec3{ 1.0f, 0.5f, 0.0f }, glm::vec3{ 0.5f, 1.0f, 1.0f }, glm::vec3{ 1.0f, 1.0f, 0.5f }, glm::vec3{ 1.0f, 0.5f, 1.0f } };
+	indices[44] = std::vector<int>{ 0,1,2,1,2,3,4,5,6 };
+	points[52] = std::vector<glm::vec3>{ glm::vec3{ 0.0f, 1.0f, 0.5f }, glm::vec3{ 1.0f, 1.0f, 0.5f }, glm::vec3{ 0.0f, 0.5f, 1.0f }, glm::vec3{ 1.0f, 0.5f, 1.0f }, glm::vec3{ 0.5f, 0.0f, 0.0f }, glm::vec3{ 1.0f, 0.0f, 0.5f }, glm::vec3{ 1.0f, 0.5f, 0.0f } };
+	indices[52] = std::vector<int>{ 0,1,2,1,2,3,4,5,6 };
+	points[56] = std::vector<glm::vec3>{ glm::vec3{ 0.0f, 1.0f, 0.5f }, glm::vec3{ 1.0f, 1.0f, 0.5f }, glm::vec3{ 0.0f, 0.5f, 1.0f }, glm::vec3{ 1.0f, 0.5f, 1.0f }, glm::vec3{ 0.5f, 0.0f, 0.0f }, glm::vec3{ 0.0f, 0.0f, 0.5f }, glm::vec3{ 0.0f, 0.5f, 0.0f } };
+	indices[56] = std::vector<int>{ 0,1,2,1,2,3,4,5,6 };
+	points[67] = std::vector<glm::vec3>{ glm::vec3{ 0.0f, 1.0f, 0.5f }, glm::vec3{ 1.0f, 1.0f, 0.5f }, glm::vec3{ 0.0f, 0.5f, 0.0f }, glm::vec3{ 1.0f, 0.5f, 0.0f }, glm::vec3{ 1.0f, 0.0f, 0.5f }, glm::vec3{ 0.5f, 0.0f, 1.0f }, glm::vec3{ 1.0f, 0.5f, 1.0f } };
+	indices[67] = std::vector<int>{ 0,1,2,1,2,3,4,5,6 };
+	points[69] = std::vector<glm::vec3>{ glm::vec3{ 0.5f, 0.0f, 0.0f }, glm::vec3{ 0.5f, 0.0f, 1.0f }, glm::vec3{ 1.0f, 0.5f, 0.0f }, glm::vec3{ 1.0f, 0.5f, 1.0f }, glm::vec3{ 0.5f, 1.0f, 0.0f }, glm::vec3{ 0.0f, 0.5f, 0.0f }, glm::vec3{ 0.0f, 1.0f, 0.5f } };
+	indices[69] = std::vector<int>{ 0,1,2,1,2,3,4,5,6 };
+	points[73] = std::vector<glm::vec3>{ glm::vec3{ 0.0f, 0.0f, 0.5f }, glm::vec3{ 0.5f, 0.0f, 1.0f }, glm::vec3{ 0.0f, 1.0f, 0.5f }, glm::vec3{ 0.5f, 1.0f, 1.0f }, glm::vec3{ 1.0f, 0.0f, 0.5f }, glm::vec3{ 0.5f, 0.0f, 1.0f }, glm::vec3{ 1.0f, 0.5f, 1.0f } };
+	indices[73] = std::vector<int>{ 0,1,2,1,2,3,4,5,6 };
+	points[81] = std::vector<glm::vec3>{ glm::vec3{ 0.5f, 1.0f, 0.0f }, glm::vec3{ 0.5f, 1.0f, 1.0f }, glm::vec3{ 0.0f, 0.5f, 0.0f }, glm::vec3{ 0.0f, 0.5f, 1.0f }, glm::vec3{ 1.0f, 0.0f, 0.5f }, glm::vec3{ 0.5f, 0.0f, 1.0f }, glm::vec3{ 1.0f, 0.5f, 1.0f } };
+	indices[81] = std::vector<int>{ 0,1,2,1,2,3,4,5,6 };
+	points[84] = std::vector<glm::vec3>{ glm::vec3{ 0.5f, 0.0f, 0.0f }, glm::vec3{ 0.5f, 0.0f, 1.0f }, glm::vec3{ 1.0f, 0.5f, 0.0f }, glm::vec3{ 1.0f, 0.5f, 1.0f }, glm::vec3{ 0.0f, 1.0f, 0.5f }, glm::vec3{ 0.5f, 1.0f, 1.0f }, glm::vec3{ 0.0f, 0.5f, 1.0f } };
+	indices[84] = std::vector<int>{ 0,1,2,1,2,3,4,5,6 };
+	points[97] = std::vector<glm::vec3>{ glm::vec3{ 1.0f, 0.0f, 0.5f }, glm::vec3{ 0.5f, 0.0f, 1.0f }, glm::vec3{ 1.0f, 1.0f, 0.5f }, glm::vec3{ 0.5f, 1.0f, 1.0f }, glm::vec3{ 0.5f, 1.0f, 0.0f }, glm::vec3{ 0.0f, 0.5f, 0.0f }, glm::vec3{ 0.0f, 1.0f, 0.5f } };
+	indices[97] = std::vector<int>{ 0,1,2,1,2,3,4,5,6 };
+	points[104] = std::vector<glm::vec3>{ glm::vec3{ 1.0f, 0.0f, 0.5f }, glm::vec3{ 0.5f, 0.0f, 1.0f }, glm::vec3{ 1.0f, 1.0f, 0.5f }, glm::vec3{ 0.5f, 1.0f, 1.0f }, glm::vec3{ 0.5f, 0.0f, 0.0f }, glm::vec3{ 0.0f, 0.0f, 0.5f }, glm::vec3{ 0.0f, 0.5f, 0.0f } };
+	indices[104] = std::vector<int>{ 0,1,2,1,2,3,4,5,6 };
+	points[131] = std::vector<glm::vec3>{ glm::vec3{ 0.0f, 1.0f, 0.5f }, glm::vec3{ 1.0f, 1.0f, 0.5f }, glm::vec3{ 0.0f, 0.5f, 0.0f }, glm::vec3{ 1.0f, 0.5f, 0.0f },  glm::vec3{ 0.0f, 0.0f, 0.5f }, glm::vec3{ 0.5f, 0.0f, 1.0f }, glm::vec3{ 0.0f, 0.5f, 1.0f } };
+	indices[131] = std::vector<int>{ 0,1,2,1,2,3,4,5,6 };
+	points[134] = std::vector<glm::vec3>{ glm::vec3{ 1.0f, 0.0f, 0.5f }, glm::vec3{ 0.5f, 0.0f, 1.0f }, glm::vec3{ 1.0f, 1.0f, 0.5f }, glm::vec3{ 0.5f, 1.0f, 1.0f }, glm::vec3{ 0.0f, 0.0f, 0.5f }, glm::vec3{ 0.5f, 0.0f, 1.0f }, glm::vec3{ 0.0f, 0.5f, 1.0f } };
+	indices[134] = std::vector<int>{ 0,1,2,1,2,3,4,5,6 };
+	points[138] = std::vector<glm::vec3>{ glm::vec3{ 0.5f, 0.0f, 0.0f }, glm::vec3{ 0.5f, 0.0f, 1.0f }, glm::vec3{ 0.0f, 0.5f, 0.0f }, glm::vec3{ 0.0f, 0.5f, 1.0f }, glm::vec3{ 0.5f, 1.0f, 0.0f }, glm::vec3{ 1.0f, 0.5f, 0.0f }, glm::vec3{ 1.0f, 1.0f, 0.5f } };
+	indices[138] = std::vector<int>{ 0,1,2,1,2,3,4,5,6 };
+	points[146] = std::vector<glm::vec3>{ glm::vec3{ 0.0f, 0.0f, 0.5f }, glm::vec3{ 0.5f, 0.0f, 1.0f }, glm::vec3{ 0.0f, 1.0f, 0.5f }, glm::vec3{ 0.5f, 1.0f, 1.0f }, glm::vec3{ 0.5f, 1.0f, 0.0f }, glm::vec3{ 1.0f, 0.5f, 0.0f }, glm::vec3{ 1.0f, 1.0f, 0.5f } };
+	indices[146] = std::vector<int>{ 0,1,2,1,2,3,4,5,6 };
+	points[148] = std::vector<glm::vec3>{ glm::vec3{ 0.0f, 0.0f, 0.5f }, glm::vec3{ 0.5f, 0.0f, 1.0f }, glm::vec3{ 0.0f, 1.0f, 0.5f }, glm::vec3{ 0.5f, 1.0f, 1.0f }, glm::vec3{ 0.5f, 0.0f, 0.0f }, glm::vec3{ 1.0f, 0.0f, 0.5f }, glm::vec3{ 1.0f, 0.5f, 0.0f } };
+	indices[148] = std::vector<int>{ 0,1,2,1,2,3,4,5,6 };
+	points[162] = std::vector<glm::vec3>{ glm::vec3{ 0.5f, 1.0f, 0.0f }, glm::vec3{ 0.5f, 1.0f, 1.0f }, glm::vec3{ 1.0f, 0.5f, 0.0f }, glm::vec3{ 1.0f, 0.5f, 1.0f }, glm::vec3{ 0.0f, 0.0f, 0.5f }, glm::vec3{ 0.5f, 0.0f, 1.0f }, glm::vec3{ 0.0f, 0.5f, 1.0f } };
+	indices[162] = std::vector<int>{ 0,1,2,1,2,3,4,5,6 };
+	points[168] = std::vector<glm::vec3>{ glm::vec3{ 0.5f, 0.0f, 0.0f }, glm::vec3{ 0.5f, 0.0f, 1.0f }, glm::vec3{ 0.0f, 0.5f, 0.0f }, glm::vec3{ 0.0f, 0.5f, 1.0f }, glm::vec3{ 0.5f, 1.0f, 1.0f }, glm::vec3{ 1.0f, 1.0f, 0.5f }, glm::vec3{ 1.0f, 0.5f, 1.0f } };
+	indices[168] = std::vector<int>{ 0,1,2,1,2,3,4,5,6 };
+	points[193] = std::vector<glm::vec3>{ glm::vec3{ 0.0f, 0.0f, 0.5f }, glm::vec3{ 1.0f, 0.0f, 0.5f }, glm::vec3{ 0.0f, 0.5f, 1.0f }, glm::vec3{ 1.0f, 0.5f, 1.0f }, glm::vec3{ 0.5f, 1.0f, 0.0f }, glm::vec3{ 0.0f, 0.5f, 0.0f }, glm::vec3{ 0.0f, 1.0f, 0.5f } };
+	indices[193] = std::vector<int>{ 0,1,2,1,2,3,4,5,6 };
+	points[194] = std::vector<glm::vec3>{ glm::vec3{ 0.0f, 0.0f, 0.5f }, glm::vec3{ 1.0f, 0.0f, 0.5f }, glm::vec3{ 0.0f, 0.5f, 1.0f }, glm::vec3{ 1.0f, 0.5f, 1.0f }, glm::vec3{ 0.5f, 1.0f, 0.0f }, glm::vec3{ 1.0f, 0.5f, 0.0f }, glm::vec3{ 1.0f, 1.0f, 0.5f } };
+	indices[194] = std::vector<int>{ 0,1,2,1,2,3,4,5,6 };
+	// ---CASE 12------------
+	points[37] = std::vector<glm::vec3>{ glm::vec3{ 0.5f, 1.0f, 0.0f }, glm::vec3{ 0.0f, 0.5f, 0.0f }, glm::vec3{ 0.0f, 1.0f, 0.5f }, glm::vec3{ 0.5f, 0.0f, 0.0f }, glm::vec3{ 1.0f, 0.0f, 0.5f }, glm::vec3{ 1.0f, 0.5f, 0.0f }, glm::vec3{ 0.5f, 1.0f, 1.0f }, glm::vec3{ 1.0f, 1.0f, 0.5f }, glm::vec3{ 1.0f, 0.5f, 1.0f } };
+	indices[37] = std::vector<int>{ 0,1,2,3,4,5,6,7,8 };
+	points[74] = std::vector<glm::vec3>{ glm::vec3{ 0.5f, 1.0f, 0.0f }, glm::vec3{ 1.0f, 0.5f, 0.0f }, glm::vec3{ 1.0f, 1.0f, 0.5f }, glm::vec3{ 0.5f, 0.0f, 0.0f }, glm::vec3{ 0.0f, 0.0f, 0.5f }, glm::vec3{ 0.0f, 0.5f, 0.0f }, glm::vec3{ 1.0f, 0.0f, 0.5f }, glm::vec3{ 0.5f, 0.0f, 1.0f }, glm::vec3{ 1.0f, 0.5f, 1.0f } };
+	indices[74] = std::vector<int>{ 0,1,2,3,4,5,6,7,8 };
+	points[82] = std::vector<glm::vec3>{ glm::vec3{ 0.5f, 1.0f, 0.0f }, glm::vec3{ 1.0f, 0.5f, 0.0f }, glm::vec3{ 1.0f, 1.0f, 0.5f }, glm::vec3{ 0.0f, 1.0f, 0.5f }, glm::vec3{ 0.5f, 1.0f, 1.0f }, glm::vec3{ 0.0f, 0.5f, 1.0f }, glm::vec3{ 1.0f, 0.0f, 0.5f }, glm::vec3{ 0.5f, 0.0f, 1.0f }, glm::vec3{ 1.0f, 0.5f, 1.0f } };
+	indices[82] = std::vector<int>{ 0,1,2,3,4,5,6,7,8 };
+	points[88] = std::vector<glm::vec3>{ glm::vec3{ 0.5f, 0.0f, 0.0f }, glm::vec3{ 0.0f, 0.0f, 0.5f }, glm::vec3{ 0.0f, 0.5f, 0.0f }, glm::vec3{ 0.0f, 1.0f, 0.5f }, glm::vec3{ 0.5f, 1.0f, 1.0f }, glm::vec3{ 0.0f, 0.5f, 1.0f }, glm::vec3{ 1.0f, 0.0f, 0.5f }, glm::vec3{ 0.5f, 0.0f, 1.0f }, glm::vec3{ 1.0f, 0.5f, 1.0f } };
+	indices[88] = std::vector<int>{ 0,1,2,3,4,5,6,7,8 };
+	points[133] = std::vector<glm::vec3>{ glm::vec3{ 0.5f, 1.0f, 0.0f }, glm::vec3{ 0.0f, 0.5f, 0.0f }, glm::vec3{ 0.0f, 1.0f, 0.5f }, glm::vec3{ 0.5f, 0.0f, 0.0f }, glm::vec3{ 1.0f, 0.0f, 0.5f }, glm::vec3{ 1.0f, 0.5f, 0.0f }, glm::vec3{ 0.0f, 0.0f, 0.5f }, glm::vec3{ 0.5f, 0.0f, 1.0f }, glm::vec3{ 0.0f, 0.5f, 1.0f } };
+	indices[133] = std::vector<int>{ 0,1,2,3,4,5,6,7,8 };
+	points[138] = std::vector<glm::vec3>{ glm::vec3{ 0.5f, 1.0f, 0.0f }, glm::vec3{ 1.0f, 0.5f, 0.0f }, glm::vec3{ 1.0f, 1.0f, 0.5f }, glm::vec3{ 0.5f, 0.0f, 0.0f }, glm::vec3{ 0.0f, 0.0f, 0.5f }, glm::vec3{ 0.0f, 0.5f, 0.0f }, glm::vec3{ 0.0f, 0.0f, 0.5f }, glm::vec3{ 0.5f, 0.0f, 1.0f }, glm::vec3{ 0.0f, 0.5f, 1.0f } };
+	indices[138] = std::vector<int>{ 0,1,2,3,4,5,6,7,8 };	
+	points[161] = std::vector<glm::vec3>{ glm::vec3{ 0.5f, 1.0f, 0.0f }, glm::vec3{ 0.0f, 0.5f, 0.0f }, glm::vec3{ 0.0f, 1.0f, 0.5f }, glm::vec3{ 0.5f, 1.0f, 1.0f }, glm::vec3{ 1.0f, 1.0f, 0.5f }, glm::vec3{ 1.0f, 0.5f, 1.0f }, glm::vec3{ 0.0f, 0.0f, 0.5f }, glm::vec3{ 0.5f, 0.0f, 1.0f }, glm::vec3{ 0.0f, 0.5f, 1.0f } };
+	indices[161] = std::vector<int>{ 0,1,2,3,4,5,6,7,8 };
+	points[164] = std::vector<glm::vec3>{ glm::vec3{ 0.5f, 0.0f, 0.0f }, glm::vec3{ 1.0f, 0.0f, 0.5f }, glm::vec3{ 1.0f, 0.5f, 0.0f }, glm::vec3{ 0.5f, 1.0f, 1.0f }, glm::vec3{ 1.0f, 1.0f, 0.5f }, glm::vec3{ 1.0f, 0.5f, 1.0f }, glm::vec3{ 0.0f, 0.0f, 0.5f }, glm::vec3{ 0.5f, 0.0f, 1.0f }, glm::vec3{ 0.0f, 0.5f, 1.0f } };
+	indices[164] = std::vector<int>{ 0,1,2,3,4,5,6,7,8 };
+
 }
 
 /*
