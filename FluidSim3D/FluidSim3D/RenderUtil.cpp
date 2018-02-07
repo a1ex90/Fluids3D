@@ -322,6 +322,8 @@ void Point::draw() {
 	glBindVertexArray(m_vertexArrayObject);
 
 	glEnable(GL_PROGRAM_POINT_SIZE);
+	//DISABLE MEE
+	glPointSize(5.0f);
 	glEnable(GL_POINT_SMOOTH);
 	glDrawArrays(GL_POINTS, 0, m_pointsCount);
 
@@ -356,6 +358,7 @@ Shader::Shader(const std::string& fileName) {
 	//needed for texture
 	//m_uniforms[1] = glGetUniformLocation(m_program, "Diffuse");
 	m_uniforms[TRANSFORM_U] = glGetUniformLocation(m_program, "transform");
+	m_uniforms[COLOR] = glGetUniformLocation(m_program, "color");
 }
 
 Shader::~Shader() {
@@ -376,8 +379,8 @@ void Shader::update(const transform& transform1, const camera& camera1) {
 	glUniformMatrix4fv(m_uniforms[TRANSFORM_U], 1, GL_FALSE, &model[0][0]);
 }
 
-void Shader::setColor(float r, float g, float b) {
-	//glUniform3f(m_uniforms[0], r, g, b);
+void Shader::setColor(float r, float g, float b, float a) {
+	glUniform4f(m_uniforms[COLOR], r, g, b, a);
 }
 
 void Shader::setTexture(int unit) {

@@ -25,6 +25,8 @@ public:
 	*/
 	void drawP(std::vector<glm::vec2> particles);
 	void drawP(std::vector<glm::vec3> particles);
+
+	void drawCubes(std::vector<glm::vec3> vertices, std::vector<int> indices, std::vector<glm::vec3> darkDots, std::vector<glm::vec3> brightDots);
 	/*
 	Draws the given vertices as a line
 	*/

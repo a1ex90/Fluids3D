@@ -167,7 +167,7 @@ public:
 
 	void bind();
 	void update(const transform& transform1, const camera& camera1);
-	void setColor(float r, float g, float b);
+	void setColor(float r, float g, float b, float a);
 	void setTexture(int unit);
 	
 	~Shader();
@@ -177,6 +177,7 @@ private:
 
 	enum {
 		TRANSFORM_U,
+		COLOR,
 
 		NUM_UNIFORMS
 	};

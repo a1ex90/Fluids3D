@@ -12,6 +12,7 @@
 #include "FluidSolver3d.h"
 #include "FluidRenderer3d.h"
 #include "SimUtil.h"
+#include "MarchingCubes.h"
 
 //----------------------------------------------------------------------
 // Execution Options
@@ -20,9 +21,9 @@
 // whether to run the simulation
 const bool RUN_SIM = false;
 // whether to run rendering
-const bool RUN_RENDERING = false;
+const bool RUN_RENDERING = true;
 // wheater to do a realtime simulation
-const bool REALTIME_SIM = true;
+const bool REALTIME_SIM = false;
 /* 
 choose a visualization mode for rendering
 0 - Draw Surface as Line
@@ -163,12 +164,27 @@ int main(int argc, char** argv) {
 		delete trianglesInd;
 		delete trianglesOpa;
 		delete timingOut;
-	}
+	}*/
 
 	if (RUN_RENDERING) {
-		FluidRenderer3D render{ DATA_FILES_OUT, INITIAL_GEOMETRY_FILE_IN, VISUALIZATION_MODE };
-		render.run();
-	}*/
+		int CASENO = 64;
+		SimUtil::Mat3Di empty{ 2,2,2 };
+		empty.initValues(SimUtil::AIR);
+		SimUtil::Mat3Df caseMat{ 2,2,2 };
+		MarchingCubes::initCase(caseMat, CASENO);
+		std::vector<std::vector<glm::vec3>> cubeCases; 
+		std::vector<std::vector<int>> cubeIndices;
+		std::vector<glm::vec3> darkDots;
+		std::vector<glm::vec3> brightDots;
+		MarchingCubes::corners(darkDots, brightDots, CASENO);
+		MarchingCubes::initMarchingCubesCases(cubeCases, cubeIndices);
+		SimUtil::Mesh3D caseMesh = MarchingCubes::meshData(caseMat, cubeCases, cubeIndices, 2, 2, 2, 0.0f);
+
+
+		FluidRenderer3D render(&empty, 2, 2, 2, VISUALIZATION_MODE);
+		render.drawCubes(caseMesh.vertices, caseMesh.indices, darkDots, brightDots);
+		std::cin.ignore();
+	}
 
 	return 0;
 }

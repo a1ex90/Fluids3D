@@ -221,7 +221,7 @@ std::vector<glm::vec3> FluidSolver3D::particleData() {
 }
 
 Mesh3D FluidSolver3D::meshData() {
-	return meshData(m_p, m_gridWidth, m_gridHeight, m_gridDepth, SURFACE_THRESHOLD);
+	return meshData(m_p, m_cubeCases, m_cubeIndices, m_gridWidth, m_gridHeight, m_gridDepth, SURFACE_THRESHOLD);
 }
 
 
@@ -1153,7 +1153,7 @@ bool FluidSolver3D::projectParticle(Particle3D *particle, float dx) {
 	}
 }
 
-Mesh3D FluidSolver3D::meshData(SimUtil::Mat3Df &grid, int width, int height, int depth, float tol) {
+Mesh3D FluidSolver3D::meshData(SimUtil::Mat3Df &grid, std::vector<std::vector<glm::vec3>> &cubeCases, std::vector<std::vector<int>> &cubeIndices, int width, int height, int depth, float tol) {
 	std::vector<glm::vec3> vertices;
 	std::vector<glm::vec3> normals;
 	std::vector<int> globalIndices;
@@ -1180,13 +1180,13 @@ Mesh3D FluidSolver3D::meshData(SimUtil::Mat3Df &grid, int width, int height, int
 					selectCase += 2;
 				if (grid.get(i, j + 1, k) > tol)
 					selectCase += 1;
-				for (int l = 0; l < m_cubeIndices[selectCase].size(); l++) {
-					globalIndices.push_back(m_cubeIndices[selectCase][l] + curInd);
+				for (int l = 0; l < cubeIndices[selectCase].size(); l++) {
+					globalIndices.push_back(cubeIndices[selectCase][l] + curInd);
 				}
-				for (int l = 0; l < m_cubeCases[selectCase].size(); l++) {
-					float offsetX = m_cubeCases[selectCase][l].x;
-					float offsetY = m_cubeCases[selectCase][l].y;
-					float offsetZ = m_cubeCases[selectCase][l].z;
+				for (int l = 0; l < cubeCases[selectCase].size(); l++) {
+					float offsetX = cubeCases[selectCase][l].x;
+					float offsetY = cubeCases[selectCase][l].y;
+					float offsetZ = cubeCases[selectCase][l].z;
 
 					glm::vec3 normal;
 					//the offset of 0.5f indicates that this axis needs interpolation
@@ -1322,6 +1322,11 @@ void FluidSolver3D::initMarchingCubesCases(std::vector<std::vector<glm::vec3>> &
 	indices[140] = std::vector<int>{ 0,1,2,1,2,3,1,3,4 };
 	points[196] = std::vector<glm::vec3>{ glm::vec3{ 0.5f, 0.0f, 0.0f }, glm::vec3{ 1.0f, 0.5f, 0.0f }, glm::vec3{ 0.0f, 0.0f, 0.5f }, glm::vec3{ 0.0f, 0.5f, 1.0f }, glm::vec3{ 1.0f, 0.5f, 1.0f } };
 	indices[196] = std::vector<int>{ 0,1,2,1,2,3,1,3,4 };
+
+	points[98] = std::vector<glm::vec3>{ glm::vec3{ 1.0f, 0.5f, 0.0f }, glm::vec3{ 0.5f, 1.0f, 0.0f }, glm::vec3{ 1.0f, 0.0f, 0.5f }, glm::vec3{ 0.5f, 0.0f, 1.0f }, glm::vec3{ 0.5f, 1.0f, 1.0f } };
+	indices[98] = std::vector<int>{ 0,1,2,1,2,3,1,3,4 };
+	points[38] = std::vector<glm::vec3>{ glm::vec3{ 1.0f, 0.5f, 0.0f }, glm::vec3{ 0.5f, 1.0f, 0.0f }, glm::vec3{ 1.0f, 0.0f, 0.5f }, glm::vec3{ 0.5f, 0.0f, 1.0f }, glm::vec3{ 0.5f, 1.0f, 1.0f } };
+	indices[38] = std::vector<int>{ 0,1,2,1,2,3,1,3,4 };
 
 	
 

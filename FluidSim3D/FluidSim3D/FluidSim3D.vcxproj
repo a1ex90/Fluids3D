@@ -179,6 +179,7 @@
     <ClCompile Include="FluidRenderer3d.cpp" />
     <ClCompile Include="FluidSim3dMain.cpp" />
     <ClCompile Include="FluidSolver3d.cpp" />
+    <ClCompile Include="MarchingCubes.cpp" />
     <ClCompile Include="RenderUtil.cpp" />
     <ClCompile Include="SimUtil.cpp" />
     <ClCompile Include="stb_image.c" />
@@ -188,6 +189,7 @@
     <ClInclude Include="classicSolver.h" />
     <ClInclude Include="FluidRenderer3d.h" />
     <ClInclude Include="FluidSolver3d.h" />
+    <ClInclude Include="MarchingCubes.h" />
     <ClInclude Include="RenderUtil.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="SimUtil.h" />

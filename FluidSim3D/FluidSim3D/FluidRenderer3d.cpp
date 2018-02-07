@@ -98,6 +98,36 @@ void FluidRenderer3D::drawP(std::vector<glm::vec3> particles) {
 	m_display->update();
 }
 
+void FluidRenderer3D::drawCubes(std::vector<glm::vec3> vertices, std::vector<int> indices, std::vector<glm::vec3> darkDots, std::vector<glm::vec3> brightDots) {
+	m_display->clear(0.686f, 0.933f, 0.933f, 1.0f);
+	camera camera1(glm::vec3(0, 0, -6), 70.0f, (float)WIDTH / (float)HEIGHT, 0.01f, 1000.0f);
+	transform transform1;
+
+	transform1.SetScale(glm::vec3(-1, 1, 1));
+
+	m_pointShader->bind();
+	m_pointShader->update(transform1, camera1);
+
+	
+
+	m_pointShader->setColor(0.0f, 0.0f, 0.0f, 1.0f);
+
+	Point activeDots{ darkDots };
+	activeDots.draw();
+
+	m_pointShader->setColor(1.0f, 1.0f, 1.0f, 1.0f);
+
+	Point inactiveDots{ brightDots };
+	inactiveDots.draw();
+
+	m_pointShader->setColor(1.0f, 0.0f, 0.0f, 0.5f);
+
+	Mesh mesh{ vertices, std::vector<glm::vec3> {}, indices };
+	mesh.draw();
+
+	m_display->update();
+}
+
 void FluidRenderer3D::draw(std::vector<glm::vec2> vertices) {
 	m_solidsTexShader->bind();
 	m_texImgBackground->bind(1);
@@ -157,7 +187,7 @@ points - array of 2d points
 */
 void FluidRenderer3D::drawPoints(std::vector<glm::vec2> points) {
 	m_pointShader->bind();
-	m_pointShader->setColor(0.000f, 0.000f, 0.804f);
+	m_pointShader->setColor(0.000f, 0.000f, 0.804f, 1.0f);
 
 	Point point{ points };
 	point.draw();
@@ -178,7 +208,7 @@ vertices - array with 2d points. each point is the beginning of one line and the
 */
 void FluidRenderer3D::drawLines(std::vector<glm::vec2> vertices) {
 	m_colorShader->bind();
-	m_colorShader->setColor(0.000f, 0.000f, 0.804f);
+	m_colorShader->setColor(0.000f, 0.000f, 0.804f, 1.0f);
 
 	Line line{ vertices };
 	line.draw();
@@ -192,7 +222,7 @@ indicies - indicies of the triangle mesh
 */
 void FluidRenderer3D::drawTriangles(std::vector<glm::vec2> vertices, std::vector<int> indicies) {
 	m_colorShader->bind();
-	m_colorShader->setColor(0.000f, 0.000f, 0.804f);
+	m_colorShader->setColor(0.000f, 0.000f, 0.804f, 1.0f);
 
 	Mesh meshFluid{ vertices, indicies };
 	meshFluid.draw();
@@ -208,7 +238,7 @@ opacities - opacity values of each triangle
 */
 void FluidRenderer3D::drawOpacityTriangles(std::vector<glm::vec2> vertices, std::vector<int> indicies, std::vector<float> opacities) {
 	m_opacityShader->bind();
-	m_opacityShader->setColor(0.000f, 0.000f, 0.804f);
+	m_opacityShader->setColor(0.000f, 0.000f, 0.804f, 1.0f);
 
 	Mesh meshFluid{ vertices, indicies, opacities };
 	meshFluid.draw();
