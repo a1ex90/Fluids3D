@@ -12,7 +12,7 @@
 // Constructor
 //----------------------------------------------------------------------
 FluidRenderer3D::FluidRenderer3D(std::string geoFileName, int mode) {
-	m_visualizationMode = mode;
+	/*m_visualizationMode = mode;
 
 	m_display = new Display{ WIDTH, HEIGHT, "2D Fluid Simulation" };
 
@@ -29,13 +29,18 @@ FluidRenderer3D::FluidRenderer3D(std::string geoFileName, int mode) {
 	initGeom(geoFileName);
 	initBackground("./background-dune.png");
 
-	m_currentFrame = 0;
+	m_currentFrame = 0;*/
 }
 
 FluidRenderer3D::FluidRenderer3D(SimUtil::Mat3Di *labels, int gridWidth, int gridHeight, int gridDepth, int mode) {
 	m_visualizationMode = mode;
 
-	m_display = new Display{ WIDTH, HEIGHT, "2D Fluid Simulation" };
+	m_transform = new Transform();
+
+	m_display = new Display{ WIDTH, HEIGHT, "2D Fluid Simulation", m_transform };
+
+	m_camera = new Camera(glm::vec3(0, 0, -4), 70.0f, (float)WIDTH / (float)HEIGHT, 0.01f, 1000.0f);
+	
 
 	//m_pointShader = new Shader{ "./pointShader" };
 	m_pointShader = new Shader{ "./basicShader" };
@@ -79,11 +84,9 @@ void FluidRenderer3D::drawP(std::vector<glm::vec2> particles) {
 
 void FluidRenderer3D::drawP(std::vector<glm::vec3> particles) {
 	m_display->clear(0.686f, 0.933f, 0.933f, 1.0f);
-	camera camera1(glm::vec3(0, 0, -4), 70.0f, (float)WIDTH / (float)HEIGHT, 0.01f, 1000.0f);
-	transform transform1;
 
 	m_pointShader->bind();
-	m_pointShader->update(transform1, camera1);
+	m_pointShader->update(m_transform, m_camera);
 
 	m_borderSolid->draw();
 
@@ -91,7 +94,7 @@ void FluidRenderer3D::drawP(std::vector<glm::vec3> particles) {
 	point.draw();
 
 	m_solidsTexShader->bind();
-	m_solidsTexShader->update(transform1, camera1);
+	m_solidsTexShader->update(m_transform, m_camera);
 
 	m_meshSolid->draw();
 
@@ -100,13 +103,11 @@ void FluidRenderer3D::drawP(std::vector<glm::vec3> particles) {
 
 void FluidRenderer3D::drawCubes(std::vector<glm::vec3> vertices, std::vector<int> indices, std::vector<glm::vec3> darkDots, std::vector<glm::vec3> brightDots) {
 	m_display->clear(0.686f, 0.933f, 0.933f, 1.0f);
-	camera camera1(glm::vec3(0, 0, -6), 70.0f, (float)WIDTH / (float)HEIGHT, 0.01f, 1000.0f);
-	transform transform1;
 
-	transform1.SetScale(glm::vec3(-1, 1, 1));
+	m_transform->SetScale(glm::vec3(-1, 1, 1));
 
 	m_pointShader->bind();
-	m_pointShader->update(transform1, camera1);
+	m_pointShader->update(m_transform, m_camera);
 
 	
 
@@ -120,10 +121,18 @@ void FluidRenderer3D::drawCubes(std::vector<glm::vec3> vertices, std::vector<int
 	Point inactiveDots{ brightDots };
 	inactiveDots.draw();
 
-	m_pointShader->setColor(1.0f, 0.0f, 0.0f, 0.5f);
+	
+	
 
 	Mesh mesh{ vertices, std::vector<glm::vec3> {}, indices };
+	m_pointShader->setColor(1.0f, 0.0f, 0.0f, 0.5f);
 	mesh.draw();
+	m_pointShader->setColor(1.0f, 0.9f, 0.9f, 1.0f);
+	mesh.drawOutline();
+	
+
+	
+	
 
 	m_display->update();
 }

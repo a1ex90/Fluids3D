@@ -167,23 +167,35 @@ int main(int argc, char** argv) {
 	}*/
 
 	if (RUN_RENDERING) {
-		int CASENO = 64;
+		int CASENO = 83;
 		SimUtil::Mat3Di empty{ 2,2,2 };
 		empty.initValues(SimUtil::AIR);
 		SimUtil::Mat3Df caseMat{ 2,2,2 };
 		MarchingCubes::initCase(caseMat, CASENO);
 		std::vector<std::vector<glm::vec3>> cubeCases; 
 		std::vector<std::vector<int>> cubeIndices;
+		
 		std::vector<glm::vec3> darkDots;
 		std::vector<glm::vec3> brightDots;
 		MarchingCubes::corners(darkDots, brightDots, CASENO);
 		MarchingCubes::initMarchingCubesCases(cubeCases, cubeIndices);
+		int count = 0;
+		for (int i = 0; i < 256; i++) {
+			
+			if (cubeCases[i].empty()) {
+				count++;
+			}
+			
+		}
+		std::cout << count << std::endl;
 		SimUtil::Mesh3D caseMesh = MarchingCubes::meshData(caseMat, cubeCases, cubeIndices, 2, 2, 2, 0.0f);
 
 
 		FluidRenderer3D render(&empty, 2, 2, 2, VISUALIZATION_MODE);
-		render.drawCubes(caseMesh.vertices, caseMesh.indices, darkDots, brightDots);
-		std::cin.ignore();
+		while (true) {
+			render.drawCubes(caseMesh.vertices, caseMesh.indices, darkDots, brightDots);
+		}
+		
 	}
 
 	return 0;

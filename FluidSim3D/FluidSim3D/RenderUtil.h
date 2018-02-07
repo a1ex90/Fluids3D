@@ -7,12 +7,48 @@
 #include <glm/gtx/transform.hpp>
 
 //----------------------------------------------------------------------
+// Transform Class
+//----------------------------------------------------------------------
+class Transform
+{
+public:
+	Transform(const glm::vec3& pos = glm::vec3(), const glm::vec3& rot = glm::vec3(), const glm::vec3& scale = glm::vec3(1.0f, 1.0f, 1.0f)) :
+		m_pos(pos),
+		m_rot(rot),
+		m_scale(scale) {}
+
+	inline glm::mat4 GetModel() const {
+		glm::mat4 posMatrix = glm::translate(m_pos);
+		glm::mat4 rotXMatrix = glm::rotate(m_rot.x, glm::vec3(1, 0, 0));
+		glm::mat4 rotYMatrix = glm::rotate(m_rot.y, glm::vec3(0, 1, 0));
+		glm::mat4 rotZMatrix = glm::rotate(m_rot.z, glm::vec3(0, 0, 1));
+		glm::mat4 scaleMatrix = glm::scale(m_scale);
+
+		glm::mat4 rotMatrix = rotZMatrix * rotYMatrix * rotXMatrix;
+
+		return posMatrix * rotMatrix * scaleMatrix;
+	}
+
+	inline glm::vec3& GetPos() { return m_pos; }
+	inline glm::vec3& GetRot() { return m_rot; }
+	inline glm::vec3& GetScale() { return m_scale; }
+
+	inline void SetPos(const glm::vec3& pos) { m_pos = pos; }
+	inline void SetRot(const glm::vec3& rot) { m_rot = rot; }
+	inline void SetScale(const glm::vec3& scale) { m_scale = scale; }
+private:
+	glm::vec3 m_pos;
+	glm::vec3 m_rot;
+	glm::vec3 m_scale;
+};
+
+//----------------------------------------------------------------------
 // Display Class
 //----------------------------------------------------------------------
 class Display
 {
 public:
-	Display(int width, int height, const std::string& title);
+	Display(int width, int height, const std::string& title, Transform* transform);
 
 	void update();
 	void clear(float r, float g, float b, float a);
@@ -22,6 +58,8 @@ public:
 private:
 	Display(const Display& other) {}
 	void operator=(const Display& other) {}
+
+	Transform* m_transform;
 
 	SDL_Window* m_window;
 	SDL_GLContext m_glContext;
@@ -39,6 +77,7 @@ public:
 	Mesh(std::vector<glm::vec2> vertices, std::vector<int> indices, std::vector<float> opacites);
 
 	void draw();
+	void drawOutline();
 
 	~Mesh();
 private:
@@ -98,48 +137,12 @@ private:
 };
 
 //----------------------------------------------------------------------
-// Transform Class
-//----------------------------------------------------------------------
-class transform
-{
-public:
-	transform(const glm::vec3& pos = glm::vec3(), const glm::vec3& rot = glm::vec3(), const glm::vec3& scale = glm::vec3(1.0f, 1.0f, 1.0f)) :
-		m_pos(pos),
-		m_rot(rot),
-		m_scale(scale) {}
-
-	inline glm::mat4 GetModel() const {
-		glm::mat4 posMatrix = glm::translate(m_pos);
-		glm::mat4 rotXMatrix = glm::rotate(m_rot.x, glm::vec3(1, 0, 0));
-		glm::mat4 rotYMatrix = glm::rotate(m_rot.y, glm::vec3(0, 1, 0));
-		glm::mat4 rotZMatrix = glm::rotate(m_rot.z, glm::vec3(0, 0, 1));
-		glm::mat4 scaleMatrix = glm::scale(m_scale);
-
-		glm::mat4 rotMatrix = rotZMatrix * rotYMatrix * rotXMatrix;
-
-		return posMatrix * rotMatrix * scaleMatrix;
-	}
-
-	inline glm::vec3& GetPos() { return m_pos; }
-	inline glm::vec3& GetRot() { return m_rot; }
-	inline glm::vec3& GetScale() { return m_scale; }
-
-	inline void SetPos(const glm::vec3& pos) { m_pos = pos; }
-	inline void SetRot(const glm::vec3& rot) { m_rot = rot; }
-	inline void SetScale(const glm::vec3& scale) { m_scale = scale; }
-private:
-	glm::vec3 m_pos;
-	glm::vec3 m_rot;
-	glm::vec3 m_scale;
-};
-
-//----------------------------------------------------------------------
 // Camera Class
 //----------------------------------------------------------------------
-class camera
+class Camera
 {
 public:
-	camera(const glm::vec3& pos, float fov, float aspect, float zNear, float zFar) {
+	Camera(const glm::vec3& pos, float fov, float aspect, float zNear, float zFar) {
 		m_perspective = glm::perspective(fov, aspect, zNear, zFar);
 		m_position = pos;
 		m_forward = glm::vec3(0, 0, 1);
@@ -166,7 +169,7 @@ public:
 	Shader(const std::string& fileName);
 
 	void bind();
-	void update(const transform& transform1, const camera& camera1);
+	void update(const Transform* transform, const Camera* camera);
 	void setColor(float r, float g, float b, float a);
 	void setTexture(int unit);
 	

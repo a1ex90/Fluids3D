@@ -16,7 +16,7 @@ height - Window height
 title - Window title
 
 */
-Display::Display(int width, int height, const std::string& title)
+Display::Display(int width, int height, const std::string& title, Transform* transform)
 {
 	SDL_Init(SDL_INIT_EVERYTHING);
 
@@ -36,6 +36,8 @@ Display::Display(int width, int height, const std::string& title)
 	if (status != GLEW_OK) {
 		std::cerr << "Glew failed to initialize" << std::endl;
 	}
+
+	m_transform = transform;
 
 	m_isClosed = false;
 }
@@ -75,9 +77,72 @@ void Display::update() {
 	SDL_Event e;
 	int handled;
 
+	float PI = 3.1415927410125732421875f;
+	//Defines how much the scene should be rotated by one keypress
+	int increments = 16;
+	//Defines how much the scene should be moved by one keypress
+	float steps = 0.2f;
+
 	while (SDL_PollEvent(&e)) {
 		if (e.type == SDL_QUIT) {
 			m_isClosed = true;
+		}
+		switch (e.type)
+		{
+		case SDL_KEYDOWN:
+			switch (e.key.keysym.sym)
+			{
+			case SDLK_w:
+				//move screen up
+				m_transform->SetPos(m_transform->GetPos() + glm::vec3(0, steps, 0));
+				break;
+			case SDLK_s:
+				//move screen down
+				m_transform->SetPos(m_transform->GetPos() - glm::vec3(0, steps, 0));
+				break;
+			case SDLK_d:
+				//move screen right
+				m_transform->SetPos(m_transform->GetPos() - glm::vec3(steps, 0, 0));
+				break;
+			case SDLK_a:
+				//move screen left
+				m_transform->SetPos(m_transform->GetPos() + glm::vec3(steps, 0, 0));
+				break;
+			case SDLK_q:
+				//move closer
+				m_transform->SetPos(m_transform->GetPos() + glm::vec3(0, 0, steps));
+				break;
+			case SDLK_e:
+				//move screen left
+				m_transform->SetPos(m_transform->GetPos() - glm::vec3(0, 0, steps));
+				break;
+			case SDLK_r:
+				//move screen left
+				m_transform->SetPos(glm::vec3(0, 0, 0));
+				m_transform->SetRot(glm::vec3(0, 0, 0));
+				break;
+			case SDLK_ESCAPE:
+				exit(0);
+				break;
+			case SDLK_RIGHT:
+				m_transform->SetRot((m_transform->GetRot() + glm::vec3(0, 2 * PI / increments , 0)));
+				break;
+			case SDLK_LEFT:
+				m_transform->SetRot((m_transform->GetRot() - glm::vec3(0, 2 * PI / increments, 0)));
+				break;
+			case SDLK_DOWN:
+				m_transform->SetRot((m_transform->GetRot() - glm::vec3(2 * PI / increments, 0, 0)));
+				break;
+			case SDLK_UP:
+				m_transform->SetRot((m_transform->GetRot() + glm::vec3(2 * PI / increments, 0, 0)));
+				break;
+			case SDLK_o:
+				m_transform->SetRot((m_transform->GetRot() + glm::vec3(0, 0, 2 * PI / increments)));
+				break;
+			case SDLK_l:
+				m_transform->SetRot((m_transform->GetRot() - glm::vec3(0, 0, 2 * PI / increments)));
+				break;
+			}
 		}
 	}
 }
@@ -200,6 +265,16 @@ Mesh::~Mesh() {
 void Mesh::draw() {
 	glBindVertexArray(m_vertexArrayObject);
 	
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	glDrawElementsBaseVertex(GL_TRIANGLES, m_drawCount, GL_UNSIGNED_INT, 0, 0);
+
+	glBindVertexArray(0);
+}
+
+void Mesh::drawOutline() {
+	glBindVertexArray(m_vertexArrayObject);
+
+	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	glDrawElementsBaseVertex(GL_TRIANGLES, m_drawCount, GL_UNSIGNED_INT, 0, 0);
 
 	glBindVertexArray(0);
@@ -373,8 +448,8 @@ void Shader::bind() {
 	glUseProgram(m_program);
 }
 
-void Shader::update(const transform& transform1, const camera& camera1) {
-	glm::mat4 model = camera1.getViewProjection() * transform1.GetModel();
+void Shader::update(const Transform* transform, const Camera* camera) {
+	glm::mat4 model = camera->getViewProjection() * transform->GetModel();
 
 	glUniformMatrix4fv(m_uniforms[TRANSFORM_U], 1, GL_FALSE, &model[0][0]);
 }

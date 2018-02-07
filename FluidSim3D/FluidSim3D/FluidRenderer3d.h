@@ -44,6 +44,10 @@ public:
 private:
 	//output window
 	Display *m_display;
+	//viewing Camera
+	Camera *m_camera;
+	//perspective transformation
+	Transform *m_transform;
 	//constant color shader
 	Shader *m_pointShader;
 	//constant color shader
