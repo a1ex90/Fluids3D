@@ -122,8 +122,6 @@ private:
 	SimUtil::Vec3 interpVel(SimUtil::Mat3Df&, SimUtil::Mat3Df&, SimUtil::Mat3Df&, SimUtil::Vec3);
 	void RK3(SimUtil::Particle3D*, SimUtil::Vec3, float, SimUtil::Mat3Df&, SimUtil::Mat3Df&, SimUtil::Mat3Df&);
 	bool projectParticle(SimUtil::Particle3D *, float);
-	SimUtil::Mesh3D meshData(SimUtil::Mat3Df &grid, std::vector<std::vector<glm::vec3>> &points, std::vector<std::vector<int>> &indices, int width, int height, int depth, float tol);
-	void initMarchingCubesCases(std::vector<std::vector<glm::vec3>> &points, std::vector<std::vector<int>> &indices);
 	std::vector<std::string> split(std::string str, std::string token);
 	
 

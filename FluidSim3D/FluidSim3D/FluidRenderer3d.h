@@ -35,7 +35,7 @@ public:
 	Draws the given vertices as a mesh
 	*/
 	void draw(std::vector<glm::vec2> vertices, std::vector<int> indicies);
-	void draw(std::vector<glm::vec3> vertices, std::vector<int> indicies);
+	void draw(std::vector<glm::vec3> vertices, std::vector<glm::vec3> normals, std::vector<int> indicies);
 	/*
 	Draws the given vertices as a mesh with given opacities
 	*/

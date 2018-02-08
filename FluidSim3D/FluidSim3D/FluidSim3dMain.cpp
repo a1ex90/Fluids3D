@@ -21,18 +21,15 @@
 // whether to run the simulation
 const bool RUN_SIM = false;
 // whether to run rendering
-const bool RUN_RENDERING = true;
+const bool RUN_RENDERING = false;
 // wheater to do a realtime simulation
-const bool REALTIME_SIM = false;
+const bool REALTIME_SIM = true;
 /* 
 choose a visualization mode for rendering
-0 - Draw Surface as Line
+0 - Draw Fluid as Particles
 1 - Draw Fluid as Triangle Mesh
-2 - Draw Fluid as pressure dependend opacity Triangle Mesh
-3 - Draw Fluid as Particles
-4 - Draw Fluid as Particles + Lines
 */
-const int VISUALIZATION_MODE = 3;
+const int VISUALIZATION_MODE = 1;
 
 //----------------------------------------------------------------------
 // Simulation Parameters
@@ -82,10 +79,11 @@ int main(int argc, char** argv) {
 			auto start = std::chrono::system_clock::now();
 			solver.step();
 			if (VISUALIZATION_MODE == 0) {
-				//render.draw(solver.marchingSquares());
-			}
-			else if (VISUALIZATION_MODE == 3) {
 				render.drawP(solver.particleData());
+			}
+			else if (VISUALIZATION_MODE == 1) {
+				SimUtil::Mesh3D data = solver.meshData();
+				render.draw(data.vertices, data.normals, data.indices);
 			}
 			else {
 				/*SimUtil::MarchingTrianglesData data = solver.marchingSquaresTriangles();

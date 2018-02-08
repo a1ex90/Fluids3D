@@ -87,11 +87,33 @@ void FluidRenderer3D::drawP(std::vector<glm::vec3> particles) {
 
 	m_pointShader->bind();
 	m_pointShader->update(m_transform, m_camera);
+	m_pointShader->setColor(0.0f, 0.0f, 0.0f, 1.0f);
 
 	m_borderSolid->draw();
 
 	Point point{ particles };
 	point.draw();
+
+	m_solidsTexShader->bind();
+	m_solidsTexShader->update(m_transform, m_camera);
+
+	m_meshSolid->draw();
+
+	m_display->update();
+}
+
+void FluidRenderer3D::draw(std::vector<glm::vec3> vertices, std::vector<glm::vec3> normals, std::vector<int> indicies) {
+	m_display->clear(0.686f, 0.933f, 0.933f, 1.0f);
+
+	m_pointShader->bind();
+	m_pointShader->update(m_transform, m_camera);
+	m_pointShader->setColor(0.0f, 0.0f, 0.0f, 1.0f);
+
+	m_borderSolid->draw();
+
+	Mesh mesh{ vertices, normals, indicies };
+
+	mesh.draw();
 
 	m_solidsTexShader->bind();
 	m_solidsTexShader->update(m_transform, m_camera);
