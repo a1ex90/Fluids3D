@@ -167,7 +167,7 @@ int main(int argc, char** argv) {
 	}*/
 
 	if (RUN_RENDERING) {
-		int CASENO = 83;
+		int CASENO = 139;
 		SimUtil::Mat3Di empty{ 2,2,2 };
 		empty.initValues(SimUtil::AIR);
 		SimUtil::Mat3Df caseMat{ 2,2,2 };
@@ -184,6 +184,7 @@ int main(int argc, char** argv) {
 			
 			if (cubeCases[i].empty()) {
 				count++;
+				std::cout << "case missing: " << i << std::endl;
 			}
 			
 		}
