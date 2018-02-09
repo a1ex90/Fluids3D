@@ -12,18 +12,15 @@
 // Constructor
 //----------------------------------------------------------------------
 
-FluidRenderer3D::FluidRenderer3D(SimUtil::Mat3Di *labels, int gridWidth, int gridHeight, int gridDepth, int mode) {
-	m_visualizationMode = mode;
-
+FluidRenderer3D::FluidRenderer3D(SimUtil::Mat3Di *labels, int gridWidth, int gridHeight, int gridDepth) {
 	m_transform = new Transform();
-
 	m_display = new Display{ WIDTH, HEIGHT, "2D Fluid Simulation", m_transform };
-
-	m_camera = new Camera(glm::vec3(0, 0, -4), 70.0f, (float)WIDTH / (float)HEIGHT, 0.01f, 1000.0f);
-	
+	m_camera = new Camera(glm::vec3(0, 0, -4), 70.0f, (float)WIDTH / (float)HEIGHT, 0.01f, 1000.0f);	
 	m_colorShader = new Shader{ "./basicShader" };
-
 	initGeom(labels, gridWidth, gridHeight, gridDepth);
+	//initially pause the simulation
+	m_isPaused = true;
+	m_forwardPressed = false;
 }
 
 FluidRenderer3D::~FluidRenderer3D() {
@@ -49,7 +46,7 @@ void FluidRenderer3D::drawP(std::vector<glm::vec3> particles) {
 
 	m_meshSolid->draw();
 
-	m_display->update();
+	m_display->update(m_isPaused, m_forwardPressed);
 }
 
 void FluidRenderer3D::draw(std::vector<glm::vec3> vertices, std::vector<glm::vec3> normals, std::vector<int> indicies) {
@@ -69,7 +66,7 @@ void FluidRenderer3D::draw(std::vector<glm::vec3> vertices, std::vector<glm::vec
 
 	m_meshSolid->draw();
 
-	m_display->update();
+	m_display->update(m_isPaused, m_forwardPressed);
 }
 
 void FluidRenderer3D::drawCubes(std::vector<glm::vec3> vertices, std::vector<int> indices, std::vector<glm::vec3> darkDots, std::vector<glm::vec3> brightDots) {
@@ -79,9 +76,6 @@ void FluidRenderer3D::drawCubes(std::vector<glm::vec3> vertices, std::vector<int
 
 	m_colorShader->bind();
 	m_colorShader->update(m_transform, m_camera);
-
-	
-
 	m_colorShader->setColor(0.0f, 0.0f, 0.0f, 1.0f);
 
 	Point activeDots{ darkDots };
@@ -92,20 +86,13 @@ void FluidRenderer3D::drawCubes(std::vector<glm::vec3> vertices, std::vector<int
 	Point inactiveDots{ brightDots };
 	inactiveDots.draw();
 
-	
-	
-
 	Mesh mesh{ vertices, std::vector<glm::vec3> {}, indices };
 	m_colorShader->setColor(1.0f, 0.0f, 0.0f, 0.5f);
 	mesh.draw();
 	m_colorShader->setColor(1.0f, 0.9f, 0.9f, 1.0f);
 	mesh.drawOutline();
 	
-
-	
-	
-
-	m_display->update();
+	m_display->update(m_isPaused, m_forwardPressed);
 }
 
 //----------------------------------------------------------------------
@@ -116,7 +103,10 @@ void FluidRenderer3D::drawCubes(std::vector<glm::vec3> vertices, std::vector<int
 Reads in the inital geometry and generates the vertices of the solids
 in a vector
 Args:
-file - name of the .txt file containing initial geometry
+label - pointer reference to the grid containing the geometry info
+x - gridwidth
+y - gridheight
+z - griddepth
 */
 void FluidRenderer3D::initGeom(SimUtil::Mat3Di *label, int x, int y, int z) {
 	std::vector<glm::vec3> vertSolid;
@@ -307,6 +297,14 @@ void FluidRenderer3D::initGeom(SimUtil::Mat3Di *label, int x, int y, int z) {
 	m_meshSolid = new Mesh{ vertSolid , normalsSolid, indSolid };
 }
 
+/*
+Draws the boundary lines of the geometry
+Args:
+x - gridwidth
+y - gridheight
+z - griddepth
+maxGridSize - maximum of x,y,z for scaling purposes
+*/
 void FluidRenderer3D::initBorderLines(int x, int y, int z, int maxGridSize) {
 	std::vector<glm::vec3> lines;
 	//inner
@@ -325,6 +323,17 @@ void FluidRenderer3D::initBorderLines(int x, int y, int z, int maxGridSize) {
 	m_borderSolid = new Line{ lines };
 }
 
+/*
+Draws the bottom line
+Args:
+lines - reference where line vertices should be stored in
+yLoc - y coordinate for the line (line distance from the bottom)
+crop - left and right cropping of the line
+x - gridwidth
+y - gridheight
+z - griddepth
+maxGridSize - maximum of x,y,z for scaling purposes
+*/
 void FluidRenderer3D::bottomLineAt(std::vector<glm::vec3> &lines, int yLoc, int crop, int x, int y, int z, int maxGridSize) {
 	lines.push_back(glm::vec3(2.0 * crop / maxGridSize - 1.0, 2.0 * yLoc / maxGridSize - 1.0, 2.0 * crop / maxGridSize - 1.0));
 	lines.push_back(glm::vec3(2.0 * (x - crop) / maxGridSize - 1.0, 2.0 * yLoc / maxGridSize - 1.0, 2.0 * crop / maxGridSize - 1.0));
@@ -339,6 +348,19 @@ void FluidRenderer3D::bottomLineAt(std::vector<glm::vec3> &lines, int yLoc, int 
 	lines.push_back(glm::vec3(2.0 * crop / maxGridSize - 1.0, 2.0 * yLoc / maxGridSize - 1.0, 2.0 * crop / maxGridSize - 1.0));
 }
 
+/*
+Draws a side line
+Args:
+lines - reference where line vertices should be stored in
+xLoc - x coordinate for the line
+crop - front and back cropping of the line
+bottomCrop - bottom crop of the line
+topCrop - top crop of the line
+x - gridwidth
+y - gridheight
+z - griddepth
+maxGridSize - maximum of x,y,z for scaling purposes
+*/
 void FluidRenderer3D::sideLineAt(std::vector<glm::vec3> &lines, int xLoc, int crop, int bottomCrop, int topCrop, int x, int y, int z, int maxGridSize) {
 	lines.push_back(glm::vec3(2.0 * xLoc / maxGridSize - 1.0, 2.0 * bottomCrop / maxGridSize - 1.0, 2.0 * crop / maxGridSize - 1.0));
 	lines.push_back(glm::vec3(2.0 * xLoc / maxGridSize - 1.0, 2.0 * bottomCrop / maxGridSize - 1.0, 2.0 * (z - crop) / maxGridSize - 1.0));
@@ -353,6 +375,19 @@ void FluidRenderer3D::sideLineAt(std::vector<glm::vec3> &lines, int xLoc, int cr
 	lines.push_back(glm::vec3(2.0 * xLoc / maxGridSize - 1.0, 2.0 * bottomCrop / maxGridSize - 1.0, 2.0 * crop / maxGridSize - 1.0));
 }
 
+/*
+Draws a side line
+Args:
+lines - reference where line vertices should be stored in
+zLoc - z coordinate for the line
+crop - front and back cropping of the line
+bottomCrop - bottom crop of the line
+topCrop - top crop of the line
+x - gridwidth
+y - gridheight
+z - griddepth
+maxGridSize - maximum of x,y,z for scaling purposes
+*/
 void FluidRenderer3D::frontLineAt(std::vector<glm::vec3> &lines, int zLoc, int crop, int bottomCrop, int topCrop, int x, int y, int z, int maxGridSize) {
 	lines.push_back(glm::vec3(2.0 * crop / maxGridSize - 1.0, 2.0 * bottomCrop / maxGridSize - 1.0, 2.0 * zLoc / maxGridSize - 1.0));
 	lines.push_back(glm::vec3(2.0 * crop / maxGridSize - 1.0, 2.0 * (y - topCrop) / maxGridSize - 1.0, 2.0 * zLoc / maxGridSize - 1.0));
@@ -369,10 +404,10 @@ void FluidRenderer3D::frontLineAt(std::vector<glm::vec3> &lines, int zLoc, int c
 
 
 /*
-	renders the current frame buffer to a bitmap picture. stores the picture
-	as "'geoFileName'-frame-'frameNumber'.bmp"
-	Args:
-	frame - current frame number
+renders the current frame buffer to a bitmap picture. stores the picture
+as "'geoFileName'-frame-'frameNumber'.bmp"
+Args:
+frame - current frame number
 */
 void FluidRenderer3D::capturePicture(int frame) {
 

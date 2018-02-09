@@ -50,7 +50,7 @@ class Display
 public:
 	Display(int width, int height, const std::string& title, Transform* transform);
 
-	void update();
+	void update(bool &pausePressed, bool &forwardPressed);
 	void clear(float r, float g, float b, float a);
 	bool isClosed();
 
@@ -71,10 +71,7 @@ private:
 //----------------------------------------------------------------------
 class Mesh {
 public:
-	Mesh(std::vector<glm::vec2> vertices, std::vector<int> indices);
-	Mesh(std::vector<glm::vec3> vertices, std::vector<glm::vec3> normals, std::vector<int> indices);
-	Mesh(std::vector<glm::vec2> vertices, std::vector<glm::vec2> textureCoords, std::vector<int> indices);
-	Mesh(std::vector<glm::vec2> vertices, std::vector<int> indices, std::vector<float> opacites);
+	Mesh::Mesh(std::vector<glm::vec3> vertices, std::vector<glm::vec3> normals, std::vector<int> indices);
 
 	void draw();
 	void drawOutline();
@@ -99,7 +96,6 @@ private:
 //----------------------------------------------------------------------
 class Line {
 public:
-	Line(std::vector<glm::vec2> vertices);
 	Line(std::vector<glm::vec3> vertices);
 	
 	void draw();
@@ -120,7 +116,6 @@ private:
 //----------------------------------------------------------------------
 class Point {
 public:
-	Point(std::vector<glm::vec2> points);
 	Point(std::vector<glm::vec3> points);
 
 	void draw();
@@ -171,12 +166,10 @@ public:
 	void bind();
 	void update(const Transform* transform, const Camera* camera);
 	void setColor(float r, float g, float b, float a);
-	void setTexture(int unit);
 	
 	~Shader();
 private:
 	static const unsigned int NUM_SHADERS = 2;
-	//static const unsigned int NUM_UNIFORMS = 2;
 
 	enum {
 		TRANSFORM_U,
@@ -188,23 +181,5 @@ private:
 	GLuint m_program;
 	GLuint m_shaders[NUM_SHADERS];
 	GLuint m_uniforms[NUM_UNIFORMS];	
-};
-
-//----------------------------------------------------------------------
-// Texture Class
-//----------------------------------------------------------------------
-class Texture
-{
-public:
-	Texture(const std::string& fileName);
-
-	void bind(unsigned int unit);
-
-	~Texture();
-private:
-	Texture(const Texture& other) {};
-	void operator=(const Texture& other) {};
-
-	GLuint m_texture;
 };
 

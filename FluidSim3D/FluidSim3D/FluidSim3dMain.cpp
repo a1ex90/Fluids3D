@@ -18,10 +18,8 @@
 // Execution Options
 //----------------------------------------------------------------------
 
-// whether to run the simulation
-const bool RUN_SIM = false;
 // whether to run rendering
-const bool RUN_RENDERING = false;
+const bool DISPLAY_MARCHINGCUBES = false;
 // wheater to do a realtime simulation
 const bool REALTIME_SIM = true;
 /* 
@@ -74,8 +72,8 @@ int main(int argc, char** argv) {
 		FluidSolver3D solver(GRID_WIDTH, GRID_HEIGHT, GRID_DEPTH, GRID_CELL_WIDTH, TIME_STEP);
 		solver.init(INITIAL_GEOMETRY_FILE_IN);
 		//FluidRenderer3D render{ INITIAL_GEOMETRY_FILE_IN, VISUALIZATION_MODE };
-		FluidRenderer3D render( solver.getGeometry(),GRID_WIDTH, GRID_HEIGHT, GRID_DEPTH, VISUALIZATION_MODE );
-		for (int frame = 0; frame < 4*NUM_SIM_FRAMES; frame++) {
+		FluidRenderer3D render( solver.getGeometry(),GRID_WIDTH, GRID_HEIGHT, GRID_DEPTH );
+		/*for (int frame = 0; frame < 4*NUM_SIM_FRAMES; frame++) {
 			auto start = std::chrono::system_clock::now();
 			solver.step();
 			if (VISUALIZATION_MODE == 0) {
@@ -84,15 +82,6 @@ int main(int argc, char** argv) {
 			else if (VISUALIZATION_MODE == 1) {
 				SimUtil::Mesh3D data = solver.meshData();
 				render.draw(data.vertices, data.normals, data.indices);
-			}
-			else {
-				/*SimUtil::MarchingTrianglesData data = solver.marchingSquaresTriangles();
-				if (VISUALIZATION_MODE == 1) {
-					render.draw(data.vertices, data.indices);
-				}
-				else if (VISUALIZATION_MODE == 2) {
-					render.draw(data.vertices, data.indices, data.opacities);
-				}*/
 			}
 			if (frame == 0) {
 				//Wait for keypress to start
@@ -106,65 +95,34 @@ int main(int argc, char** argv) {
 					sleep = false;
 				}
 			}
+		}*/
+		solver.step();
+		SimUtil::Mesh3D data = solver.meshData();
+		auto start = std::chrono::system_clock::now();
+		bool newFrame = true;
+		while (!render.isClosed()) {
+			render.draw(data.vertices, data.normals, data.indices);
+			if (!render.isPaused() && newFrame) {
+				start = std::chrono::system_clock::now();
+				solver.step();
+				data = solver.meshData();
+				newFrame = false;
+			}
+			if (render.isPaused() && render.forwardPressed()) {
+				solver.step();
+				data = solver.meshData();
+			}
+			//Check if it's time for a new frame
+			if (!render.isPaused() && !newFrame) {
+				auto now = std::chrono::system_clock::now();
+				auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(now - start);
+				if (elapsed.count() > 1000 * TIME_STEP) {
+					newFrame = true;
+				}
+			}
 		}
 	}
-
-	/*if (RUN_SIM) {
-		// open and clear output file
-		std::ofstream *particlesOut = new std::ofstream(DATA_FILES_OUT + "-part.csv", std::ofstream::trunc);
-		std::ofstream *linesOut = new std::ofstream(DATA_FILES_OUT + "-lines.csv", std::ofstream::trunc);
-		std::ofstream *timingOut = new std::ofstream(DATA_FILES_OUT + "-timing.csv", std::ofstream::trunc);
-		std::ofstream *trianglesVert = new std::ofstream(DATA_FILES_OUT + "-vert.csv", std::ofstream::trunc);
-		std::ofstream *trianglesInd = new std::ofstream(DATA_FILES_OUT + "-ind.csv", std::ofstream::trunc);
-		std::ofstream *trianglesOpa = new std::ofstream(DATA_FILES_OUT + "-opacity.csv", std::ofstream::trunc);
-
-		FluidSolver3D solver(GRID_WIDTH, GRID_HEIGHT, GRID_CELL_WIDTH, TIME_STEP);
-		std::cout << "Simulating Frame 1" << std::endl;
-		solver.init(INITIAL_GEOMETRY_FILE_IN);
-		
-		// run simulation
-		// save initial frame
-		//ADD INITIAL STEP HERE FOR MARCHING SQUARES TO WORK
-		solver.step();
-		solver.saveParticleData(particlesOut);
-		solver.saveLineData(linesOut);
-		solver.saveTriangleData(trianglesVert, trianglesInd, trianglesOpa);
-		float t = 0.0f;
-		for (int framesOut = 1; framesOut < NUM_SIM_FRAMES; framesOut++) {
-			std::cout << "Simulating Frame " << framesOut + 1 << std::endl;
-			
-			float subTime = 0.0f;
-			while (subTime < FRAME_TIME_STEP) {
-				// perform sim time step
-				//solver.step();
-				solver.stepTiming();
-
-				subTime += TIME_STEP;
-				t += TIME_STEP;
-			}
-			// render at current time
-			solver.saveParticleData(particlesOut);
-			solver.saveLineData(linesOut);
-			solver.saveTriangleData(trianglesVert, trianglesInd, trianglesOpa);
-			
-		}
-		solver.saveTimingData(timingOut);
-		// cleanup
-		particlesOut->close();
-		linesOut->close();
-		trianglesVert->close();
-		trianglesInd->close();
-		trianglesOpa->close();
-		timingOut->close();
-		delete particlesOut;
-		delete linesOut;
-		delete trianglesVert;
-		delete trianglesInd;
-		delete trianglesOpa;
-		delete timingOut;
-	}*/
-
-	if (RUN_RENDERING) {
+	if (DISPLAY_MARCHINGCUBES) {
 		int CASENO = 139;
 		SimUtil::Mat3Di empty{ 2,2,2 };
 		empty.initValues(SimUtil::AIR);
@@ -177,20 +135,11 @@ int main(int argc, char** argv) {
 		std::vector<glm::vec3> brightDots;
 		MarchingCubes::corners(darkDots, brightDots, CASENO);
 		MarchingCubes::initMarchingCubesCases(cubeCases, cubeIndices);
-		int count = 0;
-		for (int i = 0; i < 256; i++) {
-			
-			if (cubeCases[i].empty()) {
-				count++;
-				std::cout << "case missing: " << i << std::endl;
-			}
-			
-		}
-		std::cout << count << std::endl;
+
 		SimUtil::Mesh3D caseMesh = MarchingCubes::meshData(caseMat, cubeCases, cubeIndices, 2, 2, 2, 0.0f);
 
 
-		FluidRenderer3D render(&empty, 2, 2, 2, VISUALIZATION_MODE);
+		FluidRenderer3D render(&empty, 2, 2, 2);
 		while (true) {
 			render.drawCubes(caseMesh.vertices, caseMesh.indices, darkDots, brightDots);
 		}

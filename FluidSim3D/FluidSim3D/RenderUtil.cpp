@@ -72,7 +72,7 @@ bool Display::isClosed() {
 /*
 Updates the window
 */
-void Display::update() {
+void Display::update(bool &pausePressed, bool &forwardPressed) {
 	SDL_GL_SwapWindow(m_window);
 	SDL_Event e;
 	int handled;
@@ -142,6 +142,12 @@ void Display::update() {
 			case SDLK_l:
 				m_transform->SetRot((m_transform->GetRot() - glm::vec3(0, 0, 2 * PI / increments)));
 				break;
+			case SDLK_SPACE:
+				pausePressed = !pausePressed;
+				break;
+			case SDLK_m:
+				forwardPressed = true;
+				pausePressed = true;
 			}
 		}
 	}
@@ -150,26 +156,6 @@ void Display::update() {
 //----------------------------------------------------------------------
 // Mesh Class
 //----------------------------------------------------------------------
-
-Mesh::Mesh(std::vector<glm::vec2> vertices, std::vector<int> indices) {
-	m_drawCount = indices.size();
-
-	glGenVertexArrays(1, &m_vertexArrayObject);
-	glBindVertexArray(m_vertexArrayObject);
-
-	glGenBuffers(NUM_BUFFERS, m_vertexArrayBuffers);
-
-	glBindBuffer(GL_ARRAY_BUFFER, m_vertexArrayBuffers[POSITION_VB]);
-	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(vertices[0]), vertices.data(), GL_STATIC_DRAW);
-
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, 0);
-
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_vertexArrayBuffers[INDEX_VB]);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(indices[0]), indices.data(), GL_STATIC_DRAW);
-
-	glBindVertexArray(0);
-}
 
 Mesh::Mesh(std::vector<glm::vec3> vertices, std::vector<glm::vec3> normals, std::vector<int> indices) {
 	m_drawCount = indices.size();
@@ -190,62 +176,6 @@ Mesh::Mesh(std::vector<glm::vec3> vertices, std::vector<glm::vec3> normals, std:
 
 	glEnableVertexAttribArray(2);
 	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0, 0);
-
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_vertexArrayBuffers[INDEX_VB]);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(indices[0]), indices.data(), GL_STATIC_DRAW);
-
-	glBindVertexArray(0);
-
-	//needs to be enabled to active opacity rendering
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-}
-
-Mesh::Mesh(std::vector<glm::vec2> vertices, std::vector<glm::vec2> textureCoords, std::vector<int> indices) {
-	m_drawCount = indices.size();
-
-	glGenVertexArrays(1, &m_vertexArrayObject);
-	glBindVertexArray(m_vertexArrayObject);
-
-	glGenBuffers(NUM_BUFFERS, m_vertexArrayBuffers);
-
-	glBindBuffer(GL_ARRAY_BUFFER, m_vertexArrayBuffers[POSITION_VB]);
-	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(vertices[0]), vertices.data(), GL_STATIC_DRAW);
-
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, 0);
-
-	glBindBuffer(GL_ARRAY_BUFFER, m_vertexArrayBuffers[TEXCOORD_VB]);
-	glBufferData(GL_ARRAY_BUFFER, textureCoords.size() * sizeof(textureCoords[0]), textureCoords.data(), GL_STATIC_DRAW);
-
-	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, 0);
-
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_vertexArrayBuffers[INDEX_VB]);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(indices[0]), indices.data(), GL_STATIC_DRAW);
-
-	glBindVertexArray(0);
-}
-
-Mesh::Mesh(std::vector<glm::vec2> vertices, std::vector<int> indices, std::vector<float> opacities) {
-	m_drawCount = indices.size();
-
-	glGenVertexArrays(1, &m_vertexArrayObject);
-	glBindVertexArray(m_vertexArrayObject);
-
-	glGenBuffers(NUM_BUFFERS, m_vertexArrayBuffers);
-
-	glBindBuffer(GL_ARRAY_BUFFER, m_vertexArrayBuffers[POSITION_VB]);
-	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(vertices[0]), vertices.data(), GL_STATIC_DRAW);
-
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, 0);
-
-	glBindBuffer(GL_ARRAY_BUFFER, m_vertexArrayBuffers[NORMAL_VB]);
-	glBufferData(GL_ARRAY_BUFFER, opacities.size() * sizeof(opacities[0]), opacities.data(), GL_STATIC_DRAW);
-
-	glEnableVertexAttribArray(2);
-	glVertexAttribPointer(2, 1, GL_FLOAT, GL_FALSE, 0, 0);
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_vertexArrayBuffers[INDEX_VB]);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(indices[0]), indices.data(), GL_STATIC_DRAW);
@@ -292,23 +222,6 @@ void Mesh::drawOutline() {
 	verticesCount - number of vertices
 
 */
-Line::Line(std::vector<glm::vec2> vertices) {
-	m_verticesCount = vertices.size();
-
-	glGenVertexArrays(1, &m_vertexArrayObject);
-	glBindVertexArray(m_vertexArrayObject);
-
-	glGenBuffers(NUM_BUFFERS, m_vertexArrayBuffers);
-
-	glBindBuffer(GL_ARRAY_BUFFER, m_vertexArrayBuffers[POSITION_VB]);
-	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(vertices[0]), vertices.data(), GL_STATIC_DRAW);
-
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, 0);
-
-	glBindVertexArray(0);
-}
-
 Line::Line(std::vector<glm::vec3> vertices) {
 	m_verticesCount = vertices.size();
 
@@ -354,23 +267,6 @@ so vertices is twice as long as vertices exist
 verticesCount - number of vertices
 
 */
-Point::Point(std::vector<glm::vec2> points) {
-	m_pointsCount = points.size();
-
-	glGenVertexArrays(1, &m_vertexArrayObject);
-	glBindVertexArray(m_vertexArrayObject);
-
-	glGenBuffers(NUM_BUFFERS, m_vertexArrayBuffers);
-
-	glBindBuffer(GL_ARRAY_BUFFER, m_vertexArrayBuffers[POSITION_VB]);
-	glBufferData(GL_ARRAY_BUFFER, points.size() * sizeof(points[0]), points.data(), GL_STATIC_DRAW);
-
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, 0);
-
-	glBindVertexArray(0);
-}
-
 Point::Point(std::vector<glm::vec3> points) {
 	m_pointsCount = points.size();
 
@@ -458,10 +354,6 @@ void Shader::setColor(float r, float g, float b, float a) {
 	glUniform4f(m_uniforms[COLOR], r, g, b, a);
 }
 
-void Shader::setTexture(int unit) {
-	//glUniform1i(m_uniforms[1], unit);
-}
-
 std::string loadShader(const std::string& fileName)
 {
 	std::ifstream file;
@@ -525,45 +417,4 @@ void checkShaderError(GLuint shader, GLuint flag, bool isProgram, const std::str
 
 		std::cerr << errorMessage << ": '" << error << "'" << std::endl;
 	}
-}
-
-//----------------------------------------------------------------------
-// Texture Class
-//----------------------------------------------------------------------
-Texture::Texture(const std::string& fileName)
-{
-	int width, height, numComponents;
-	unsigned char* imageData = stbi_load(fileName.c_str(), &width, &height, &numComponents, 4);
-
-	if (imageData == NULL) {
-		std::cerr << "Texture loading failed for texture: " << fileName << std::endl;
-	}
-
-	glGenTextures(1, &m_texture);
-	glBindTexture(GL_TEXTURE_2D, m_texture);
-
-	//defines texture outside coordinates here: repeat 
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-
-	//defines bevauior if texture is displayed smaller or bigger as source file here: linear interpolation
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, imageData);
-
-	stbi_image_free(imageData);
-}
-
-
-Texture::~Texture()
-{
-	glDeleteTextures(1, &m_texture);
-}
-
-void Texture::bind(unsigned int unit) {
-	assert(unit >= 0 && unit <= 31);
-
-	glActiveTexture(GL_TEXTURE0 + unit);
-	glBindTexture(GL_TEXTURE_2D, m_texture);
 }
