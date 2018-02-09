@@ -27,12 +27,6 @@
     </None>
     <None Include="basicShader.fs" />
     <None Include="basicShader.vs" />
-    <None Include="textureShader.vs" />
-    <None Include="textureShader.fs" />
-    <None Include="pointShader.vs" />
-    <None Include="pointShader.fs" />
-    <None Include="solidsShader.fs" />
-    <None Include="solidsShader.vs" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SimUtil.cpp">

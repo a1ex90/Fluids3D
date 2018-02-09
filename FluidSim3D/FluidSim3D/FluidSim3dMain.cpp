@@ -22,6 +22,8 @@
 const bool DISPLAY_MARCHINGCUBES = false;
 // wheater to do a realtime simulation
 const bool REALTIME_SIM = true;
+// wheater to manipulate gravity by user input
+const bool MANIPULATION = true;
 /* 
 choose a visualization mode for rendering
 0 - Draw Fluid as Particles
@@ -47,7 +49,7 @@ const float TIME_STEP = 0.01f;
 //----------------------------------------------------------------------
 
 // input file for initial system state - grid marked solid, fluid, or air
-const std::string INITIAL_GEOMETRY_FILE_IN = "geo_small3.txt";
+const std::string INITIAL_GEOMETRY_FILE_IN = "geo_small4.txt";
 // output file for watersurface line data
 const std::string DATA_FILES_OUT = "shit";
 
@@ -104,11 +106,17 @@ int main(int argc, char** argv) {
 			render.draw(data.vertices, data.normals, data.indices);
 			if (!render.isPaused() && newFrame) {
 				start = std::chrono::system_clock::now();
+				if (MANIPULATION) {
+					solver.updateOrientation(render.currentOrientation());
+				}
 				solver.step();
 				data = solver.meshData();
 				newFrame = false;
 			}
 			if (render.isPaused() && render.forwardPressed()) {
+				if (MANIPULATION) {
+					solver.updateOrientation(render.currentOrientation());
+				}
 				solver.step();
 				data = solver.meshData();
 			}

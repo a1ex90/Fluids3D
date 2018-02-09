@@ -262,8 +262,8 @@ namespace SimUtil {
 			}
 		}
 		for (int k = 3; k < 6; k++) {
-			readInGeom2D(x, y, k, "geo_small3e.txt", grid);
-			readInGeom2D(x, y, z - k - 1, "geo_small3e.txt", grid);
+			readInGeom2D(x, y, k, "geo_small4e.txt", grid);
+			readInGeom2D(x, y, z - k - 1, "geo_small4e.txt", grid);
 		}
 		for (int k = 6; k < z - 6; k++) {
 			readInGeom2D(x, y, k, geomFileName, grid);

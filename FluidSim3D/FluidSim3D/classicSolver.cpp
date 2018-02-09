@@ -1,5 +1,4 @@
 #include "classicSolver.h"
-#include "SimUtil.h"
 #include <iostream>
 
 using namespace SimUtil;

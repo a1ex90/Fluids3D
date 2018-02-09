@@ -50,7 +50,7 @@ class Display
 public:
 	Display(int width, int height, const std::string& title, Transform* transform);
 
-	void update(bool &pausePressed, bool &forwardPressed);
+	void update(glm::vec3 &orientation, bool &pausePressed, bool &forwardPressed);
 	void clear(float r, float g, float b, float a);
 	bool isClosed();
 

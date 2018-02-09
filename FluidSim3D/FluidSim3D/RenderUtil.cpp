@@ -72,7 +72,7 @@ bool Display::isClosed() {
 /*
 Updates the window
 */
-void Display::update(bool &pausePressed, bool &forwardPressed) {
+void Display::update(glm::vec3 &orientation, bool &pausePressed, bool &forwardPressed) {
 	SDL_GL_SwapWindow(m_window);
 	SDL_Event e;
 	int handled;
@@ -120,34 +120,67 @@ void Display::update(bool &pausePressed, bool &forwardPressed) {
 				//move screen left
 				m_transform->SetPos(glm::vec3(0, 0, 0));
 				m_transform->SetRot(glm::vec3(0, 0, 0));
+				orientation.x = 0.0f;
+				orientation.y = -1.0f;
+				orientation.z = 0.0f;
 				break;
 			case SDLK_ESCAPE:
 				exit(0);
 				break;
-			case SDLK_RIGHT:
-				m_transform->SetRot((m_transform->GetRot() + glm::vec3(0, 2 * PI / increments , 0)));
-				break;
-			case SDLK_LEFT:
+			case SDLK_RIGHT: {
+				m_transform->SetRot((m_transform->GetRot() + glm::vec3(0, 2 * PI / increments, 0)));
+				float y = orientation.y * cos(2 * PI / increments) - orientation.z * sin(2 * PI / increments);
+				float z = orientation.y * sin(2 * PI / increments) + orientation.z * cos(2 * PI / increments);
+				orientation.y = y;
+				orientation.z = z;
+				break; }
+			case SDLK_LEFT: {
 				m_transform->SetRot((m_transform->GetRot() - glm::vec3(0, 2 * PI / increments, 0)));
-				break;
-			case SDLK_DOWN:
+				float y = orientation.y * cos(2 * PI / increments) + orientation.z * sin(2 * PI / increments);
+				float z = -orientation.y * sin(2 * PI / increments) + orientation.z * cos(2 * PI / increments);
+				orientation.y = y;
+				orientation.z = z;
+				break; }
+			case SDLK_DOWN: {
 				m_transform->SetRot((m_transform->GetRot() - glm::vec3(2 * PI / increments, 0, 0)));
-				break;
-			case SDLK_UP:
+				float z = orientation.z * cos(2 * PI / increments) + orientation.x * sin(2 * PI / increments);
+				float x = -orientation.z * sin(2 * PI / increments) + orientation.x * cos(2 * PI / increments);
+				orientation.z = z;
+				orientation.x = x;
+				break; }
+			case SDLK_UP: {
 				m_transform->SetRot((m_transform->GetRot() + glm::vec3(2 * PI / increments, 0, 0)));
-				break;
-			case SDLK_o:
+				float z = orientation.z * cos(2 * PI / increments) - orientation.x * sin(2 * PI / increments);
+				float x = orientation.z * sin(2 * PI / increments) + orientation.x * cos(2 * PI / increments);
+				orientation.z = z;
+				orientation.x = x;
+				break; }
+			case SDLK_o: {
 				m_transform->SetRot((m_transform->GetRot() + glm::vec3(0, 0, 2 * PI / increments)));
-				break;
-			case SDLK_l:
+				float x = orientation.x * cos(2 * PI / increments) + orientation.y * sin(2 * PI / increments);
+				float y = -orientation.x * sin(2 * PI / increments) + orientation.y * cos(2 * PI / increments);
+				orientation.x = x;
+				orientation.y = y;
+				break; }
+			case SDLK_l: {
 				m_transform->SetRot((m_transform->GetRot() - glm::vec3(0, 0, 2 * PI / increments)));
-				break;
+				float x = orientation.x * cos(2 * PI / increments) - orientation.y * sin(2 * PI / increments);
+				float y = orientation.x * sin(2 * PI / increments) + orientation.y * cos(2 * PI / increments);
+				orientation.x = x;
+				orientation.y = y;
+				break; }
 			case SDLK_SPACE:
 				pausePressed = !pausePressed;
 				break;
 			case SDLK_m:
 				forwardPressed = true;
 				pausePressed = true;
+				break;
+			case SDLK_n:
+				orientation.x = 0.0f;
+				orientation.y = 0.0f;
+				orientation.z = 1.0f;
+				break;
 			}
 		}
 	}

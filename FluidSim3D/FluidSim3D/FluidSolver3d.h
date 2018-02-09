@@ -64,7 +64,8 @@ private:
 	// the maximum number of grid cells a particle should move when advected
 	const int ADVECT_MAX = 1;
 	// acceleration due to gravity
-	const SimUtil::Vec3 GRAVITY = { 0.0f, -9.81f, 0.0f };
+	//const SimUtil::Vec3 GRAVITY = { 0.0f, -9.81f, 0.0f };
+	const float GRAVITY = 9.81f;
 	// density of the fluid (kg/m^3)
 	const float FLUID_DENSITY = 1000.0f;
 	// surface threshold for marching squares
@@ -72,6 +73,8 @@ private:
 
 	// simulation time step
 	float m_dt;
+	// current orientation
+	SimUtil::Vec3 m_orientation{ 0.0f, -1.0f, 0.0f };
 
 	//----------------------------------------------------------------------
 	// Particle-related Members
@@ -102,7 +105,6 @@ private:
 	//----------------------------------------------------------------------
 
 	// solver steps
-
 	void seedParticles(int, std::vector<SimUtil::Particle3D>*);
 	void labelGrid();
 	void particlesToGrid();
@@ -150,6 +152,13 @@ public:
 	initialGemoetryFile - name of the .txt file containing initial geometry
 	*/
 	void init(std::string);
+
+	/*
+	Update the force orientation with a new given orientation
+	Args:
+	orientation - vector with the orientation of the force {0,1,0} for standard
+	*/
+	void updateOrientation(glm::vec3 orientation) { m_orientation.x = orientation.x; m_orientation.y = orientation.y; m_orientation.z = orientation.z;};
 
 	/*
 	Steps the simulation forward dt.

@@ -21,6 +21,7 @@ FluidRenderer3D::FluidRenderer3D(SimUtil::Mat3Di *labels, int gridWidth, int gri
 	//initially pause the simulation
 	m_isPaused = true;
 	m_forwardPressed = false;
+	m_orientation = glm::vec3(0.0f, -1.0f, 0.0f);
 }
 
 FluidRenderer3D::~FluidRenderer3D() {
@@ -46,7 +47,7 @@ void FluidRenderer3D::drawP(std::vector<glm::vec3> particles) {
 
 	m_meshSolid->draw();
 
-	m_display->update(m_isPaused, m_forwardPressed);
+	m_display->update(m_orientation, m_isPaused, m_forwardPressed);
 }
 
 void FluidRenderer3D::draw(std::vector<glm::vec3> vertices, std::vector<glm::vec3> normals, std::vector<int> indicies) {
@@ -66,7 +67,7 @@ void FluidRenderer3D::draw(std::vector<glm::vec3> vertices, std::vector<glm::vec
 
 	m_meshSolid->draw();
 
-	m_display->update(m_isPaused, m_forwardPressed);
+	m_display->update(m_orientation, m_isPaused, m_forwardPressed);
 }
 
 void FluidRenderer3D::drawCubes(std::vector<glm::vec3> vertices, std::vector<int> indices, std::vector<glm::vec3> darkDots, std::vector<glm::vec3> brightDots) {
@@ -92,7 +93,7 @@ void FluidRenderer3D::drawCubes(std::vector<glm::vec3> vertices, std::vector<int
 	m_colorShader->setColor(1.0f, 0.9f, 0.9f, 1.0f);
 	mesh.drawOutline();
 	
-	m_display->update(m_isPaused, m_forwardPressed);
+	m_display->update(m_orientation, m_isPaused, m_forwardPressed);
 }
 
 //----------------------------------------------------------------------
@@ -309,10 +310,10 @@ void FluidRenderer3D::initBorderLines(int x, int y, int z, int maxGridSize) {
 	std::vector<glm::vec3> lines;
 	//inner
 	bottomLineAt(lines, 3, 3, x, y, z, maxGridSize);
-	sideLineAt(lines, 3, 3, 3, 0, x, y, z, maxGridSize);
-	sideLineAt(lines, x - 3, 3, 3, 0, x, y, z, maxGridSize);
-	frontLineAt(lines, 3, 3, 3, 0, x, y, z, maxGridSize);
-	frontLineAt(lines, z - 3, 3, 3, 0, x, y, z, maxGridSize);
+	sideLineAt(lines, 3, 3, 3, 3, x, y, z, maxGridSize);
+	sideLineAt(lines, x - 3, 3, 3, 3, x, y, z, maxGridSize);
+	frontLineAt(lines, 3, 3, 3, 3, x, y, z, maxGridSize);
+	frontLineAt(lines, z - 3, 3, 3, 3, x, y, z, maxGridSize);
 	//outer
 	/*bottomLineAt(lines, 0, 0, x, y, z, maxGridSize);
 	sideLineAt(lines, 0, 0, 0, 0, x, y, z, maxGridSize);

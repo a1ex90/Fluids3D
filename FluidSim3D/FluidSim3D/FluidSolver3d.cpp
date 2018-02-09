@@ -565,19 +565,19 @@ void FluidSolver3D::applyBodyForces() {
 					// make sure we know the velocity
 					if (m_u.get(i, j, k) != VEL_UNKNOWN) {
 						// update u component
-						m_u.set(i, j, k, m_u.get(i, j, k) + m_dt*GRAVITY.x);
+						m_u.set(i, j, k, m_u.get(i, j, k) + m_dt*GRAVITY*m_orientation.x);
 					}
 				}
 				if (i < m_gridWidth && k < m_gridDepth) {
 					if (m_v.get(i, j, k) != VEL_UNKNOWN) {
 						// update v component
-						m_v.set(i, j, k, m_v.get(i, j, k) + m_dt*GRAVITY.y);
+						m_v.set(i, j, k, m_v.get(i, j, k) + m_dt*GRAVITY*m_orientation.y);
 					}
 				}
 				if (i < m_gridWidth && j < m_gridHeight) {
 					if (m_w.get(i, j, k) != VEL_UNKNOWN) {
 						// update v component
-						m_w.set(i, j, k, m_w.get(i, j, k) + m_dt*GRAVITY.z);
+						m_w.set(i, j, k, m_w.get(i, j, k) + m_dt*GRAVITY*m_orientation.z);
 					}
 				}
 			}

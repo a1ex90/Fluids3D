@@ -37,7 +37,9 @@ public:
 	
 	bool isClosed() { return m_display->isClosed(); };
 	bool isPaused() { return m_isPaused; };
-	bool forwardPressed() { if (m_forwardPressed) { m_forwardPressed = false; return true; } };
+	bool forwardPressed() { if (m_forwardPressed) { m_forwardPressed = false; return true; } return false; };
+
+	glm::vec3 currentOrientation() { return m_orientation; };
 
 private:
 	//output window
@@ -56,6 +58,8 @@ private:
 	bool m_isPaused;
 	//forward to next frame
 	bool m_forwardPressed;
+	//stores the current orientation
+	glm::vec3 m_orientation;
 
 	void initGeom(SimUtil::Mat3Di *label, int x, int y, int z);
 	void initBorderLines(int x, int y, int z, int maxGridSize);

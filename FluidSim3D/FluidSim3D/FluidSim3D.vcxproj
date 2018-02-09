@@ -146,15 +146,15 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>.\include;C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v9.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>.\lib;C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v9.0\lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>OpenCL.lib;glew32.lib;glew32s.lib;SDL2.lib;SDL2main.lib;SDL2test.lib;OpenGL32.lib;AntTweakBar64.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>.\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>glew32.lib;glew32s.lib;SDL2.lib;SDL2main.lib;SDL2test.lib;OpenGL32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <HeapReserveSize>
       </HeapReserveSize>
       <StackReserveSize>
@@ -165,13 +165,7 @@
     <None Include="basicShader.fs" />
     <None Include="basicShader.vs" />
     <None Include="frag.glsl" />
-    <None Include="solidsShader.fs" />
-    <None Include="solidsShader.vs" />
     <None Include="packages.config" />
-    <None Include="pointShader.fs" />
-    <None Include="pointShader.vs" />
-    <None Include="textureShader.fs" />
-    <None Include="textureShader.vs" />
     <None Include="vert.glsl" />
   </ItemGroup>
   <ItemGroup>
