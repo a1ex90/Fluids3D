@@ -1,8 +1,5 @@
-#include <iostream>
-#include <fstream>
-#include <cassert>
 #include "RenderUtil.h"
-#include "stb_image.h"
+
 
 //----------------------------------------------------------------------
 // Display Class

@@ -19,9 +19,9 @@
 //----------------------------------------------------------------------
 
 // whether to run rendering
-const bool DISPLAY_MARCHINGCUBES = false;
+const bool DISPLAY_MARCHINGCUBES = true;
 // wheater to do a realtime simulation
-const bool REALTIME_SIM = true;
+const bool REALTIME_SIM = false;
 // wheater to manipulate gravity by user input
 const bool MANIPULATION = true;
 /* 
@@ -50,9 +50,6 @@ const float TIME_STEP = 0.01f;
 
 // input file for initial system state - grid marked solid, fluid, or air
 const std::string INITIAL_GEOMETRY_FILE_IN = "geo_small4.txt";
-// output file for watersurface line data
-const std::string DATA_FILES_OUT = "shit";
-
 
 //----------------------------------------------------------------------
 // Global Variables
@@ -73,31 +70,7 @@ int main(int argc, char** argv) {
 	if (REALTIME_SIM) {
 		FluidSolver3D solver(GRID_WIDTH, GRID_HEIGHT, GRID_DEPTH, GRID_CELL_WIDTH, TIME_STEP);
 		solver.init(INITIAL_GEOMETRY_FILE_IN);
-		//FluidRenderer3D render{ INITIAL_GEOMETRY_FILE_IN, VISUALIZATION_MODE };
 		FluidRenderer3D render( solver.getGeometry(),GRID_WIDTH, GRID_HEIGHT, GRID_DEPTH );
-		/*for (int frame = 0; frame < 4*NUM_SIM_FRAMES; frame++) {
-			auto start = std::chrono::system_clock::now();
-			solver.step();
-			if (VISUALIZATION_MODE == 0) {
-				render.drawP(solver.particleData());
-			}
-			else if (VISUALIZATION_MODE == 1) {
-				SimUtil::Mesh3D data = solver.meshData();
-				render.draw(data.vertices, data.normals, data.indices);
-			}
-			if (frame == 0) {
-				//Wait for keypress to start
-				std::cin.ignore();
-			}
-			bool sleep = true;
-			while (sleep) {
-				auto now = std::chrono::system_clock::now();
-				auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(now - start);
-				if (elapsed.count() > 1000*TIME_STEP) {
-					sleep = false;
-				}
-			}
-		}*/
 		solver.step();
 		SimUtil::Mesh3D data = solver.meshData();
 		auto start = std::chrono::system_clock::now();
@@ -131,7 +104,7 @@ int main(int argc, char** argv) {
 		}
 	}
 	if (DISPLAY_MARCHINGCUBES) {
-		int CASENO = 139;
+		int CASENO = 34;
 		SimUtil::Mat3Di empty{ 2,2,2 };
 		empty.initValues(SimUtil::AIR);
 		SimUtil::Mat3Df caseMat{ 2,2,2 };
@@ -145,12 +118,16 @@ int main(int argc, char** argv) {
 		MarchingCubes::initMarchingCubesCases(cubeCases, cubeIndices);
 
 		SimUtil::Mesh3D caseMesh = MarchingCubes::meshData(caseMat, cubeCases, cubeIndices, 2, 2, 2, 0.0f);
+		SimUtil::Mesh3D caseMesh2 = MarchingCubes::meshData(caseMat, 2, 2, 2, 0.0f);
 
 
 		FluidRenderer3D render(&empty, 2, 2, 2);
 		while (true) {
-			render.drawCubes(caseMesh.vertices, caseMesh.indices, darkDots, brightDots);
+			render.drawCubes(caseMesh2.vertices, caseMesh2.indices, darkDots, brightDots);
 		}
+		/*std::ofstream *particlesOut = new std::ofstream("cubedata.txt", std::ofstream::trunc);
+
+		MarchingCubes::save(particlesOut);*/
 		
 	}
 

@@ -1,5 +1,9 @@
 #pragma once
 #include <vector>
+#include <iostream>
+#include <string>
+#include <SDL2/SDL.h>
+
 #include "RenderUtil.h"
 #include "SimUtil.h"
 

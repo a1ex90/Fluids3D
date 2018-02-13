@@ -1,17 +1,4 @@
-#include <iostream>
-#include <exception>
-#include <cmath>
-#include <cstdlib>
-#include <ctime>
-#include <limits>
-//Timing
-#include <chrono>
-#include <ratio>
-
 #include "FluidSolver3d.h"
-#include "MarchingCubes.h"
-#include "SimUtil.h"
-#include "classicSolver.h"
 
 using namespace SimUtil;
 
@@ -38,7 +25,7 @@ FluidSolver3D::FluidSolver3D(int width, int height, int depth, float dx, float d
 	m_dx = dx;
 	m_dt = dt;
 
-	MarchingCubes::initMarchingCubesCases(m_cubeCases, m_cubeIndices);
+	//MarchingCubes::initMarchingCubesCases(m_cubeCases, m_cubeIndices);
 
 	m_particles = new std::vector<Particle3D>();
 	if (ENABLE_TIMING) {
@@ -224,7 +211,7 @@ std::vector<glm::vec3> FluidSolver3D::particleData() {
 }
 
 Mesh3D FluidSolver3D::meshData() {
-	return MarchingCubes::meshData(m_p, m_cubeCases, m_cubeIndices, m_gridWidth, m_gridHeight, m_gridDepth, SURFACE_THRESHOLD);
+	return MarchingCubes::meshData(m_p, m_gridWidth, m_gridHeight, m_gridDepth, SURFACE_THRESHOLD);
 }
 
 

@@ -1,7 +1,4 @@
 #include "timing.h"
-#include <ratio>
-#include <fstream>
-
 
 using namespace std::chrono;
 

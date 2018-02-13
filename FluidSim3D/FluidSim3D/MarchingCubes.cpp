@@ -1,7 +1,5 @@
 #include "MarchingCubes.h"
 
-
-
 namespace MarchingCubes {
 	SimUtil::Mesh3D meshData(SimUtil::Mat3Df &grid, std::vector<std::vector<glm::vec3>> &cubeCases, std::vector<std::vector<int>> &cubeIndices, int width, int height, int depth, float tol) {
 
@@ -41,6 +39,103 @@ namespace MarchingCubes {
 						float offsetX = cubeCases[selectCase][l].x;
 						float offsetY = cubeCases[selectCase][l].y;
 						float offsetZ = cubeCases[selectCase][l].z;
+
+						glm::vec3 normal;
+						//offset Interpolation wrong!
+
+						//the offset of 0.5f indicates that this axis needs interpolation
+						/*if (offsetX == 0.5f) {
+						int offsetJ = (int)offsetY;
+						int offsetK = (int)offsetZ;
+						offsetX = 1 / (grid.get(i + 1, j + offsetJ, k + offsetK) - grid.get(i, j + offsetJ, k + offsetK)) * (tol - grid.get(i, j + offsetJ, k + offsetK));
+
+						normal.x = offsetX * grid.get(i, j + offsetJ, k + offsetK) - (1.0f - offsetX) * grid.get(i + 1, j + offsetJ, k + offsetK);
+						normal.y = offsetX * (grid.get(i, j + offsetJ - 1, k + offsetK) - grid.get(i, j + offsetJ + 1, k + offsetK)) / 2.0 +
+						(1.0f - offsetX) * (grid.get(i + 1, j + offsetJ - 1, k + offsetK) - grid.get(i + 1, j + offsetJ + 1, k + offsetK)) / 2.0;
+						normal.z = offsetX * (grid.get(i, j + offsetJ, k + offsetK - 1) - grid.get(i, j + offsetJ, k + offsetK + 1)) / 2.0 +
+						(1.0f - offsetX) * (grid.get(i + 1, j + offsetJ, k + offsetK - 1) - grid.get(i + 1, j + offsetJ, k + offsetK + 1)) / 2.0;
+
+						}
+						else if (offsetY == 0.5f) {
+						int offsetI = (int)offsetX;
+						int offsetK = (int)offsetZ;
+						offsetY = 1 / (grid.get(i + offsetI, j + 1, k + offsetK) - grid.get(i + offsetI, j, k + offsetK)) * (tol - grid.get(i + offsetI, j, k + offsetK));
+
+						normal.y = offsetY * grid.get(i + offsetI, j, k + offsetK) - (1.0f - offsetY) * grid.get(i + offsetI, j + 1, k + offsetK);
+						normal.x = offsetY * (grid.get(i + offsetI - 1, j, k + offsetK) - grid.get(i + offsetI + 1, j, k + offsetK)) / 2.0 +
+						(1.0f - offsetY) * (grid.get(i + offsetI - 1, j + 1, k + offsetK) - grid.get(i + offsetI + 1, j + 1, k + offsetK)) / 2.0;
+						normal.z = offsetY * (grid.get(i + offsetI, j, k + offsetK - 1) - grid.get(i + offsetI, j, k + offsetK + 1)) / 2.0 +
+						(1.0f - offsetY) * (grid.get(i + offsetI, j + 1, k + offsetK - 1) - grid.get(i + offsetI, j + 1, k + offsetK + 1)) / 2.0;
+						}
+						else if (offsetZ == 0.5f) {
+						int offsetI = (int)offsetX;
+						int offsetJ = (int)offsetY;
+						offsetY = 1 / (grid.get(i + offsetI, j + offsetJ, k + 1) - grid.get(i + offsetI, j + offsetJ, k)) * (tol - grid.get(i + offsetI, j + offsetJ, k));
+
+						normal.z = offsetZ * grid.get(i + offsetI, j + offsetJ, k) - (1.0f - offsetZ) * grid.get(i + offsetI, j + offsetJ, k + 1);
+						normal.x = offsetZ * (grid.get(i + offsetI - 1, j + offsetJ, k) - grid.get(i + offsetI + 1, j + offsetJ, k)) / 2.0 +
+						(1.0f - offsetZ) * (grid.get(i + offsetI - 1, j + offsetJ, k + 1) - grid.get(i + offsetI + 1, j + offsetJ, k + 1)) / 2.0;
+						normal.y = offsetZ * (grid.get(i + offsetI, j + offsetJ - 1, k) - grid.get(i + offsetI, j + offsetJ + 1, k)) / 2.0 +
+						(1.0f - offsetZ) * (grid.get(i + offsetI, j + offsetJ - 1, k + 1) - grid.get(i + offsetI, j + offsetJ + 1, k + 1)) / 2.0;
+						}*/
+
+						float x = 2.0f * (i + offsetX) / (maxGridSize - 1) - 1;
+						float y = 2.0f * (j + offsetY) / (maxGridSize - 1) - 1;
+						float z = 2.0f * (k + offsetZ) / (maxGridSize - 1) - 1;
+
+						//normalize normals vector
+						glm::normalize(normal);
+
+						vertices.push_back(glm::vec3{ x,y,z });
+						normals.push_back(normal);
+
+						//increment the current Index
+						curInd++;
+					}
+				}
+			}
+		}
+		return SimUtil::Mesh3D(vertices, normals, globalIndices);
+	}
+
+	SimUtil::Mesh3D meshData(SimUtil::Mat3Df &grid, int width, int height, int depth, float tol) {
+
+		int maxGridSize = maxSize(width, height, depth);
+
+		std::vector<glm::vec3> vertices;
+		std::vector<glm::vec3> normals;
+		std::vector<int> globalIndices;
+		int curInd = 0;
+
+		//FOR NORMALS FROM 1 to -2
+		for (int i = 0; i < width - 1; i++) {
+			for (int j = 0; j < height - 1; j++) {
+				for (int k = 0; k < depth - 1; k++) {
+					//determine which of the 256 different cases for one square exists
+					int selectCase = 0;
+					if (grid.get(i, j, k + 1) > tol)
+						selectCase += 128;
+					if (grid.get(i + 1, j, k + 1) > tol)
+						selectCase += 64;
+					if (grid.get(i + 1, j + 1, k + 1) > tol)
+						selectCase += 32;
+					if (grid.get(i, j + 1, k + 1) > tol)
+						selectCase += 16;
+					if (grid.get(i, j, k) > tol)
+						selectCase += 8;
+					if (grid.get(i + 1, j, k) > tol)
+						selectCase += 4;
+					if (grid.get(i + 1, j + 1, k) > tol)
+						selectCase += 2;
+					if (grid.get(i, j + 1, k) > tol)
+						selectCase += 1;
+					for (int l = 0; l < indiciesLength[selectCase]; l++) {
+						globalIndices.push_back(indices[selectCase][l] + curInd);
+					}
+					for (int l = 0; l < pointsLength[selectCase]; l++) {
+						float offsetX = points[selectCase][3 * l] / 2.0f;
+						float offsetY = points[selectCase][3 * l + 1] / 2.0f;
+						float offsetZ = points[selectCase][3 * l + 2] / 2.0f;
 
 						glm::vec3 normal;
 						//offset Interpolation wrong!
@@ -105,35 +200,35 @@ namespace MarchingCubes {
 			return;
 		}
 		if (caseNo >= 128) {
-			grid.set(0, 0, 1, 1);
+			grid.set(0.0f, 0, 1, 1);
 			caseNo -= 128;
 		}
 		if (caseNo >= 64) {
-			grid.set(1, 0, 1, 1);
+			grid.set(1.0f, 0, 1, 1);
 			caseNo -= 64;
 		}
 		if (caseNo >= 32) {
-			grid.set(1, 1, 1, 1);
+			grid.set(1.0f, 1, 1, 1);
 			caseNo -= 32;
 		}
 		if (caseNo >= 16) {
-			grid.set(0, 1, 1, 1);
+			grid.set(0.0f, 1, 1, 1);
 			caseNo -= 16;
 		}
 		if (caseNo >= 8) {
-			grid.set(0, 0, 0, 1);
+			grid.set(0.0f, 0, 0, 1);
 			caseNo -= 8;
 		}
 		if (caseNo >= 4) {
-			grid.set(1, 0, 0, 1);
+			grid.set(1.0f, 0, 0, 1);
 			caseNo -= 4;
 		}
 		if (caseNo >= 2) {
-			grid.set(1, 1, 0, 1);
+			grid.set(1.0f, 1, 0, 1);
 			caseNo -= 2;
 		}
 		if (caseNo >= 1) {
-			grid.set(0, 1, 0, 1);
+			grid.set(0.0f, 1, 0, 1);
 			caseNo -= 1;
 		}
 	}
@@ -196,7 +291,9 @@ namespace MarchingCubes {
 			brightDots.push_back(glm::vec3{ -1,1,-1 });
 		}
 	}
-
+	void initMarchingCubesCases(int points, std::vector<std::vector<int>> &indices) {
+		
+	}
 
 	void initMarchingCubesCases(std::vector<std::vector<glm::vec3>> &points, std::vector<std::vector<int>> &indices) {
 		points.reserve(256);
@@ -856,6 +953,27 @@ namespace MarchingCubes {
 				return height;
 			else
 				return depth;
+		}
+	}
+
+	void save(std::ofstream *outData) {
+		if (outData->is_open()) {
+			int maxSize = 0;
+			std::vector<std::vector<glm::vec3>> points; 
+			std::vector<std::vector<int>> indices;
+			initMarchingCubesCases(points, indices);
+			(*outData) << "const int points[256][12] = { \n";
+			for (int i = 0; i < 256; i++) {
+				(*outData) << "{ ";
+				if (indices[i].size() > 0) {
+					for (int j = 0; j < points[i].size() - 1; j++) {
+						(*outData) << 2 * points[i][j].x << ", " << 2 * points[i][j].y << ", " << 2 * points[i][j].z << ", ";
+					}
+					(*outData) << 2 * points[i][points[i].size() - 1].x << ", " << 2 * points[i][points[i].size() - 1].y << ", " << 2 * points[i][points[i].size() - 1].z;
+				}
+				(*outData) << "},\n ";
+			}
+			(*outData) << "};";
 		}
 	}
 }

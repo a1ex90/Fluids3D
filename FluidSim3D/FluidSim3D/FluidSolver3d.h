@@ -6,8 +6,19 @@
 #include <fstream>
 #include <climits>
 #include <glm/glm.hpp>
+#include <iostream>
+#include <exception>
+#include <cmath>
+#include <cstdlib>
+#include <ctime>
+#include <limits>
+//Timing
+#include <chrono>
+#include <ratio>
 
 #include "SimUtil.h"
+#include "MarchingCubes.h"
+#include "classicSolver.h"
 #include "timing.h"
 
 

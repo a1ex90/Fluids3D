@@ -1,10 +1,5 @@
 #include "SimUtil.h"
 
-#include <iostream>
-#include <fstream>
-#include <cmath>
-#include <limits>
-
 namespace SimUtil {
 	//----------------------------------------------------------------------
 	// Mat3Di Class

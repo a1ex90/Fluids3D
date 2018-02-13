@@ -4,6 +4,10 @@
 #include <string>
 #include <vector>
 #include <glm/glm.hpp>
+#include <iostream>
+#include <fstream>
+#include <cmath>
+#include <limits>
 
 namespace SimUtil {
 	class Mat3Di {

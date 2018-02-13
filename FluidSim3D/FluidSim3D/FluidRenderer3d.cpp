@@ -1,9 +1,5 @@
 #include "FluidRenderer3d.h"
-#include <iostream>
-#include <string>
-#include <fstream>
-#include <SDL2/SDL.h>
-#include "timing.h"
+
 
 #define WIDTH 800
 #define HEIGHT 600

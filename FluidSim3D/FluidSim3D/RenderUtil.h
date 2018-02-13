@@ -3,6 +3,9 @@
 #include <SDL2/SDL.h>
 #include <GL/glew.h>
 #include <glm/glm.hpp>
+#include <iostream>
+#include <fstream>
+#include <cassert>
 #define GLM_ENABLE_EXPERIMENTAL 
 #include <glm/gtx/transform.hpp>
 
