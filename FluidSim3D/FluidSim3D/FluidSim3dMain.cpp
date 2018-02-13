@@ -19,9 +19,9 @@
 //----------------------------------------------------------------------
 
 // whether to run rendering
-const bool DISPLAY_MARCHINGCUBES = true;
+const bool DISPLAY_MARCHINGCUBES = false;
 // wheater to do a realtime simulation
-const bool REALTIME_SIM = false;
+const bool REALTIME_SIM = true;
 // wheater to manipulate gravity by user input
 const bool MANIPULATION = true;
 /* 
@@ -76,7 +76,10 @@ int main(int argc, char** argv) {
 		auto start = std::chrono::system_clock::now();
 		bool newFrame = true;
 		while (!render.isClosed()) {
-			render.draw(data.vertices, data.normals, data.indices);
+			if (VISUALIZATION_MODE == 1)
+				render.draw(data.vertices, data.normals, data.indices);
+			else if (VISUALIZATION_MODE == 0)
+				render.drawP(solver.particleData());
 			if (!render.isPaused() && newFrame) {
 				start = std::chrono::system_clock::now();
 				if (MANIPULATION) {
@@ -109,15 +112,11 @@ int main(int argc, char** argv) {
 		empty.initValues(SimUtil::AIR);
 		SimUtil::Mat3Df caseMat{ 2,2,2 };
 		MarchingCubes::initCase(caseMat, CASENO);
-		std::vector<std::vector<glm::vec3>> cubeCases; 
-		std::vector<std::vector<int>> cubeIndices;
 		
 		std::vector<glm::vec3> darkDots;
 		std::vector<glm::vec3> brightDots;
 		MarchingCubes::corners(darkDots, brightDots, CASENO);
-		MarchingCubes::initMarchingCubesCases(cubeCases, cubeIndices);
 
-		SimUtil::Mesh3D caseMesh = MarchingCubes::meshData(caseMat, cubeCases, cubeIndices, 2, 2, 2, 0.0f);
 		SimUtil::Mesh3D caseMesh2 = MarchingCubes::meshData(caseMat, 2, 2, 2, 0.0f);
 
 
@@ -125,9 +124,6 @@ int main(int argc, char** argv) {
 		while (true) {
 			render.drawCubes(caseMesh2.vertices, caseMesh2.indices, darkDots, brightDots);
 		}
-		/*std::ofstream *particlesOut = new std::ofstream("cubedata.txt", std::ofstream::trunc);
-
-		MarchingCubes::save(particlesOut);*/
 		
 	}
 

@@ -3,13 +3,10 @@
 #include "SimUtil.h"
 
 namespace MarchingCubes {
-	SimUtil::Mesh3D meshData(SimUtil::Mat3Df &grid, std::vector<std::vector<glm::vec3>> &cubeCases, std::vector<std::vector<int>> &cubeIndices, int width, int height, int depth, float tol);
 	SimUtil::Mesh3D meshData(SimUtil::Mat3Df &grid, int width, int height, int depth, float tol);
 	void initCase(SimUtil::Mat3Df &grid, int caseNo);
 	void corners(std::vector<glm::vec3> &darkDots, std::vector<glm::vec3> &brightDots, int caseNo);
-	void initMarchingCubesCases(std::vector<std::vector<glm::vec3>> &points, std::vector<std::vector<int>> &indices);
 	int maxSize(int width, int height, int depth);
-	void save(std::ofstream *outData);
 
 	/*vertice data for the 256 cases of marching cubes where 0,0,0 is the front-lower-left corner and 2,2,2 the back-top-right corner of the cube
 	order is x1,y1,z1, x2,y2,z2, and so on*/

@@ -624,7 +624,7 @@ void FluidSolver3D::applyPressure() {
 							m_w.set(i, j, k, 0.0f); // wsolid[i][j]
 						}
 						else {
-							m_w.set(i, j, k, m_v.get(i, j, k) - scale * (m_p.get(i, j, k) - m_p.get(i, j, k - 1)));
+							m_w.set(i, j, k, m_w.get(i, j, k) - scale * (m_p.get(i, j, k) - m_p.get(i, j, k - 1)));
 						}
 					}
 					else {

@@ -480,7 +480,7 @@ void classicSolver::applyA(Mat3Dd &z, Mat3Dd &s, Mat3Dd &Adiag, Mat3Dd &Ax, Mat3
 					if (j - 1 >= 0 && j - 1 < m_gridHeight) {
 						z.set(i, j, k, z.get(i, j, k) + Ay.get(i, j - 1, k) * s.get(i, j - 1, k));
 					}
-					if (j - 1 >= 0 && j - 1 < m_gridDepth) {
+					if (k - 1 >= 0 && k - 1 < m_gridDepth) {
 						z.set(i, j, k, z.get(i, j, k) + Az.get(i, j, k - 1) * s.get(i, j, k - 1));
 					}
 				}
