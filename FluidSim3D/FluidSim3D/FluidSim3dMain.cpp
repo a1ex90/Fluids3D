@@ -29,7 +29,7 @@ choose a visualization mode for rendering
 0 - Draw Fluid as Particles
 1 - Draw Fluid as Triangle Mesh
 */
-const int VISUALIZATION_MODE = 1;
+const int VISUALIZATION_MODE = 0;
 
 //----------------------------------------------------------------------
 // Simulation Parameters

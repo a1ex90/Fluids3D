@@ -126,31 +126,31 @@ void Display::update(glm::vec3 &orientation, bool &pausePressed, bool &forwardPr
 				break;
 			case SDLK_RIGHT: {
 				m_transform->SetRot((m_transform->GetRot() + glm::vec3(0, 2 * PI / increments, 0)));
-				float y = orientation.y * cos(2 * PI / increments) - orientation.z * sin(2 * PI / increments);
-				float z = orientation.y * sin(2 * PI / increments) + orientation.z * cos(2 * PI / increments);
-				orientation.y = y;
-				orientation.z = z;
-				break; }
-			case SDLK_LEFT: {
-				m_transform->SetRot((m_transform->GetRot() - glm::vec3(0, 2 * PI / increments, 0)));
-				float y = orientation.y * cos(2 * PI / increments) + orientation.z * sin(2 * PI / increments);
-				float z = -orientation.y * sin(2 * PI / increments) + orientation.z * cos(2 * PI / increments);
-				orientation.y = y;
-				orientation.z = z;
-				break; }
-			case SDLK_DOWN: {
-				m_transform->SetRot((m_transform->GetRot() - glm::vec3(2 * PI / increments, 0, 0)));
 				float z = orientation.z * cos(2 * PI / increments) + orientation.x * sin(2 * PI / increments);
 				float x = -orientation.z * sin(2 * PI / increments) + orientation.x * cos(2 * PI / increments);
 				orientation.z = z;
 				orientation.x = x;
 				break; }
-			case SDLK_UP: {
-				m_transform->SetRot((m_transform->GetRot() + glm::vec3(2 * PI / increments, 0, 0)));
+			case SDLK_LEFT: {
+				m_transform->SetRot((m_transform->GetRot() - glm::vec3(0, 2 * PI / increments, 0)));
 				float z = orientation.z * cos(2 * PI / increments) - orientation.x * sin(2 * PI / increments);
 				float x = orientation.z * sin(2 * PI / increments) + orientation.x * cos(2 * PI / increments);
 				orientation.z = z;
 				orientation.x = x;
+				break; }
+			case SDLK_DOWN: {
+				m_transform->SetRot((m_transform->GetRot() - glm::vec3(2 * PI / increments, 0, 0)));
+				float y = orientation.y * cos(2 * PI / increments) - orientation.z * sin(2 * PI / increments);
+				float z = orientation.y * sin(2 * PI / increments) + orientation.z * cos(2 * PI / increments);
+				orientation.y = y;
+				orientation.z = z;
+				break; }
+			case SDLK_UP: {
+				m_transform->SetRot((m_transform->GetRot() + glm::vec3(2 * PI / increments, 0, 0)));			
+				float y = orientation.y * cos(2 * PI / increments) + orientation.z * sin(2 * PI / increments);
+				float z = -orientation.y * sin(2 * PI / increments) + orientation.z * cos(2 * PI / increments);
+				orientation.y = y;
+				orientation.z = z;
 				break; }
 			case SDLK_o: {
 				m_transform->SetRot((m_transform->GetRot() + glm::vec3(0, 0, 2 * PI / increments)));
