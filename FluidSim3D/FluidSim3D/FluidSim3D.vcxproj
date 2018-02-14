@@ -110,7 +110,7 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>.\lib;C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v9.0\lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>OpenCL.lib;glew32.lib;glew32s.lib;SDL2.lib;SDL2main.lib;SDL2test.lib;OpenGL32.lib;AntTweakBar64.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>OpenCL.lib;glew32.lib;glew32s.lib;SDL2.lib;SDL2main.lib;SDL2test.lib;OpenGL32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <HeapReserveSize>
       </HeapReserveSize>
       <StackReserveSize>

@@ -18,10 +18,6 @@
 // Execution Options
 //----------------------------------------------------------------------
 
-// whether to run rendering
-const bool DISPLAY_MARCHINGCUBES = false;
-// wheater to do a realtime simulation
-const bool REALTIME_SIM = true;
 // wheater to manipulate gravity by user input
 const bool MANIPULATION = true;
 
@@ -61,61 +57,39 @@ const float FRAME_TIME_STEP = 1.0f / FRAME_RATE;
 //----------------------------------------------------------------------
 
 int main(int argc, char** argv) {
-	if (REALTIME_SIM) {
-		FluidSolver3D solver(GRID_WIDTH, GRID_HEIGHT, GRID_DEPTH, GRID_CELL_WIDTH, TIME_STEP);
-		solver.init(INITIAL_GEOMETRY_FILE_IN);
-		FluidRenderer3D render( solver.getGeometry(),GRID_WIDTH, GRID_HEIGHT, GRID_DEPTH );
-		solver.step();
-		SimUtil::Mesh3D data = solver.meshData();
-		auto start = std::chrono::system_clock::now();
-		bool newFrame = true;
-		while (!render.isClosed()) {
-			render.draw(solver.particleData(), data.vertices, data.normals, data.indices);
-			if (!render.isPaused() && newFrame) {
-				start = std::chrono::system_clock::now();
-				if (MANIPULATION) {
-					solver.updateOrientation(render.currentOrientation());
-				}
-				solver.step();
-				data = solver.meshData();
-				newFrame = false;
+	FluidSolver3D solver(GRID_WIDTH, GRID_HEIGHT, GRID_DEPTH, GRID_CELL_WIDTH, TIME_STEP);
+	solver.init(INITIAL_GEOMETRY_FILE_IN);
+	FluidRenderer3D render( solver.getGeometry(), GRID_WIDTH, GRID_HEIGHT, GRID_DEPTH );
+	solver.step();
+	SimUtil::Mesh3D data = solver.meshData();
+	auto start = std::chrono::system_clock::now();
+	bool newFrame = true;
+	while (!render.isClosed()) {
+		render.draw(solver.particleData(), data.vertices, data.normals, data.indices);
+		if (!render.isPaused() && newFrame) {
+			start = std::chrono::system_clock::now();
+			if (MANIPULATION) {
+				solver.updateOrientation(render.currentOrientation());
 			}
-			if (render.isPaused() && render.forwardPressed()) {
-				if (MANIPULATION) {
-					solver.updateOrientation(render.currentOrientation());
-				}
-				solver.step();
-				data = solver.meshData();
+			solver.step();
+			data = solver.meshData();
+			newFrame = false;
+		}
+		if (render.isPaused() && render.forwardPressed()) {
+			if (MANIPULATION) {
+				solver.updateOrientation(render.currentOrientation());
 			}
-			//Check if it's time for a new frame
-			if (!render.isPaused() && !newFrame) {
-				auto now = std::chrono::system_clock::now();
-				auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(now - start);
-				if (elapsed.count() > 1000 * TIME_STEP) {
-					newFrame = true;
-				}
+			solver.step();
+			data = solver.meshData();
+		}
+		//Check if it's time for a new frame
+		if (!render.isPaused() && !newFrame) {
+			auto now = std::chrono::system_clock::now();
+			auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(now - start);
+			if (elapsed.count() > 1000 * TIME_STEP) {
+				newFrame = true;
 			}
 		}
-	}
-	if (DISPLAY_MARCHINGCUBES) {
-		int CASENO = 34;
-		SimUtil::Mat3Di empty{ 2,2,2 };
-		empty.initValues(SimUtil::AIR);
-		SimUtil::Mat3Df caseMat{ 2,2,2 };
-		MarchingCubes::initCase(caseMat, CASENO);
-		
-		std::vector<glm::vec3> darkDots;
-		std::vector<glm::vec3> brightDots;
-		MarchingCubes::corners(darkDots, brightDots, CASENO);
-
-		SimUtil::Mesh3D caseMesh2 = MarchingCubes::meshData(caseMat, 2, 2, 2, 0.0f);
-
-
-		FluidRenderer3D render(&empty, 2, 2, 2);
-		while (true) {
-			render.drawCubes(caseMesh2.vertices, caseMesh2.indices, darkDots, brightDots);
-		}
-		
 	}
 
 	return 0;
