@@ -24,12 +24,6 @@ const bool DISPLAY_MARCHINGCUBES = false;
 const bool REALTIME_SIM = true;
 // wheater to manipulate gravity by user input
 const bool MANIPULATION = true;
-/* 
-choose a visualization mode for rendering
-0 - Draw Fluid as Particles
-1 - Draw Fluid as Triangle Mesh
-*/
-const int VISUALIZATION_MODE = 0;
 
 //----------------------------------------------------------------------
 // Simulation Parameters
@@ -76,10 +70,7 @@ int main(int argc, char** argv) {
 		auto start = std::chrono::system_clock::now();
 		bool newFrame = true;
 		while (!render.isClosed()) {
-			if (VISUALIZATION_MODE == 1)
-				render.draw(data.vertices, data.normals, data.indices);
-			else if (VISUALIZATION_MODE == 0)
-				render.drawP(solver.particleData());
+			render.draw(solver.particleData(), data.vertices, data.normals, data.indices);
 			if (!render.isPaused() && newFrame) {
 				start = std::chrono::system_clock::now();
 				if (MANIPULATION) {

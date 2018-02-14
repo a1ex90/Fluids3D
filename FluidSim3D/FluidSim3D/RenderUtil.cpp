@@ -69,7 +69,7 @@ bool Display::isClosed() {
 /*
 Updates the window
 */
-void Display::update(glm::vec3 &orientation, bool &pausePressed, bool &forwardPressed) {
+void Display::update(glm::vec3 &orientation, bool &pausePressed, bool &forwardPressed, int &visualMode) {
 	SDL_GL_SwapWindow(m_window);
 	SDL_Event e;
 	int handled;
@@ -89,6 +89,15 @@ void Display::update(glm::vec3 &orientation, bool &pausePressed, bool &forwardPr
 		case SDL_KEYDOWN:
 			switch (e.key.keysym.sym)
 			{
+			case SDLK_1:
+				visualMode = 1;
+				break;
+			case SDLK_2:
+				visualMode = 2;
+				break;
+			case SDLK_3:
+				visualMode = 3;
+				break;
 			case SDLK_w:
 				//move screen up
 				m_transform->SetPos(m_transform->GetPos() + glm::vec3(0, steps, 0));

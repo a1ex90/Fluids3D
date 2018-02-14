@@ -21,23 +21,18 @@ public:
 	FluidRenderer3D::FluidRenderer3D(SimUtil::Mat3Di *labels, int gridWidth, int gridHeight, int gridDepth);
 	~FluidRenderer3D();
 	/*
-	Draws the given particles as dots
-	Args:
-	particles - location of the particles
-	*/
-	void drawP(std::vector<glm::vec3> particles);
-	/*
 	Draws a marching cubes case
 	*/
 	void drawCubes(std::vector<glm::vec3> vertices, std::vector<int> indices, std::vector<glm::vec3> darkDots, std::vector<glm::vec3> brightDots);
 	/*
-	Draws the given vertices as a mesh
+	Draws the fluid according to choosen visualization mode
 	Args:
+	particles - location of the particles
 	vertices - vertices of the triangle mesh
 	normals - normals of the triangle mesh
 	indicies - indicies of the vertices for the triangulation
 	*/
-	void draw(std::vector<glm::vec3> vertices, std::vector<glm::vec3> normals, std::vector<int> indicies);
+	void draw(std::vector<glm::vec3> &particles, std::vector<glm::vec3> &vertices, std::vector<glm::vec3> &normals, std::vector<int> &indicies);
 	
 	bool isClosed() { return m_display->isClosed(); };
 	bool isPaused() { return m_isPaused; };
@@ -62,6 +57,12 @@ private:
 	bool m_isPaused;
 	//forward to next frame
 	bool m_forwardPressed;
+	/*
+	visualization mode for rendering
+	1 - Draw Fluid as Particles
+	2 - Draw Fluid as Triangle Mesh
+	*/
+	int m_visualMode;
 	//stores the current orientation
 	glm::vec3 m_orientation;
 

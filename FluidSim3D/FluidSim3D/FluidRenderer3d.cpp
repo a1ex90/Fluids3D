@@ -18,6 +18,7 @@ FluidRenderer3D::FluidRenderer3D(SimUtil::Mat3Di *labels, int gridWidth, int gri
 	m_isPaused = true;
 	m_forwardPressed = false;
 	m_orientation = glm::vec3(0.0f, -1.0f, 0.0f);
+	m_visualMode = 1;
 }
 
 FluidRenderer3D::~FluidRenderer3D() {
@@ -27,26 +28,7 @@ FluidRenderer3D::~FluidRenderer3D() {
 // Public Functions
 //----------------------------------------------------------------------
 
-void FluidRenderer3D::drawP(std::vector<glm::vec3> particles) {
-	m_display->clear(0.686f, 0.933f, 0.933f, 1.0f);
-
-	m_colorShader->bind();
-	m_colorShader->update(m_transform, m_camera);
-	m_colorShader->setColor(0.0f, 0.0f, 0.0f, 1.0f);
-
-	m_borderSolid->draw();
-
-	Point point{ particles };
-	point.draw();
-
-	m_colorShader->setColor(0.392f, 0.584f, 0.929f, 0.1f);
-
-	m_meshSolid->draw();
-
-	m_display->update(m_orientation, m_isPaused, m_forwardPressed);
-}
-
-void FluidRenderer3D::draw(std::vector<glm::vec3> vertices, std::vector<glm::vec3> normals, std::vector<int> indicies) {
+void FluidRenderer3D::draw(std::vector<glm::vec3> &particles, std::vector<glm::vec3> &vertices, std::vector<glm::vec3> &normals, std::vector<int> &indicies) {
 	m_display->clear(0.686f, 0.933f, 0.933f, 1.0f);
 
 	m_colorShader->bind();
@@ -56,14 +38,26 @@ void FluidRenderer3D::draw(std::vector<glm::vec3> vertices, std::vector<glm::vec
 	m_borderSolid->draw();
 
 	Mesh mesh{ vertices, normals, indicies };
+	Point point{ particles };
 
-	mesh.draw();
+	if (m_visualMode == 1) {
+		point.draw();
+	}
+	else if (m_visualMode == 2) {
+		mesh.draw();
+	}
+	else if (m_visualMode == 3) {
+		mesh.draw();
+		m_colorShader->setColor(1.0f, 0.0f, 0.2f, 1.0f);
+		point.draw();
+	}
+	
 
 	m_colorShader->setColor(0.392f, 0.584f, 0.929f, 0.1f);
 
 	m_meshSolid->draw();
 
-	m_display->update(m_orientation, m_isPaused, m_forwardPressed);
+	m_display->update(m_orientation, m_isPaused, m_forwardPressed, m_visualMode);
 }
 
 void FluidRenderer3D::drawCubes(std::vector<glm::vec3> vertices, std::vector<int> indices, std::vector<glm::vec3> darkDots, std::vector<glm::vec3> brightDots) {
@@ -89,7 +83,7 @@ void FluidRenderer3D::drawCubes(std::vector<glm::vec3> vertices, std::vector<int
 	m_colorShader->setColor(1.0f, 0.9f, 0.9f, 1.0f);
 	mesh.drawOutline();
 	
-	m_display->update(m_orientation, m_isPaused, m_forwardPressed);
+	m_display->update(m_orientation, m_isPaused, m_forwardPressed, m_visualMode);
 }
 
 //----------------------------------------------------------------------
