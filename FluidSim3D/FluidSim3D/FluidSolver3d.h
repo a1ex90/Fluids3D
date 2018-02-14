@@ -75,11 +75,10 @@ private:
 	// the maximum number of grid cells a particle should move when advected
 	const int ADVECT_MAX = 1;
 	// acceleration due to gravity
-	//const SimUtil::Vec3 GRAVITY = { 0.0f, -9.81f, 0.0f };
 	const float GRAVITY = 9.81f;
 	// density of the fluid (kg/m^3)
 	const float FLUID_DENSITY = 1000.0f;
-	// surface threshold for marching squares
+	// surface threshold for marching cubes
 	const float SURFACE_THRESHOLD = 5.0f;
 
 	// simulation time step

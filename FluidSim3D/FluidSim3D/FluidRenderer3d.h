@@ -49,6 +49,8 @@ private:
 	Transform *m_transform;
 	//constant color shader
 	Shader *m_colorShader;
+	//shader with normal dependend shading
+	Shader *m_normalShader;
 	//Mesh with the geometry of the solids
 	Mesh *m_meshSolid;
 	//Line for the edges of the solids

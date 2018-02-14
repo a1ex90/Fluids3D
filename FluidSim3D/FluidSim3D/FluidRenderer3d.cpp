@@ -13,6 +13,7 @@ FluidRenderer3D::FluidRenderer3D(SimUtil::Mat3Di *labels, int gridWidth, int gri
 	m_display = new Display{ WIDTH, HEIGHT, "2D Fluid Simulation", m_transform };
 	m_camera = new Camera(glm::vec3(0, 0, -4), 70.0f, (float)WIDTH / (float)HEIGHT, 0.01f, 1000.0f);	
 	m_colorShader = new Shader{ "./basicShader" };
+	m_normalShader = new Shader{ "./normalShader" };
 	initGeom(labels, gridWidth, gridHeight, gridDepth);
 	//initially pause the simulation
 	m_isPaused = true;
@@ -50,6 +51,15 @@ void FluidRenderer3D::draw(std::vector<glm::vec3> &particles, std::vector<glm::v
 		mesh.draw();
 		m_colorShader->setColor(1.0f, 0.0f, 0.2f, 1.0f);
 		point.draw();
+	}
+	else if (m_visualMode == 4) {
+		m_normalShader->bind();
+		m_normalShader->update(m_transform, m_camera);
+		m_normalShader->setColor(0.0f, 0.0f, 0.0f, 1.0f);
+
+		mesh.draw();
+
+		m_colorShader->bind();
 	}
 	
 

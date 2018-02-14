@@ -27,6 +27,8 @@
     </None>
     <None Include="basicShader.fs" />
     <None Include="basicShader.vs" />
+    <None Include="normalShader.vs" />
+    <None Include="normalShader.fs" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SimUtil.cpp">

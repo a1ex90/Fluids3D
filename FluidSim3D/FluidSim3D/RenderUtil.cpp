@@ -98,6 +98,9 @@ void Display::update(glm::vec3 &orientation, bool &pausePressed, bool &forwardPr
 			case SDLK_3:
 				visualMode = 3;
 				break;
+			case SDLK_4:
+				visualMode = 4;
+				break;
 			case SDLK_w:
 				//move screen up
 				m_transform->SetPos(m_transform->GetPos() + glm::vec3(0, steps, 0));
@@ -220,6 +223,9 @@ Mesh::Mesh(std::vector<glm::vec3> vertices, std::vector<glm::vec3> normals, std:
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(indices[0]), indices.data(), GL_STATIC_DRAW);
 
 	glBindVertexArray(0);
+
+	// Cull triangles which normal is not towards the camera (not working yet)
+	//glEnable(GL_CULL_FACE);
 
 	//needs to be enabled to active opacity rendering
 	glEnable(GL_BLEND);

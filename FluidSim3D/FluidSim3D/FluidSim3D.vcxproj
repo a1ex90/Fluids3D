@@ -165,6 +165,8 @@
     <None Include="basicShader.fs" />
     <None Include="basicShader.vs" />
     <None Include="frag.glsl" />
+    <None Include="normalShader.fs" />
+    <None Include="normalShader.vs" />
     <None Include="packages.config" />
     <None Include="vert.glsl" />
   </ItemGroup>
