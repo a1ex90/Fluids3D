@@ -45,11 +45,13 @@ void FluidRenderer3D::draw(std::vector<glm::vec3> &particles, std::vector<glm::v
 		point.draw();
 	}
 	else if (m_visualMode == 2) {
+		m_colorShader->setColor(0.255f, 0.412f, 0.882f, 0.8f);
 		mesh.draw();
 	}
 	else if (m_visualMode == 3) {
+		m_colorShader->setColor(0.255f, 0.412f, 0.882f, 0.8f);
 		mesh.draw();
-		m_colorShader->setColor(1.0f, 0.0f, 0.2f, 1.0f);
+		m_colorShader->setColor(0.690f, 0.878f, 0.902f, 0.2f);
 		point.draw();
 	}
 	else if (m_visualMode == 4) {
@@ -113,6 +115,12 @@ void FluidRenderer3D::initGeom(SimUtil::Mat3Di *label, int x, int y, int z) {
 	std::vector<glm::vec3> vertSolid;
 	std::vector<glm::vec3> normalsSolid;
 	std::vector<int> indSolid;
+
+	const int BORDER_LR = 3;
+	const int BORDER_FB = 3;
+	const int BORDER_BOTTOM = 3;
+	const int BORDER_TOP = 3;
+
 	int maxGridSize;
 	int currentInd = 0;
 	//get maximum grid size for scaling
@@ -128,9 +136,9 @@ void FluidRenderer3D::initGeom(SimUtil::Mat3Di *label, int x, int y, int z) {
 		else
 			maxGridSize = z;
 	}
-	for (int i = 0; i < x; i++) {
-		for (int j = 0; j < y; j++) {
-			for (int k = 0; k < z; k++) {
+	for (int i = BORDER_LR; i < x - BORDER_LR; i++) {
+		for (int j = BORDER_BOTTOM; j < y - BORDER_TOP; j++) {
+			for (int k = BORDER_FB; k < z - BORDER_FB; k++) {
 				//only draw solids
 				if (label->get(i, j, k) == SimUtil::SOLID) {
 					float x1 = 2.0f * i / (maxGridSize)-1.0f;
