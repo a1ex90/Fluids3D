@@ -52,12 +52,11 @@ namespace MarchingCubes {
 							int offsetK = (int)offsetZ;
 							offsetX = 1 / (grid.get(i + 1, j + offsetJ, k + offsetK) - grid.get(i, j + offsetJ, k + offsetK)) * (tol - grid.get(i, j + offsetJ, k + offsetK));
 
-							normal.x = offsetX * (grid.get(i, j + offsetJ, k + offsetK) + grid.get(i - 1, j + offsetJ, k + offsetK)) - 
-								(1 - offsetX) * (grid.get(i + 1, j + offsetJ, k + offsetK) + grid.get(i + 2, j + offsetJ, k + offsetK));
-							normal.y = offsetX * (grid.get(i, j + offsetJ - 1, k + offsetK) + grid.get(i + 1, j + offsetJ - 1, k + offsetK)) -
-								(1 - offsetX) * (grid.get(i, j + offsetJ + 1, k + offsetK) + grid.get(i + 1, j + offsetJ + 1, k + offsetK));
-							normal.z = offsetX * (grid.get(i, j + offsetJ, k + offsetK - 1) + grid.get(i + 1, j + offsetJ, k + offsetK - 1)) -
-								(1 - offsetX) * (grid.get(i, j + offsetJ, k + offsetK + 1) + grid.get(i + 1, j + offsetJ, k + offsetK + 1));
+							normal.x = aboveTol(grid.get(i, j + offsetJ, k + offsetK), tol) - aboveTol(grid.get(i + 1, j + offsetJ, k + offsetK), tol);
+							normal.y = 0.5f * (aboveTol(grid.get(i, j + offsetJ - 1, k + offsetK), tol) + aboveTol(grid.get(i + 1, j + offsetJ - 1, k + offsetK), tol)) -
+								0.5f * (aboveTol(grid.get(i, j + offsetJ + 1, k + offsetK), tol) + aboveTol(grid.get(i + 1, j + offsetJ + 1, k + offsetK), tol));
+							normal.z = 0.5f * (aboveTol(grid.get(i, j + offsetJ, k + offsetK - 1), tol) + aboveTol(grid.get(i + 1, j + offsetJ, k + offsetK - 1), tol)) -
+								0.5f * (aboveTol(grid.get(i, j + offsetJ, k + offsetK + 1), tol) + aboveTol(grid.get(i + 1, j + offsetJ, k + offsetK + 1), tol));
 
 						}
 						else if (offsetY == 0.5f) {
@@ -65,24 +64,22 @@ namespace MarchingCubes {
 							int offsetK = (int)offsetZ;
 							offsetY = 1 / (grid.get(i + offsetI, j + 1, k + offsetK) - grid.get(i + offsetI, j, k + offsetK)) * (tol - grid.get(i + offsetI, j, k + offsetK));
 
-							normal.x = offsetY * (grid.get(i + offsetI - 1, j, k + offsetK) + grid.get(i + offsetI - 1, j + 1, k + offsetK)) -
-								(1 - offsetY) * (grid.get(i + offsetI + 1, j, k + offsetK) + grid.get(i + offsetI + 1, j + 1, k + offsetK));
-							normal.y = offsetY * (grid.get(i + offsetI, j, k + offsetK) + grid.get(i + offsetI, j - 1, k + offsetK)) -
-								(1 - offsetY) * (grid.get(i + offsetI, j + 1, k + offsetK) + grid.get(i + offsetI, j + 2, k + offsetK));							
-							normal.z = offsetY * (grid.get(i + offsetI, j , k + offsetK - 1) + grid.get(i + offsetI, j + 1, k + offsetK - 1)) -
-								(1 - offsetY) * (grid.get(i + offsetI, j, k + offsetK + 1) + grid.get(i + offsetI, j + 1, k + offsetK + 1));
+							normal.y = aboveTol(grid.get(i + offsetI, j, k + offsetK), tol) - aboveTol(grid.get(i + offsetI, j + 1, k + offsetK), tol);
+							normal.x = 0.5f * (aboveTol(grid.get(i + offsetI - 1, j, k + offsetK), tol) + aboveTol(grid.get(i + offsetI - 1, j + 1, k + offsetK), tol)) -
+								0.5f * (aboveTol(grid.get(i + offsetI + 1, j, k + offsetK), tol) + aboveTol(grid.get(i + offsetI + 1, j + 1, j + offsetK), tol));
+							normal.z = 0.5f * (aboveTol(grid.get(i + offsetI, j, k + offsetK - 1), tol) + aboveTol(grid.get(i + offsetI, j + 1, k + offsetK - 1), tol)) -
+								0.5f * (aboveTol(grid.get(i + offsetI, j, k + offsetK + 1), tol) + aboveTol(grid.get(i + offsetI, j + 1, k + offsetK + 1), tol));
 						}
 						else if (offsetZ == 0.5f) {
 							int offsetI = (int)offsetX;
 							int offsetJ = (int)offsetY;
 							offsetZ = 1 / (grid.get(i + offsetI, j + offsetJ, k + 1) - grid.get(i + offsetI, j + offsetJ, k)) * (tol - grid.get(i + offsetI, j + offsetJ, k));
 
-							normal.z = offsetZ * (grid.get(i + offsetI, j + offsetJ, k) + grid.get(i + offsetI, j + offsetJ, k - 1)) -
-								(1 - offsetZ) * (grid.get(i + offsetI, j + offsetJ, k + 1) + grid.get(i + offsetI, j + offsetJ, k + 2));
-							normal.y = offsetZ * (grid.get(i + offsetI, j + offsetJ - 1, k) + grid.get(i + offsetI, j + offsetJ - 1, k + 1)) -
-								(1 - offsetZ) * (grid.get(i + offsetI, j + offsetJ + 1, k) + grid.get(i + offsetI, j + offsetJ + 1, k + 1));
-							normal.x = offsetZ * (grid.get(i + offsetI - 1, j + offsetJ, k) + grid.get(i + offsetI - 1, j + offsetJ, k + 1)) -
-								(1 - offsetZ) * (grid.get(i + offsetI + 1, j + offsetJ, k) + grid.get(i + offsetI + 1, j + offsetJ, k + 1));
+							normal.z = aboveTol(grid.get(i + offsetI, j + offsetJ, k), tol) - aboveTol(grid.get(i + offsetI, j + offsetJ, k + 1), tol);
+							normal.y = 0.5f * (aboveTol(grid.get(i + offsetI, j + offsetJ - 1, k), tol) + aboveTol(grid.get(i + offsetI, j + offsetJ - 1, k + 1), tol)) -
+								0.5f * (aboveTol(grid.get(i + offsetI, j + offsetJ + 1, k), tol) + aboveTol(grid.get(i + offsetI, j + offsetJ + 1, k + 1), tol));
+							normal.x = 0.5f * (aboveTol(grid.get(i + offsetI - 1, j + offsetJ, k), tol) + aboveTol(grid.get(i + offsetI - 1, j + offsetJ, k + 1), tol)) -
+								0.5f * (aboveTol(grid.get(i + offsetI + 1, j + offsetJ, k), tol) + aboveTol(grid.get(i + offsetI + 1, j + offsetJ, k + 1), tol));
 						}
 
 						float x = 2.0f * (i + offsetX) / (maxGridSize - 1) - 1;
@@ -117,5 +114,12 @@ namespace MarchingCubes {
 			else
 				return depth;
 		}
+	}
+
+	int aboveTol(float val, float tol) {
+		if (val > tol)
+			return 1;
+		else
+			return 0;
 	}
 }

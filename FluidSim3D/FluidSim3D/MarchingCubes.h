@@ -5,6 +5,7 @@
 namespace MarchingCubes {
 	SimUtil::Mesh3D meshData(SimUtil::Mat3Df &grid, int width, int height, int depth, float tol);
 	int maxSize(int width, int height, int depth);
+	int aboveTol(float val, float tol);
 
 	/*vertice data for the 256 cases of marching cubes where 0,0,0 is the front-lower-left corner and 2,2,2 the back-top-right corner of the cube
 	order is x1,y1,z1, x2,y2,z2, and so on*/
