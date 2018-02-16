@@ -224,8 +224,8 @@ Mesh::Mesh(std::vector<glm::vec3> vertices, std::vector<glm::vec3> normals, std:
 
 	glBindVertexArray(0);
 
-	// Cull triangles which normal is not towards the camera (not working yet)
-	//glEnable(GL_CULL_FACE);
+	// Cull triangles which normal is not towards the camera
+	glEnable(GL_CULL_FACE);
 
 	//needs to be enabled to active opacity rendering
 	glEnable(GL_BLEND);

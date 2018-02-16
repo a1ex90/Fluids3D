@@ -77,12 +77,12 @@ namespace MarchingCubes {
 							int offsetJ = (int)offsetY;
 							offsetZ = 1 / (grid.get(i + offsetI, j + offsetJ, k + 1) - grid.get(i + offsetI, j + offsetJ, k)) * (tol - grid.get(i + offsetI, j + offsetJ, k));
 
-							normal.z = offsetX * (grid.get(i + offsetI, j + offsetJ, k) + grid.get(i + offsetI, j + offsetJ, k - 1)) -
-								(1 - offsetX) * (grid.get(i + offsetI, j + offsetJ, k + 1) + grid.get(i + offsetI, j + offsetJ, k + 2));
-							normal.y = offsetX * (grid.get(i + offsetI, j + offsetJ - 1, k) + grid.get(i + offsetI, j + offsetJ - 1, k + 1)) -
-								(1 - offsetX) * (grid.get(i + offsetI, j + offsetJ + 1, k) + grid.get(i + offsetI, j + offsetJ + 1, k + 1));
-							normal.x = offsetX * (grid.get(i + offsetI - 1, j + offsetJ, k) + grid.get(i + offsetI - 1, j + offsetJ, k + 1)) -
-								(1 - offsetX) * (grid.get(i + offsetI + 1, j + offsetJ, k) + grid.get(i + offsetI + 1, j + offsetJ, k + 1));
+							normal.z = offsetZ * (grid.get(i + offsetI, j + offsetJ, k) + grid.get(i + offsetI, j + offsetJ, k - 1)) -
+								(1 - offsetZ) * (grid.get(i + offsetI, j + offsetJ, k + 1) + grid.get(i + offsetI, j + offsetJ, k + 2));
+							normal.y = offsetZ * (grid.get(i + offsetI, j + offsetJ - 1, k) + grid.get(i + offsetI, j + offsetJ - 1, k + 1)) -
+								(1 - offsetZ) * (grid.get(i + offsetI, j + offsetJ + 1, k) + grid.get(i + offsetI, j + offsetJ + 1, k + 1));
+							normal.x = offsetZ * (grid.get(i + offsetI - 1, j + offsetJ, k) + grid.get(i + offsetI - 1, j + offsetJ, k + 1)) -
+								(1 - offsetZ) * (grid.get(i + offsetI + 1, j + offsetJ, k) + grid.get(i + offsetI + 1, j + offsetJ, k + 1));
 						}
 
 						float x = 2.0f * (i + offsetX) / (maxGridSize - 1) - 1;
@@ -90,7 +90,7 @@ namespace MarchingCubes {
 						float z = 2.0f * (k + offsetZ) / (maxGridSize - 1) - 1;
 
 						//normalize normals vector
-						glm::normalize(normal);
+						normal = glm::normalize(normal);
 
 						vertices.push_back(glm::vec3{ x,y,z });
 						normals.push_back(normal);
