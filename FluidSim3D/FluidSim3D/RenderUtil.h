@@ -16,6 +16,8 @@
 struct Light {
 	glm::vec3 position;
 	glm::vec3 intensities; //a.k.a. the color of the light
+	float attenuation;
+	float ambientCoefficient;
 };
 
 //----------------------------------------------------------------------
@@ -182,6 +184,7 @@ public:
 	void bind();
 	void update(const Transform* transform, const Camera* camera);
 	void setLight(const Light& light);
+	void setMaterialSettings(float shininess, glm::vec3 specularColor);
 	void setColor(float r, float g, float b, float a);
 	
 	~Shader();
@@ -191,10 +194,10 @@ private:
 	enum {
 		MODEL_U,
 		CAMERA_U,
-		LIGHT_POS_U,
-		LIGHT_INTENSITY_U,
 		CAMERA_POS_U,
 		COLOR,
+		SHININESS,
+		SPECULARCOLOR,
 
 		NUM_UNIFORMS
 	};

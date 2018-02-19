@@ -224,6 +224,8 @@ Mesh::Mesh(std::vector<glm::vec3> vertices, std::vector<glm::vec3> normals, std:
 
 	glBindVertexArray(0);
 
+	// Enable Z-Buffer
+	glEnable(GL_DEPTH_TEST);
 	// Cull triangles which normal is not towards the camera (depending on triangle rotation)
 	glEnable(GL_CULL_FACE);
 	// Triangle roation for normal display in shader (Default CCW (counterclockwise))
@@ -372,15 +374,12 @@ Shader::Shader(const std::string& fileName) {
 	glLinkProgram(m_program);
 	glValidateProgram(m_program);
 
-	//m_uniforms[0] = glGetUniformLocation(m_program, "Color");
-	//needed for texture
-	//m_uniforms[1] = glGetUniformLocation(m_program, "Diffuse");
 	m_uniforms[MODEL_U] = glGetUniformLocation(m_program, "model");
 	m_uniforms[CAMERA_U] = glGetUniformLocation(m_program, "camera");
 	m_uniforms[CAMERA_POS_U] = glGetUniformLocation(m_program, "cameraPosition");
-	m_uniforms[LIGHT_POS_U] = glGetUniformLocation(m_program, "lightPos");
-	m_uniforms[LIGHT_INTENSITY_U] = glGetUniformLocation(m_program, "lightIntensity");
 	m_uniforms[COLOR] = glGetUniformLocation(m_program, "color");
+	m_uniforms[SHININESS] = glGetUniformLocation(m_program, "materialShininess");
+	m_uniforms[SPECULARCOLOR] = glGetUniformLocation(m_program, "materialSpecularColor");
 }
 
 Shader::~Shader() {
@@ -406,8 +405,23 @@ void Shader::update(const Transform* transform, const Camera* camera) {
 }
 
 void Shader::setLight(const Light& light) {
-	glUniform3f(m_uniforms[LIGHT_POS_U], light.position.x, light.position.y, light.position.z);
-	glUniform3f(m_uniforms[LIGHT_INTENSITY_U], light.intensities.x, light.intensities.y, light.intensities.z);
+	GLint loc = glGetUniformLocation(m_program, "light.position");
+	GLfloat pos[3] = { light.position.x, light.position.y, light.position.z };
+	glProgramUniform3fv(m_program, loc, 1, pos);
+	loc = glGetUniformLocation(m_program, "light.intensities");
+	GLfloat intensities[3] = { light.intensities.x, light.intensities.y, light.intensities.z };
+	glProgramUniform3fv(m_program, loc, 1, pos);
+	loc = glGetUniformLocation(m_program, "light.attenuation");
+	GLfloat att[1] = { light.attenuation };
+	glProgramUniform1fv(m_program, loc, 1, att);
+	loc = glGetUniformLocation(m_program, "light.ambientCoefficient");
+	GLfloat amb[1] = { light.ambientCoefficient };
+	glProgramUniform1fv(m_program, loc, 1, amb);
+}
+
+void Shader::setMaterialSettings(float shininess, glm::vec3 specularColor) {
+	glUniform3f(m_uniforms[SPECULARCOLOR], specularColor.x, specularColor.y, specularColor.z);
+	glUniform1f(m_uniforms[SHININESS], shininess);
 }
 
 void Shader::setColor(float r, float g, float b, float a) {

@@ -18,6 +18,8 @@ FluidRenderer3D::FluidRenderer3D(SimUtil::Mat3Di *labels, int gridWidth, int gri
 
 	m_gLight.position = glm::vec3(1.0, 1.0, 1.0);
 	m_gLight.intensities = glm::vec3(1.0, 1.0, 1.0);
+	m_gLight.ambientCoefficient = 0.05f;
+	m_gLight.attenuation = 0.2f;
 	//initially pause the simulation
 	m_isPaused = true;
 	m_forwardPressed = false;
@@ -54,18 +56,19 @@ void FluidRenderer3D::draw(std::vector<glm::vec3> &particles, std::vector<glm::v
 	else if (m_visualMode == 3) {
 		m_colorShader->setColor(0.255f, 0.412f, 0.882f, 0.8f);
 		mesh.draw();
+		glDisable(GL_DEPTH_TEST);
 		m_colorShader->setColor(0.690f, 0.878f, 0.902f, 0.2f);
 		point.draw();
+		glEnable(GL_DEPTH_TEST);
 	}
 	else if (m_visualMode == 4) {
 		m_normalShader->bind();
 		m_normalShader->update(m_transform, m_camera);
-		m_normalShader->setColor(0.255f, 0.412f, 0.882f, 1.0f);
+		m_normalShader->setColor(0.118f, 0.565f, 1.0f, 1.0f);
+		m_normalShader->setMaterialSettings(80.0f, glm::vec3{ 1.0f, 1.0f, 1.0f });
 		m_normalShader->setLight(m_gLight);
 
 		mesh.draw();
-
-		m_colorShader->bind();
 	}
 	
 
