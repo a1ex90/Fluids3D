@@ -15,6 +15,9 @@ FluidRenderer3D::FluidRenderer3D(SimUtil::Mat3Di *labels, int gridWidth, int gri
 	m_colorShader = new Shader{ "./basicShader" };
 	m_normalShader = new Shader{ "./normalShader" };
 	initGeom(labels, gridWidth, gridHeight, gridDepth);
+
+	m_gLight.position = glm::vec3(1.0, 1.0, 1.0);
+	m_gLight.intensities = glm::vec3(1.0, 1.0, 1.0);
 	//initially pause the simulation
 	m_isPaused = true;
 	m_forwardPressed = false;
@@ -57,7 +60,8 @@ void FluidRenderer3D::draw(std::vector<glm::vec3> &particles, std::vector<glm::v
 	else if (m_visualMode == 4) {
 		m_normalShader->bind();
 		m_normalShader->update(m_transform, m_camera);
-		m_normalShader->setColor(0.0f, 0.0f, 0.0f, 1.0f);
+		m_normalShader->setColor(0.255f, 0.412f, 0.882f, 1.0f);
+		m_normalShader->setLight(m_gLight);
 
 		mesh.draw();
 

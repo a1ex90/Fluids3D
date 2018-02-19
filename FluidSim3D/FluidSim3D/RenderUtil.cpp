@@ -224,8 +224,10 @@ Mesh::Mesh(std::vector<glm::vec3> vertices, std::vector<glm::vec3> normals, std:
 
 	glBindVertexArray(0);
 
-	// Cull triangles which normal is not towards the camera
+	// Cull triangles which normal is not towards the camera (depending on triangle rotation)
 	glEnable(GL_CULL_FACE);
+	// Triangle roation for normal display in shader (Default CCW (counterclockwise))
+	glFrontFace(GL_CW);
 
 	//needs to be enabled to active opacity rendering
 	glEnable(GL_BLEND);
@@ -373,7 +375,10 @@ Shader::Shader(const std::string& fileName) {
 	//m_uniforms[0] = glGetUniformLocation(m_program, "Color");
 	//needed for texture
 	//m_uniforms[1] = glGetUniformLocation(m_program, "Diffuse");
-	m_uniforms[TRANSFORM_U] = glGetUniformLocation(m_program, "transform");
+	m_uniforms[MODEL_U] = glGetUniformLocation(m_program, "model");
+	m_uniforms[CAMERA_U] = glGetUniformLocation(m_program, "camera");
+	m_uniforms[LIGHT_POS_U] = glGetUniformLocation(m_program, "lightPos");
+	m_uniforms[LIGHT_INTENSITY_U] = glGetUniformLocation(m_program, "lightIntensity");
 	m_uniforms[COLOR] = glGetUniformLocation(m_program, "color");
 }
 
@@ -390,9 +395,16 @@ void Shader::bind() {
 }
 
 void Shader::update(const Transform* transform, const Camera* camera) {
-	glm::mat4 model = camera->getViewProjection() * transform->GetModel();
+	glm::mat4 cameraU = camera->getViewProjection();
+	glm::mat4 modelU = transform->GetModel();
 
-	glUniformMatrix4fv(m_uniforms[TRANSFORM_U], 1, GL_FALSE, &model[0][0]);
+	glUniformMatrix4fv(m_uniforms[CAMERA_U], 1, GL_FALSE, &cameraU[0][0]);
+	glUniformMatrix4fv(m_uniforms[MODEL_U], 1, GL_FALSE, &modelU[0][0]);
+}
+
+void Shader::setLight(const Light& light) {
+	glUniform3f(m_uniforms[LIGHT_POS_U], light.position.x, light.position.y, light.position.z);
+	glUniform3f(m_uniforms[LIGHT_INTENSITY_U], light.intensities.x, light.intensities.y, light.intensities.z);
 }
 
 void Shader::setColor(float r, float g, float b, float a) {

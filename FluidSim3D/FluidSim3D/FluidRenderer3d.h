@@ -55,6 +55,8 @@ private:
 	Mesh *m_meshSolid;
 	//Line for the edges of the solids
 	Line *m_borderSolid;
+	//Global Light
+	Light m_gLight;
 	//If simulation is paused
 	bool m_isPaused;
 	//forward to next frame

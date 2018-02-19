@@ -1,13 +1,16 @@
-#version 120
+#version 150
 
 attribute vec3 position;
 attribute vec3 normal;
 
-varying vec3 normal0;
+out vec3 fragNormal;
+out vec3 fragVert;
 
-uniform mat4 transform; 
+uniform mat4 model;
+uniform mat4 camera; 
 
 void main() {
-	gl_Position = transform * vec4(position, 1.0);
-	normal0 = (transform * vec4(normal, 0.0)).xyz;
+	fragNormal = normal;
+	fragVert = position;
+	gl_Position = camera * model * vec4(position, 1.0);
 }

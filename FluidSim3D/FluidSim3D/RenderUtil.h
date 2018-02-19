@@ -9,6 +9,15 @@
 #define GLM_ENABLE_EXPERIMENTAL 
 #include <glm/gtx/transform.hpp>
 
+
+//----------------------------------------------------------------------
+//  Light Structure
+//----------------------------------------------------------------------
+struct Light {
+	glm::vec3 position;
+	glm::vec3 intensities; //a.k.a. the color of the light
+};
+
 //----------------------------------------------------------------------
 // Transform Class
 //----------------------------------------------------------------------
@@ -168,6 +177,7 @@ public:
 
 	void bind();
 	void update(const Transform* transform, const Camera* camera);
+	void setLight(const Light& light);
 	void setColor(float r, float g, float b, float a);
 	
 	~Shader();
@@ -175,7 +185,10 @@ private:
 	static const unsigned int NUM_SHADERS = 2;
 
 	enum {
-		TRANSFORM_U,
+		MODEL_U,
+		CAMERA_U,
+		LIGHT_POS_U,
+		LIGHT_INTENSITY_U,
 		COLOR,
 
 		NUM_UNIFORMS

@@ -82,9 +82,13 @@ namespace MarchingCubes {
 								0.5f * (aboveTol(grid.get(i + offsetI + 1, j + offsetJ, k), tol) + aboveTol(grid.get(i + offsetI + 1, j + offsetJ, k + 1), tol));
 						}
 
-						float x = 2.0f * (i + offsetX) / (maxGridSize - 1) - 1;
+						/*float x = 2.0f * (i + offsetX) / (maxGridSize - 1) - 1;
 						float y = 2.0f * (j + offsetY) / (maxGridSize - 1) - 1;
-						float z = 2.0f * (k + offsetZ) / (maxGridSize - 1) - 1;
+						float z = 2.0f * (k + offsetZ) / (maxGridSize - 1) - 1;*/
+						//Not correct but better looking with interpolation
+						float x = 2.0f * (i + offsetX + 1) / (maxGridSize + 1) - 1;
+						float y = 2.0f * (j + offsetY + 1) / (maxGridSize + 1) - 1;
+						float z = 2.0f * (k + offsetZ + 1) / (maxGridSize + 1) - 1;
 
 						//normalize normals vector
 						normal = glm::normalize(normal);
