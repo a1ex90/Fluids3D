@@ -377,6 +377,7 @@ Shader::Shader(const std::string& fileName) {
 	//m_uniforms[1] = glGetUniformLocation(m_program, "Diffuse");
 	m_uniforms[MODEL_U] = glGetUniformLocation(m_program, "model");
 	m_uniforms[CAMERA_U] = glGetUniformLocation(m_program, "camera");
+	m_uniforms[CAMERA_POS_U] = glGetUniformLocation(m_program, "cameraPosition");
 	m_uniforms[LIGHT_POS_U] = glGetUniformLocation(m_program, "lightPos");
 	m_uniforms[LIGHT_INTENSITY_U] = glGetUniformLocation(m_program, "lightIntensity");
 	m_uniforms[COLOR] = glGetUniformLocation(m_program, "color");
@@ -397,9 +398,11 @@ void Shader::bind() {
 void Shader::update(const Transform* transform, const Camera* camera) {
 	glm::mat4 cameraU = camera->getViewProjection();
 	glm::mat4 modelU = transform->GetModel();
+	glm::vec3 cameraPosU = camera->getPos();
 
 	glUniformMatrix4fv(m_uniforms[CAMERA_U], 1, GL_FALSE, &cameraU[0][0]);
 	glUniformMatrix4fv(m_uniforms[MODEL_U], 1, GL_FALSE, &modelU[0][0]);
+	glUniform3f(m_uniforms[CAMERA_POS_U], cameraPosU.x, cameraPosU.y, cameraPosU.z);
 }
 
 void Shader::setLight(const Light& light) {

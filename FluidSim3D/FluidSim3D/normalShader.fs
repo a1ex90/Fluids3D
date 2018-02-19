@@ -2,11 +2,7 @@
 
 uniform vec4 color;
 uniform mat4 model;
-
-uniform struct Light {
-   vec3 position;
-   vec3 intensities; //a.k.a the color of the light
-} light;
+uniform vec3 cameraPosition;
 
 uniform vec3 lightPos;
 uniform vec3 lightIntensity;
@@ -15,23 +11,33 @@ in vec3 fragVert;
 in vec3 fragNormal;
 
 void main() {
-	mat3 normalMatrix = transpose(inverse(mat3(model)));
-	vec3 normal = normalize(normalMatrix * fragNormal);
-	vec3 fragPos = vec3(model * vec4(fragVert, 1));
+	vec3 normal = normalize(transpose(inverse(mat3(model))) * fragNormal);
+	vec3 surfacePos = vec3(model * vec4(fragVert, 1));
+	vec3 surfaceToLight = normalize(lightPos - surfacePos);
+	vec3 surfaceToCamera = normalize(cameraPosition - surfacePos);
+   
+	//AMBIENT COMPONENT
+	float lightAmbientCoefficient = 0.1f;
+	vec3 ambient = lightAmbientCoefficient * color.xyz * lightIntensity;
 
-	//calculate the vector from this pixels surface to the light source
-    vec3 surfaceToLight = lightPos - fragPos;
+    //DIFFUSE COMPONENT
+    float diffuseCoefficient = max(0.0, dot(normal, surfaceToLight));
+	vec3 diffuse = diffuseCoefficient * color.xyz * lightIntensity;
 
-    //calculate the cosine of the angle of incidence
-    float brightness = dot(normal, surfaceToLight) / (length(surfaceToLight) * length(normal));
-    brightness = clamp(brightness, 0, 1);
+	//SPECULAR COMPONENT
+	float materialShininess = 80.0f;
+	vec3 materialSpecularColor = vec3(1.0f, 1.0f, 1.0f);
+	float specularCoefficient = 0.0f;
+    if(diffuseCoefficient > 0.0)
+        specularCoefficient = pow(max(0.0, dot(surfaceToCamera, reflect(-surfaceToLight, normal))), materialShininess);
+    vec3 specular = specularCoefficient * materialSpecularColor * lightIntensity;
 
-    //calculate final color of the pixel, based on:
-    // 1. The angle of incidence: brightness
-    // 2. The color/intensities of the light: light.intensities
-    // 3. The overall material color: color
-    gl_FragColor = vec4(brightness * lightIntensity * color.xyz, color[3]);
+	//Attenuation
+	float lightAttenuation = 0.2f;
+    float distanceToLight = length(lightPos - surfacePos);
+    float attenuation = 1.0 / (1.0 + lightAttenuation * pow(distanceToLight, 2));
 
-
-	//gl_FragColor = vec4(0.5f + 0.5f * normal, 1.0f);
+	vec3 linearColor = ambient + attenuation*(diffuse + specular);
+    vec3 gamma = vec3(1.0/2.2);
+    gl_FragColor = vec4(pow(linearColor, gamma), color[3]);
 }

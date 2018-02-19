@@ -160,6 +160,10 @@ public:
 	inline glm::mat4 getViewProjection() const {
 		return m_perspective * glm::lookAt(m_position, m_position + m_forward, m_up);
 	}
+
+	inline glm::vec3 getPos() const {
+		return m_position;
+	}
 private:
 	glm::mat4 m_perspective;
 	glm::vec3 m_position;
@@ -189,6 +193,7 @@ private:
 		CAMERA_U,
 		LIGHT_POS_U,
 		LIGHT_INTENSITY_U,
+		CAMERA_POS_U,
 		COLOR,
 
 		NUM_UNIFORMS
