@@ -21,10 +21,6 @@ public:
 	FluidRenderer3D::FluidRenderer3D(SimUtil::Mat3Di *labels, int gridWidth, int gridHeight, int gridDepth);
 	~FluidRenderer3D();
 	/*
-	Draws a marching cubes case
-	*/
-	void drawCubes(std::vector<glm::vec3> vertices, std::vector<int> indices, std::vector<glm::vec3> darkDots, std::vector<glm::vec3> brightDots);
-	/*
 	Draws the fluid according to choosen visualization mode
 	Args:
 	particles - location of the particles
@@ -36,6 +32,7 @@ public:
 	
 	bool isClosed() { return m_display->isClosed(); };
 	bool isPaused() { return m_isPaused; };
+	bool gManipulationActive() { return m_gManipulation; };
 	bool forwardPressed() { if (m_forwardPressed) { m_forwardPressed = false; return true; } return false; };
 
 	glm::vec3 currentOrientation() { return m_orientation; };
@@ -61,6 +58,8 @@ private:
 	bool m_isPaused;
 	//forward to next frame
 	bool m_forwardPressed;
+	//If gravitation manipulation by rotation is activated
+	bool m_gManipulation;
 	/*
 	visualization mode for rendering
 	1 - Draw Fluid as Particles

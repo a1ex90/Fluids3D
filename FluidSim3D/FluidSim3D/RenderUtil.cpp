@@ -35,8 +35,11 @@ Display::Display(int width, int height, const std::string& title, Transform* tra
 	}
 
 	m_transform = transform;
-
+	m_width = width;
+	m_height = height;
+	m_r = glm::min(m_width, m_height) / 2.0f;
 	m_isClosed = false;
+	m_doRotation = false;
 }
 
 
@@ -69,16 +72,15 @@ bool Display::isClosed() {
 /*
 Updates the window
 */
-void Display::update(glm::vec3 &orientation, bool &pausePressed, bool &forwardPressed, int &visualMode) {
+void Display::update(glm::vec3 &orientation, bool &pausePressed, bool &forwardPressed, int &visualMode, bool &manipulation) {
 	SDL_GL_SwapWindow(m_window);
 	SDL_Event e;
 	int handled;
-
-	float PI = 3.1415927410125732421875f;
 	//Defines how much the scene should be rotated by one keypress
 	int increments = 16;
 	//Defines how much the scene should be moved by one keypress
 	float steps = 0.2f;
+	
 
 	while (SDL_PollEvent(&e)) {
 		if (e.type == SDL_QUIT) {
@@ -138,61 +140,137 @@ void Display::update(glm::vec3 &orientation, bool &pausePressed, bool &forwardPr
 				break;
 			case SDLK_RIGHT: {
 				m_transform->SetRot((m_transform->GetRot() + glm::vec3(0, 2 * PI / increments, 0)));
-				float z = orientation.z * cos(2 * PI / increments) + orientation.x * sin(2 * PI / increments);
-				float x = -orientation.z * sin(2 * PI / increments) + orientation.x * cos(2 * PI / increments);
-				orientation.z = z;
-				orientation.x = x;
+				orientation = updateOrientation(m_transform->GetRot());
 				break; }
 			case SDLK_LEFT: {
 				m_transform->SetRot((m_transform->GetRot() - glm::vec3(0, 2 * PI / increments, 0)));
-				float z = orientation.z * cos(2 * PI / increments) - orientation.x * sin(2 * PI / increments);
-				float x = orientation.z * sin(2 * PI / increments) + orientation.x * cos(2 * PI / increments);
-				orientation.z = z;
-				orientation.x = x;
+				orientation = updateOrientation(m_transform->GetRot());
 				break; }
 			case SDLK_DOWN: {
 				m_transform->SetRot((m_transform->GetRot() - glm::vec3(2 * PI / increments, 0, 0)));
-				float y = orientation.y * cos(2 * PI / increments) - orientation.z * sin(2 * PI / increments);
-				float z = orientation.y * sin(2 * PI / increments) + orientation.z * cos(2 * PI / increments);
-				orientation.y = y;
-				orientation.z = z;
+				orientation = updateOrientation(m_transform->GetRot());
 				break; }
 			case SDLK_UP: {
-				m_transform->SetRot((m_transform->GetRot() + glm::vec3(2 * PI / increments, 0, 0)));			
-				float y = orientation.y * cos(2 * PI / increments) + orientation.z * sin(2 * PI / increments);
-				float z = -orientation.y * sin(2 * PI / increments) + orientation.z * cos(2 * PI / increments);
-				orientation.y = y;
-				orientation.z = z;
+				m_transform->SetRot((m_transform->GetRot() + glm::vec3(2 * PI / increments, 0, 0)));
+				orientation = updateOrientation(m_transform->GetRot());
 				break; }
 			case SDLK_o: {
 				m_transform->SetRot((m_transform->GetRot() + glm::vec3(0, 0, 2 * PI / increments)));
-				float x = orientation.x * cos(2 * PI / increments) + orientation.y * sin(2 * PI / increments);
-				float y = -orientation.x * sin(2 * PI / increments) + orientation.y * cos(2 * PI / increments);
-				orientation.x = x;
-				orientation.y = y;
+				orientation = updateOrientation(m_transform->GetRot());
 				break; }
-			case SDLK_l: {
+			case SDLK_l: {			
 				m_transform->SetRot((m_transform->GetRot() - glm::vec3(0, 0, 2 * PI / increments)));
-				float x = orientation.x * cos(2 * PI / increments) - orientation.y * sin(2 * PI / increments);
-				float y = orientation.x * sin(2 * PI / increments) + orientation.y * cos(2 * PI / increments);
-				orientation.x = x;
-				orientation.y = y;
+				orientation = updateOrientation(m_transform->GetRot());
 				break; }
 			case SDLK_SPACE:
 				pausePressed = !pausePressed;
 				break;
 			case SDLK_m:
+				manipulation = !manipulation;
+				break;
+			case SDLK_n:
 				forwardPressed = true;
 				pausePressed = true;
 				break;
-			case SDLK_n:
-				orientation.x = 0.0f;
-				orientation.y = 0.0f;
-				orientation.z = 1.0f;
-				break;
 			}
+		case SDL_MOUSEBUTTONDOWN:
+			switch (e.button.button)
+			{
+			case SDL_BUTTON_LEFT: {
+				m_doRotation = true;
+				m_startP = projectOnSphere(e.button.x, e.button.y, m_r);
+				break; }
+			}
+			break;
+		case SDL_MOUSEMOTION:
+			if (m_doRotation) {
+				glm::vec3 moveP = projectOnSphere(e.motion.x, e.motion.y, m_r);
+				m_angle = acos(glm::dot(m_startP, moveP));
+				m_axis = glm::cross(m_startP, moveP);
+				m_transform->SetRot((m_transform->GetRot() + toEuler(m_axis, m_angle)));
+				m_startP = projectOnSphere(e.motion.x, e.motion.y, m_r);
+			}
+			break;
+		case SDL_MOUSEBUTTONUP:
+			switch (e.button.button)
+			{
+			case SDL_BUTTON_LEFT: {
+				m_doRotation = false;
+				orientation = updateOrientation(m_transform->GetRot());
+				break; }
+			}
+			break;
 		}
 	}
+}
+
+/*
+Returns the 3D location as vector of given pixel coordiantes 
+on the 3D Sphere with radius r at the center of the window.
+---
+Arguments:
+x,y - window coordinates in pixels
+r - radius of the sphere in pixels
+*/
+glm::vec3 Display::projectOnSphere(float x, float y, float r) {
+	x = x - m_width / 2.0f;
+	y = m_height / 2.0f - y;
+	float a = glm::min(r*r, x*x + y*y);
+	float z = sqrt(r*r - a);
+	float l = sqrt(x*x + y*y + z*z);
+	return glm::vec3(x / l, y / l, z / l);
+}
+
+/*
+Returns the 3 Euler angles from a given rotation axis and angle
+---
+Arguments:
+axis - rotation axis
+angle - rotation angle in radiants
+*/
+glm::vec3 Display::toEuler(glm::vec3 axis, float angle) {
+	glm::vec3 euler;
+	float s = sin(angle);
+	float c = cos(angle);
+	float t = 1.0f - c;
+	axis = glm::normalize(axis);
+	// north pole singularity detected
+	if ((axis.x * axis.y * t + axis.z * s) > 0.998) 
+	{ 
+		euler.y = 2.0f * atan2(axis.x * sin(angle / 2.0f), cos(angle / 2.0f));
+		euler.z = PI / 2.0f;
+		euler.x = 0.0f;
+		return euler;
+	}
+	// south pole singularity detected
+	if ((axis.x * axis.y * t + axis.z * s) < -0.998) 
+	{ 
+		euler.y = -2.0f * atan2(axis.x * sin(angle / 2.0f), cos(angle / 2.0f));
+		euler.z = -PI / 2.0f;
+		euler.x = 0.0f;
+		return euler;
+	}
+	euler.y = atan2(axis.y * s - axis.x * axis.z * t, 1 - (axis.y * axis.y + axis.z * axis.z) * t);
+	euler.z = asin(axis.x * axis.y * t + axis.z * s);
+	euler.x = -atan2(axis.x * s - axis.y * axis.z * t, 1 - (axis.x * axis.x + axis.z * axis.z) * t);
+	return euler;
+}
+
+/*
+Returns a rotated orientation vector by a given rotation from a original
+orientation (0, -1, 0)
+---
+Arguments:
+rotation - as euler angles
+*/
+glm::vec3 Display::updateOrientation(glm::vec3 rotation) {
+	glm::mat4 rotXMatrix = glm::rotate(rotation.x, glm::vec3(1, 0, 0));
+	glm::mat4 rotYMatrix = glm::rotate(rotation.y, glm::vec3(0, 1, 0));
+	glm::mat4 rotZMatrix = glm::rotate(rotation.z, glm::vec3(0, 0, 1));
+	glm::mat4 rotMatrix = rotZMatrix * rotYMatrix * rotXMatrix;
+
+	glm::vec4 newOrientation = glm::vec4(0.0f, -1.0f, 0.0f, 1.0f) * rotMatrix;
+	return glm::vec3{ newOrientation.x, newOrientation.y, newOrientation.z };
 }
 
 //----------------------------------------------------------------------

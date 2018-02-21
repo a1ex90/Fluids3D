@@ -68,7 +68,7 @@ int main(int argc, char** argv) {
 		render.draw(solver.particleData(), data.vertices, data.normals, data.indices);
 		if (!render.isPaused() && newFrame) {
 			start = std::chrono::system_clock::now();
-			if (MANIPULATION) {
+			if (render.gManipulationActive()) {
 				solver.updateOrientation(render.currentOrientation());
 			}
 			solver.step();
@@ -76,7 +76,7 @@ int main(int argc, char** argv) {
 			newFrame = false;
 		}
 		if (render.isPaused() && render.forwardPressed()) {
-			if (MANIPULATION) {
+			if (render.gManipulationActive()) {
 				solver.updateOrientation(render.currentOrientation());
 			}
 			solver.step();

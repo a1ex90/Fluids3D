@@ -64,7 +64,7 @@ class Display
 public:
 	Display(int width, int height, const std::string& title, Transform* transform);
 
-	void update(glm::vec3 &orientation, bool &pausePressed, bool &forwardPressed, int &visualMode);
+	void update(glm::vec3 &orientation, bool &pausePressed, bool &forwardPressed, int &visualMode, bool &manipulation);
 	void clear(float r, float g, float b, float a);
 	bool isClosed();
 
@@ -73,11 +73,30 @@ private:
 	Display(const Display& other) {}
 	void operator=(const Display& other) {}
 
+	const float PI = 3.1415927410125732421875f;
+	//Defines the size of the arcball for rotation
+	float m_r;
+	//Stores the startpoint of an arcball rotation
+	glm::vec3 m_startP;
+	//Stores the axis for the arcball rotation
+	glm::vec3 m_axis;
+	//stores the angle of the arcball rotation around axis
+	float m_angle;
+	//Stores if mouse is clicked
+	bool m_doRotation;
+
+	glm::vec3 projectOnSphere(float x, float y, float r);
+	glm::vec3 toEuler(glm::vec3 axis, float angle);
+	glm::vec3 updateOrientation(glm::vec3 rotation);
+
 	Transform* m_transform;
 
 	SDL_Window* m_window;
 	SDL_GLContext m_glContext;
 	bool m_isClosed;
+
+	int m_width;
+	int m_height;
 };
 
 //----------------------------------------------------------------------
