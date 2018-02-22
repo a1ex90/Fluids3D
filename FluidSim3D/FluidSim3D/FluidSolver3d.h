@@ -12,14 +12,10 @@
 #include <cstdlib>
 #include <ctime>
 #include <limits>
-//Timing
-#include <chrono>
-#include <ratio>
 
 #include "SimUtil.h"
 #include "MarchingCubes.h"
 #include "classicSolver.h"
-#include "timing.h"
 
 
 class FluidSolver3D {
@@ -105,15 +101,6 @@ private:
 	std::vector<std::vector<int>> m_cubeIndices;
 
 	//----------------------------------------------------------------------
-	// For Timing Purposes
-	//----------------------------------------------------------------------
-	
-	// timing class object
-	timing *m_timer;
-	// definies if timing class is initialized
-	const bool ENABLE_TIMING = true;
-
-	//----------------------------------------------------------------------
 	// Functions
 	//----------------------------------------------------------------------
 
@@ -175,10 +162,6 @@ public:
 	*/
 	void step();
 	/*
-	Times the different algorithms in step()
-	*/
-	void stepTiming();
-	/*
 	Saves the lines of the isocontur representing the surface between water and
 	air. Outputs in csv format where each line is represented by two points.
 	each coordinate and each point is seperated by a space. Each line is one
@@ -201,15 +184,22 @@ public:
 	third containing vertex indices for index buffering
 	*/
 	SimUtil::Mesh3D meshData();
-	/*
-	Saves the average timing data for each sub-algorithm of the step algorithm
-	*/
-	void saveTimingData(std::ofstream*);
 
+	/*
+	Returns a pointer to the grid where the geometry information is stored in
+	*/
 	SimUtil::Mat3Di* getGeometry() {
 		return &m_label;
 	};
 
+	/*
+	Exports Dimension values
+	Args:
+	width - gets the gridwidth
+	height - gets the gridheight
+	depth - gets the griddepth
+	borderCount - gets the number of bordercells
+	*/
 	void getDim(int &width, int &height, int &depth, int &borderCount) {
 		width = m_gridWidth;
 		height = m_gridHeight;

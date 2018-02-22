@@ -6,30 +6,14 @@ using namespace SimUtil;
 // Constructors
 //----------------------------------------------------------------------
 
-FluidSolver3D::FluidSolver3D(std::string initialGeometryFile, float dx, float dt){
-	
+FluidSolver3D::FluidSolver3D(std::string initialGeometryFile, float dx, float dt) {
+
 	m_dx = dx;
 	m_dt = dt;
 
 	//init(initialGeometryFile);
 
 	m_particles = new std::vector<Particle3D>();
-	if (ENABLE_TIMING) {
-		std::vector<std::string> algorithms{
-			"labelGrid",
-			"particlesToGrid",
-			"extrapolateDepth2",
-			"saveVelocityGrids",
-			"applyBodyForces",
-			"pressureSolve",
-			"applyPressure",
-			"extrapolateDepthN",
-			"gridToParticles",
-			"advectParticles",
-			"cleanupParticles"
-		};
-		m_timer = new timing{ algorithms };
-	}
 }
 
 //----------------------------------------------------------------------
@@ -124,60 +108,6 @@ void FluidSolver3D::step() {
 
 }
 
-void FluidSolver3D::stepTiming() {
-	// update the grid labels
-	m_timer->start();
-	labelGrid();
-	m_timer->stop();
-	// transfer particle vel to grid
-	m_timer->start();
-	particlesToGrid();
-	m_timer->stop();
-	// extrapolate fluid data out one cell for accurate divergence calculations
-	m_timer->start();
-	extrapolateGridFluidData(m_u, m_gridWidth + 1, m_gridHeight, m_gridDepth, 2);
-	extrapolateGridFluidData(m_v, m_gridWidth, m_gridHeight + 1, m_gridDepth, 2);
-	extrapolateGridFluidData(m_w, m_gridWidth, m_gridHeight, m_gridDepth + 1, 2);
-	m_timer->stop();
-	// save copy of current grid velocities for FLIP update
-	m_timer->start();
-	saveVelocityGrids();
-	m_timer->stop();
-	// apply body forces on grid (gravity)
-	m_timer->start();
-	applyBodyForces();
-	m_timer->stop();
-	// solve for pressure
-	m_timer->start();
-	classicSolver solver(m_gridWidth, m_gridHeight, m_gridDepth, m_dx, m_dt, &m_label, &m_p, &m_u, &m_v, &m_w);
-	solver.pressureSolve();
-	m_timer->stop();
-	// apply pressure force
-	m_timer->start();
-	applyPressure();
-	m_timer->stop();
-	// advect particles
-	m_timer->start();
-	extrapolateGridFluidData(m_u, m_gridWidth + 1, m_gridHeight, m_gridDepth, m_maxGridSize);
-	extrapolateGridFluidData(m_v, m_gridWidth, m_gridHeight + 1, m_gridDepth, m_maxGridSize);
-	extrapolateGridFluidData(m_w, m_gridWidth, m_gridHeight, m_gridDepth + 1, m_maxGridSize);
-	m_timer->stop();
-	// transfer grid velocities back to particles
-	m_timer->start();
-	gridToParticles(PIC_WEIGHT);
-	m_timer->stop();
-	// advect particles
-	m_timer->start();
-	advectParticles(ADVECT_MAX);
-	m_timer->stop();
-	// detect particles that have penetrated solid boundary and move back inside fluid
-	m_timer->start();
-	cleanupParticles(m_dx / 4.0f);
-	m_timer->stop();
-
-	m_timer->endStep();
-}
-
 void FluidSolver3D::saveParticleData(std::ofstream *particleOut) {
 	if (particleOut->is_open()) {
 				// print out all particle data on same line, each pos separated by " "
@@ -194,10 +124,6 @@ void FluidSolver3D::saveParticleData(std::ofstream *particleOut) {
 			
 		}		
 	}	
-}
-
-void FluidSolver3D::saveTimingData(std::ofstream *timingOut) {
-	m_timer->writeTiming(timingOut);
 }
 
 std::vector<glm::vec3> FluidSolver3D::particleData() {

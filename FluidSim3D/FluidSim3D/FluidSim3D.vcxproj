@@ -178,7 +178,6 @@
     <ClCompile Include="MarchingCubes.cpp" />
     <ClCompile Include="RenderUtil.cpp" />
     <ClCompile Include="SimUtil.cpp" />
-    <ClCompile Include="timing.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="classicSolver.h" />
@@ -188,7 +187,6 @@
     <ClInclude Include="RenderUtil.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="SimUtil.h" />
-    <ClInclude Include="timing.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="FluidSim3D.rc" />
