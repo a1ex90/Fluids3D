@@ -179,6 +179,8 @@ void Display::update(glm::vec3 &orientation, bool &pausePressed, bool &forwardPr
 			case SDL_BUTTON_LEFT: {
 				m_doRotation = true;
 				m_startP = projectOnSphere(e.button.x, e.button.y, m_r);
+				SDL_Cursor* cursor = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_SIZEALL);
+				SDL_SetCursor(cursor);
 				break; }
 			}
 			break;
@@ -197,6 +199,8 @@ void Display::update(glm::vec3 &orientation, bool &pausePressed, bool &forwardPr
 			case SDL_BUTTON_LEFT: {
 				m_doRotation = false;
 				orientation = updateOrientation(m_transform->GetRot());
+				SDL_Cursor* cursor = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_ARROW);
+				SDL_SetCursor(cursor);
 				break; }
 			}
 			break;
