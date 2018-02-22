@@ -245,55 +245,108 @@ namespace SimUtil {
 		delete[] m_grid;
 	}
 
-	void readInGeom3D(int x, int y, int z, std::string geomFileName, Mat3Di &grid) {
+	void readInGeom3D(int x, int y, int z, int borderCount, int emptyFrontCount, int emptyBackCount, int zDepth, std::string geomFileName, Mat3Di &grid) {
+		//init borders
 		for (int i = 0; i < x; i++) {
 			for (int j = 0; j < y; j++) {
-				grid.set(i, j, 0, SimUtil::SOLID);
-				grid.set(i, j, 1, SimUtil::SOLID);
-				grid.set(i, j, 2, SimUtil::SOLID);
-				grid.set(i, j, z - 3, SimUtil::SOLID);
-				grid.set(i, j, z - 2, SimUtil::SOLID);
-				grid.set(i, j, z - 1, SimUtil::SOLID);
+				for (int k = 0; k < borderCount; k++){
+					grid.set(i, j, k, SimUtil::SOLID);
+					grid.set(i, j, z - (k + 1), SimUtil::SOLID);
+				}
 			}
 		}
-		for (int k = 3; k < 6; k++) {
-			readInGeom2D(x, y, k, "geo_small4e.txt", grid);
-			readInGeom2D(x, y, z - k - 1, "geo_small4e.txt", grid);
+		for (int k = borderCount; k < z - borderCount; k++) {
+			for (int i = 0; i < x; i++) {
+				for (int j = 0; j < borderCount; j++) {
+					grid.set(i, j, k, SimUtil::SOLID);
+					grid.set(i, y - (j + 1), k, SimUtil::SOLID);
+				}
+			}
+			for (int i = 0; i < borderCount; i++) {
+				for (int j = borderCount; j < y - borderCount; j++) {
+					grid.set(i, j, k, SimUtil::SOLID);
+					grid.set(x - (i + 1), j, k, SimUtil::SOLID);
+				}
+			}
 		}
-		for (int k = 6; k < z - 6; k++) {
-			readInGeom2D(x, y, k, geomFileName, grid);
+		//init empty layers
+		for (int i = borderCount; i < x - borderCount; i++) {
+			for (int j = borderCount; j < y - borderCount; j++) {
+				for (int k = borderCount; k < borderCount + emptyFrontCount; k++) {
+					grid.set(i, j, k, SimUtil::AIR);
+				}
+				for (int k = z - (borderCount + 1); k > z - (borderCount + emptyBackCount + 1); k--) {
+					grid.set(i, j, k, SimUtil::AIR);
+				}
+			}
 		}
-
-		/*for (int k = 3; k < z - 3; k++) {
-			readInGeom2D(x, y, k, geomFileName, grid);
-		}	*/
+		//fill the rest of the scene
+		for (int k = borderCount + emptyFrontCount; k < z - (borderCount + emptyBackCount); k++) {
+			readInGeom2D(x, y, k, borderCount, geomFileName, grid);
+		}
 	}
 
-	void readInGeom2D(int x, int y, int fixedZ, std::string geomFileName, Mat3Di &grid) {
+	void readInGeom2D(int x, int y, int fixedZ, int borderCount, std::string geomFileName, Mat3Di &grid) {
 		//TODO FIND SOME READ IN
 		// open the geometry file
 		std::ifstream geomFile(geomFileName);
 		if (geomFile.is_open()) {
 			std::string lineStr;
+			//Skip the first 4 files since they don't belong to the scene
+			for (int i = 0; i < 4; i++) {
+				std::getline(geomFile, lineStr);
+			}
 			// parse file based on given dimensions, will error if file does not match these
 			// fills grid so that [0][0] is at bottom left corner of simulation
-			for (int i = y - 1; i >= 0; i--) {
+			for (int j = y - (borderCount + 1); j >= borderCount; j--) {
 				std::getline(geomFile, lineStr);
-				for (int j = 0; j < x; j++) {
-					switch (lineStr[j]) {
+				for (int i = borderCount; i < x - borderCount; i++) {
+					switch (lineStr[i-borderCount]) {
 					case 'f':
-						grid.set(j, i, fixedZ, SimUtil::FLUID);
+						grid.set(i, j, fixedZ, SimUtil::FLUID);
 						break;
 					case 's':
-						grid.set(j, i, fixedZ, SimUtil::SOLID);
+						grid.set(i, j, fixedZ, SimUtil::SOLID);
 						break;
 					case 'a':
-						grid.set(j, i, fixedZ, SimUtil::AIR);
+						grid.set(i, j, fixedZ, SimUtil::AIR);
 						break;
 					}
 				}
 			}
 			geomFile.close();
+		}
+	}
+
+	void getDimensions(std::string FileName, int &width, int &height, int &depth, int &borderCount, int &emptyFrontCount, int &emptyBackCount, int &zDepth) {
+		std::ifstream file(FileName);
+		if (file.is_open()) {
+			std::string lineStr;
+			std::getline(file, lineStr);
+			//thickness of the border arround the scene
+			borderCount = std::stoi(lineStr);
+			std::getline(file, lineStr);
+			//number of empty z-layers in the front of the scene
+			emptyFrontCount = std::stoi(lineStr);
+			std::getline(file, lineStr);
+			//number of empty z-layers in the back of the scene
+			emptyBackCount = std::stoi(lineStr);
+			std::getline(file, lineStr);
+			//number of repetitions of the scene in z-layers
+			zDepth = std::stoi(lineStr);
+			depth = 2 * borderCount + emptyFrontCount + emptyBackCount + zDepth;
+			std::getline(file, lineStr);
+			int yCount = 1;
+			width = 2 * borderCount + lineStr.length();
+			while (std::getline(file, lineStr)) {
+				yCount++;
+			}
+			//if file ends with a new line
+			if (lineStr.length() < 2) {
+				yCount--;
+			}
+			height = 2 * borderCount + yCount;
+			file.close();
 		}
 	}
 

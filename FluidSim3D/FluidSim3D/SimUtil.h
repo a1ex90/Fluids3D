@@ -124,8 +124,10 @@ namespace SimUtil {
 	geomFile - the file containing the geometry
 	grid - the 2D array to put the initial grid in
 	*/
-	void readInGeom2D(int, int, int, std::string, SimUtil::Mat3Di&);
-	void readInGeom3D(int, int, int, std::string, SimUtil::Mat3Di&);
+	void readInGeom2D(int x, int y, int fixedZ, int borderCount, std::string geomFileName, Mat3Di &grid);
+	void readInGeom3D(int x, int y, int z, int borderCount, int emptyFrontCount, int emptyBackCount, int zDepth, std::string geomFileName, Mat3Di &grid);
+
+	void getDimensions(std::string FileName, int &width, int &height, int &depth, int &borderCount, int &emptyFrontCount, int &emptyBackCount, int &zDepth);
 
 	/*
 	Finds the physical location of the cell with index [x][y][z]

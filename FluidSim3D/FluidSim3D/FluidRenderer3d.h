@@ -18,7 +18,7 @@ public:
 	y - gridheight
 	z - griddepth	
 	*/
-	FluidRenderer3D::FluidRenderer3D(SimUtil::Mat3Di *labels, int gridWidth, int gridHeight, int gridDepth);
+	FluidRenderer3D::FluidRenderer3D(SimUtil::Mat3Di *labels, int gridWidth, int gridHeight, int gridDepth, int borderCount);
 	~FluidRenderer3D();
 	/*
 	Draws the fluid according to choosen visualization mode
@@ -69,8 +69,8 @@ private:
 	//stores the current orientation
 	glm::vec3 m_orientation;
 
-	void initGeom(SimUtil::Mat3Di *label, int x, int y, int z);
-	void initBorderLines(int x, int y, int z, int maxGridSize);
+	void initGeom(SimUtil::Mat3Di *label, int x, int y, int z, int borderCount);
+	void initBorderLines(int x, int y, int z, int borderCount, int maxGridSize);
 	void capturePicture(int frame);
 
 	void bottomLineAt(std::vector<glm::vec3> &lines, int yLoc, int crop, int x, int y, int z, int maxGridSize);

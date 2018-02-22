@@ -25,10 +25,6 @@ const bool MANIPULATION = true;
 // Simulation Parameters
 //----------------------------------------------------------------------
 
-// resolution of the grid to use (width, height)
-const int GRID_WIDTH = 25;
-const int GRID_HEIGHT = 25;
-const int GRID_DEPTH = 25;
 // grid cell width (in meters)
 const float GRID_CELL_WIDTH = 0.005f;
 // simulation time step (in seconds)
@@ -39,7 +35,7 @@ const float TIME_STEP = 0.01f;
 //----------------------------------------------------------------------
 
 // input file for initial system state - grid marked solid, fluid, or air
-const std::string INITIAL_GEOMETRY_FILE_IN = "geo_small4.txt";
+const std::string INITIAL_GEOMETRY_FILE_IN = "geo_small.txt";
 
 //----------------------------------------------------------------------
 // Global Variables
@@ -57,9 +53,11 @@ const float FRAME_TIME_STEP = 1.0f / FRAME_RATE;
 //----------------------------------------------------------------------
 
 int main(int argc, char** argv) {
-	FluidSolver3D solver(GRID_WIDTH, GRID_HEIGHT, GRID_DEPTH, GRID_CELL_WIDTH, TIME_STEP);
+	FluidSolver3D solver(INITIAL_GEOMETRY_FILE_IN, GRID_CELL_WIDTH, TIME_STEP);
 	solver.init(INITIAL_GEOMETRY_FILE_IN);
-	FluidRenderer3D render( solver.getGeometry(), GRID_WIDTH, GRID_HEIGHT, GRID_DEPTH );
+	int w, h, d, b;
+	solver.getDim(w, h, d, b);
+	FluidRenderer3D render( solver.getGeometry(), w, h, d, b );
 	solver.step();
 	SimUtil::Mesh3D data = solver.meshData();
 	auto start = std::chrono::system_clock::now();

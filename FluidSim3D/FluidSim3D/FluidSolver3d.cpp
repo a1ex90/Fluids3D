@@ -6,26 +6,12 @@ using namespace SimUtil;
 // Constructors
 //----------------------------------------------------------------------
 
-FluidSolver3D::FluidSolver3D(int width, int height, int depth, float dx, float dt){
-	m_gridWidth = width;
-	m_gridHeight = height;
-	m_gridDepth = depth;
-	if (width > height) {
-		if (width > depth)
-			m_maxGridSize = width;
-		else
-			m_maxGridSize = depth;
-	}
-	else {
-		if (height > depth)
-			m_maxGridSize = height;
-		else
-			m_maxGridSize = depth;
-	}
+FluidSolver3D::FluidSolver3D(std::string initialGeometryFile, float dx, float dt){
+	
 	m_dx = dx;
 	m_dt = dt;
 
-	//MarchingCubes::initMarchingCubesCases(m_cubeCases, m_cubeIndices);
+	//init(initialGeometryFile);
 
 	m_particles = new std::vector<Particle3D>();
 	if (ENABLE_TIMING) {
@@ -69,6 +55,22 @@ FluidSolver3D::~FluidSolver3D(){
 
 void FluidSolver3D::init(std::string initialGeometryFile){
 	// set up the grid for simulation by initializing arrays
+	int e1, e2, z;
+	getDimensions(initialGeometryFile, m_gridWidth, m_gridHeight, m_gridDepth, m_borderCount, e1, e2, z);
+
+	if (m_gridWidth >m_gridHeight) {
+		if (m_gridWidth > m_gridDepth)
+			m_maxGridSize = m_gridWidth;
+		else
+			m_maxGridSize = m_gridDepth;
+	}
+	else {
+		if (m_gridHeight > m_gridDepth)
+			m_maxGridSize = m_gridHeight;
+		else
+			m_maxGridSize = m_gridDepth;
+	}
+
 	m_label = Mat3Di(m_gridWidth, m_gridHeight, m_gridDepth);
 	m_p = Mat3Df(m_gridWidth, m_gridHeight, m_gridDepth);
 	m_u = Mat3Df(m_gridWidth + 1, m_gridHeight, m_gridDepth);
@@ -84,7 +86,8 @@ void FluidSolver3D::init(std::string initialGeometryFile){
 	m_w.initValues(VEL_UNKNOWN);
 
 	// read in initial geometry to populate label grid
-	readInGeom3D(m_gridWidth, m_gridHeight, m_gridDepth, initialGeometryFile, m_label);
+	//readInGeom3D(m_gridWidth, m_gridHeight, m_gridDepth, initialGeometryFile, m_label);
+	readInGeom3D(m_gridWidth, m_gridHeight, m_gridDepth, m_borderCount, e1, e2, z, initialGeometryFile, m_label);
 
 	// seed particles using label grid
 	seedParticles(PARTICLES_PER_CELL, m_particles);

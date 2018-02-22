@@ -37,6 +37,8 @@ private:
 	int m_gridDepth;
 	// the max of depth, height and width
 	int m_maxGridSize;
+	// the number of border cells
+	int m_borderCount;
 	// distance between each grid cell
 	float m_dx;
 	// grid of cell labels, size (nx, ny)
@@ -144,15 +146,12 @@ private:
 
 public:
 	/*
-	Creates a new 2D fluid solver.
+	Creates a new 3D fluid solver.
 	Args:
-	width - width of the grid to use
-	height - height of the grid to use
-	depth - depth of the grid to use
 	dx - the grid cell width
 	dt - the timestep to use
 	*/
-	FluidSolver3D(int, int, int, float, float);
+	FluidSolver3D(std::string initialGeometryFile, float, float);
 	~FluidSolver3D();
 
 	/*
@@ -210,6 +209,13 @@ public:
 	SimUtil::Mat3Di* getGeometry() {
 		return &m_label;
 	};
+
+	void getDim(int &width, int &height, int &depth, int &borderCount) {
+		width = m_gridWidth;
+		height = m_gridHeight;
+		depth = m_gridDepth;
+		borderCount = m_borderCount;
+	}
 };
 
 #endif //FLUID_SOLVER_3D_H_

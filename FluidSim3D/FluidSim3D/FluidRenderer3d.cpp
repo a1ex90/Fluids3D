@@ -8,13 +8,13 @@
 // Constructor
 //----------------------------------------------------------------------
 
-FluidRenderer3D::FluidRenderer3D(SimUtil::Mat3Di *labels, int gridWidth, int gridHeight, int gridDepth) {
+FluidRenderer3D::FluidRenderer3D(SimUtil::Mat3Di *labels, int gridWidth, int gridHeight, int gridDepth, int borderCount) {
 	m_transform = new Transform();
-	m_display = new Display{ WIDTH, HEIGHT, "2D Fluid Simulation", m_transform };
+	m_display = new Display{ WIDTH, HEIGHT, "3D Fluid Simulation", m_transform };
 	m_camera = new Camera(glm::vec3(0, 0, -4), 70.0f, (float)WIDTH / (float)HEIGHT, 0.01f, 1000.0f);	
 	m_colorShader = new Shader{ "./basicShader" };
 	m_normalShader = new Shader{ "./normalShader" };
-	initGeom(labels, gridWidth, gridHeight, gridDepth);
+	initGeom(labels, gridWidth, gridHeight, gridDepth, borderCount);
 
 	m_gLight.position = glm::vec3(1.0, 1.0, 1.0);
 	m_gLight.intensities = glm::vec3(1.0, 1.0, 1.0);
@@ -93,7 +93,7 @@ x - gridwidth
 y - gridheight
 z - griddepth
 */
-void FluidRenderer3D::initGeom(SimUtil::Mat3Di *label, int x, int y, int z) {
+void FluidRenderer3D::initGeom(SimUtil::Mat3Di *label, int x, int y, int z, int borderCount) {
 	std::vector<glm::vec3> vertSolid;
 	std::vector<glm::vec3> normalsSolid;
 	std::vector<int> indSolid;
@@ -118,9 +118,9 @@ void FluidRenderer3D::initGeom(SimUtil::Mat3Di *label, int x, int y, int z) {
 		else
 			maxGridSize = z;
 	}
-	for (int i = BORDER_LR; i < x - BORDER_LR; i++) {
-		for (int j = BORDER_BOTTOM; j < y - BORDER_TOP; j++) {
-			for (int k = BORDER_FB; k < z - BORDER_FB; k++) {
+	for (int i = borderCount; i < x - borderCount; i++) {
+		for (int j = borderCount; j < y - borderCount; j++) {
+			for (int k = borderCount; k < z - borderCount; k++) {
 				//only draw solids
 				if (label->get(i, j, k) == SimUtil::SOLID) {
 					float x1 = 2.0f * i / (maxGridSize)-1.0f;
@@ -284,7 +284,7 @@ void FluidRenderer3D::initGeom(SimUtil::Mat3Di *label, int x, int y, int z) {
 		}
 	}
 
-	initBorderLines(x, y, z, maxGridSize);
+	initBorderLines(x, y, z, borderCount, maxGridSize);
 	m_meshSolid = new Mesh{ vertSolid , normalsSolid, indSolid };
 }
 
@@ -296,20 +296,14 @@ y - gridheight
 z - griddepth
 maxGridSize - maximum of x,y,z for scaling purposes
 */
-void FluidRenderer3D::initBorderLines(int x, int y, int z, int maxGridSize) {
+void FluidRenderer3D::initBorderLines(int x, int y, int z, int borderCount, int maxGridSize) {
 	std::vector<glm::vec3> lines;
 	//inner
-	bottomLineAt(lines, 3, 3, x, y, z, maxGridSize);
-	sideLineAt(lines, 3, 3, 3, 3, x, y, z, maxGridSize);
-	sideLineAt(lines, x - 3, 3, 3, 3, x, y, z, maxGridSize);
-	frontLineAt(lines, 3, 3, 3, 3, x, y, z, maxGridSize);
-	frontLineAt(lines, z - 3, 3, 3, 3, x, y, z, maxGridSize);
-	//outer
-	/*bottomLineAt(lines, 0, 0, x, y, z, maxGridSize);
-	sideLineAt(lines, 0, 0, 0, 0, x, y, z, maxGridSize);
-	sideLineAt(lines, x, 0, 0, 0, x, y, z, maxGridSize);
-	frontLineAt(lines, 0, 0, 0, 0, x, y, z, maxGridSize);
-	frontLineAt(lines, z, 0, 0, 0, x, y, z, maxGridSize);*/
+	bottomLineAt(lines, borderCount, borderCount, x, y, z, maxGridSize);
+	sideLineAt(lines, borderCount, borderCount, borderCount, borderCount, x, y, z, maxGridSize);
+	sideLineAt(lines, x - borderCount, borderCount, borderCount, borderCount, x, y, z, maxGridSize);
+	frontLineAt(lines, borderCount, borderCount, borderCount, borderCount, x, y, z, maxGridSize);
+	frontLineAt(lines, z - borderCount, borderCount, borderCount, borderCount, x, y, z, maxGridSize);
 
 	m_borderSolid = new Line{ lines };
 }
