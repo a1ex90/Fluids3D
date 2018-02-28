@@ -4,6 +4,8 @@
 
 This project contains a 3D grid-based real-time fluid simulation with marker particles in a hybrid pic-flip blend with a particle and a marching cubes fluid visualization.
 
+For more detail take a look at my [paper](https://github.com/a1ex90/Fluids3D/blob/master/documentation/Sommer%2C3D-RT-Fluid-Sim.pdf).
+
 ## Install
 
 The following include and library dependencies need to be included in the project:
@@ -80,7 +82,7 @@ Density of the fluid in kg/m^3
 const float FLUID_DENSITY = ...
 ```
 
-A surface-threshold constant in N*m used for interpolation in marching cubes
+A surface-threshold constant in Pa (N*m) used for interpolation in marching cubes
 
 ```
 const float SURFACE_THRESHOLD = ...

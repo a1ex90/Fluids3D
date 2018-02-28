@@ -1,8 +1,8 @@
 #include "FluidRenderer3d.h"
 
 
-#define WIDTH 1200
-#define HEIGHT 900
+#define WIDTH 800
+#define HEIGHT 600
 
 //----------------------------------------------------------------------
 // Constructor
