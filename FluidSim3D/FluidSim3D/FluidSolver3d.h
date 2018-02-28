@@ -77,8 +77,8 @@ private:
 	// density of the fluid (kg/m^3)
 	const float FLUID_DENSITY = 1000.0f;
 	// surface threshold for marching cubes
-	//const float SURFACE_THRESHOLD = 20.0f;
-	const float SURFACE_THRESHOLD = 0.0f;
+	const float SURFACE_THRESHOLD = 20.0f;
+	//const float SURFACE_THRESHOLD = 0.0f;
 
 	// simulation time step
 	float m_dt;
