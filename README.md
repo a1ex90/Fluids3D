@@ -26,7 +26,7 @@ In the live-demo you're able to use the following input commands:
 | d      | Move Screen Right         |
 | space  | Pause/Resume Simulation   |
 | n      | Jump to Next Sim Step     |
-| m      | De-/Active Gravity Rotate |
+| m      | De-/Active Gravity Orientation Update |
 | o      | + Rotation Z-Axis         |
 | l      | - Rotation Z-Axis         |
 | right  | + Rotation Y-Axis         |

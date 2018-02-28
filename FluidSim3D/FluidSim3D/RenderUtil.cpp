@@ -406,7 +406,8 @@ void Point::draw() {
 
 	glEnable(GL_PROGRAM_POINT_SIZE);
 	//DISABLE MEE
-	//glPointSize(5.0f);
+	glPointSize(2.0f);
+	glEnable(GL_POINT_SPRITE);
 	glEnable(GL_POINT_SMOOTH);
 	glDrawArrays(GL_POINTS, 0, m_pointsCount);
 

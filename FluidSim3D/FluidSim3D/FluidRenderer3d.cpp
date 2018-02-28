@@ -1,8 +1,8 @@
 #include "FluidRenderer3d.h"
 
 
-#define WIDTH 800
-#define HEIGHT 600
+#define WIDTH 1200
+#define HEIGHT 900
 
 //----------------------------------------------------------------------
 // Constructor
@@ -16,7 +16,7 @@ FluidRenderer3D::FluidRenderer3D(SimUtil::Mat3Di *labels, int gridWidth, int gri
 	m_normalShader = new Shader{ "./normalShader" };
 	initGeom(labels, gridWidth, gridHeight, gridDepth, borderCount);
 
-	m_gLight.position = glm::vec3(1.0, 1.0, 1.0);
+	m_gLight.position = glm::vec3(2.0, 2.0, 2.0);
 	m_gLight.intensities = glm::vec3(1.0, 1.0, 1.0);
 	m_gLight.ambientCoefficient = 0.05f;
 	m_gLight.attenuation = 0.2f;
