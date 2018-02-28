@@ -93,14 +93,6 @@ private:
 	std::vector<SimUtil::Particle3D> *m_particles;
 
 	//----------------------------------------------------------------------
-	// For Output Purposes
-	//----------------------------------------------------------------------
-
-	// list of all cases for marching cubes
-	std::vector<std::vector<glm::vec3>> m_cubeCases;
-	std::vector<std::vector<int>> m_cubeIndices;
-
-	//----------------------------------------------------------------------
 	// Functions
 	//----------------------------------------------------------------------
 
