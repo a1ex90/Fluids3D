@@ -4,25 +4,14 @@
 //----------------------------------------------------------------------
 
 #include <string>
-#include <fstream>
-#include <iostream>
-#include <cmath>
 #include <chrono>
 
 #include "FluidSolver3d.h"
 #include "FluidRenderer3d.h"
 #include "SimUtil.h"
-#include "MarchingCubes.h"
 
 //----------------------------------------------------------------------
-// Execution Options
-//----------------------------------------------------------------------
-
-// wheater to manipulate gravity by user input
-const bool MANIPULATION = true;
-
-//----------------------------------------------------------------------
-// Simulation Parameters
+// Simulation Attributes
 //----------------------------------------------------------------------
 
 // grid cell width (in meters)
@@ -31,22 +20,11 @@ const float GRID_CELL_WIDTH = 0.005f;
 const float TIME_STEP = 0.01f;
 
 //----------------------------------------------------------------------
-// I/O Parameters
+// Input
 //----------------------------------------------------------------------
 
-// input file for initial system state - grid marked solid, fluid, or air
+// file format for initial geometry
 const std::string INITIAL_GEOMETRY_FILE_IN = "geo_small.txt";
-
-//----------------------------------------------------------------------
-// Global Variables
-//----------------------------------------------------------------------
-
-// the number of frames to simulate
-const int NUM_SIM_FRAMES = 100;
-// frame rate for render (fps)
-const float FRAME_RATE = 25.0f;
-// time step between outputted frames
-const float FRAME_TIME_STEP = 1.0f / FRAME_RATE;
 
 //----------------------------------------------------------------------
 // Main Function

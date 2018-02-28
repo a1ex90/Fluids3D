@@ -58,7 +58,7 @@ private:
 	SimUtil::Mat3Df m_uSaved;
 	// saved grid of vel y component for FLIP update, size (nx, ny+1, nz)
 	SimUtil::Mat3Df m_vSaved;
-	// saved grid of vel z component for FLIP update, size (nx, ny, nz + 1)
+	// saved grid of vel z component for FLIP update, size (nx, ny, nz+1)
 	SimUtil::Mat3Df m_wSaved;
 
 	//----------------------------------------------------------------------
@@ -77,7 +77,7 @@ private:
 	// density of the fluid (kg/m^3)
 	const float FLUID_DENSITY = 1000.0f;
 	// surface threshold for marching cubes
-	//const float SURFACE_THRESHOLD = 5.0f;
+	//const float SURFACE_THRESHOLD = 20.0f;
 	const float SURFACE_THRESHOLD = 0.0f;
 
 	// simulation time step
@@ -125,11 +125,6 @@ private:
 	void RK3(SimUtil::Particle3D*, SimUtil::Vec3, float, SimUtil::Mat3Df&, SimUtil::Mat3Df&, SimUtil::Mat3Df&);
 	bool projectParticle(SimUtil::Particle3D *, float);
 	std::vector<std::string> split(std::string str, std::string token);
-	
-
-	// debugging functions
-	void gridValues(SimUtil::Mat3Df &grid, std::string name, int x, int y, int z);
-	void strangeParticles();
 
 public:
 	/*
@@ -161,15 +156,6 @@ public:
 	Steps the simulation forward dt.
 	*/
 	void step();
-	/*
-	Saves the lines of the isocontur representing the surface between water and
-	air. Outputs in csv format where each line is represented by two points.
-	each coordinate and each point is seperated by a space. Each line is one
-	timestep.
-	Args:
-	LinesOut - pointer to file stream to use for output
-	*/
-	void saveParticleData(std::ofstream*);
 
 	/*
 	Returns the particles location as vectors

@@ -36,7 +36,8 @@ FluidRenderer3D::~FluidRenderer3D() {
 //----------------------------------------------------------------------
 
 void FluidRenderer3D::draw(std::vector<glm::vec3> &particles, std::vector<glm::vec3> &vertices, std::vector<glm::vec3> &normals, std::vector<int> &indicies) {
-	m_display->clear(0.686f, 0.933f, 0.933f, 1.0f);
+	//m_display->clear(0.686f, 0.933f, 0.933f, 1.0f);
+	m_display->clear(1.0f, 1.0f, 1.0f, 1.0f);
 
 	m_colorShader->bind();
 	m_colorShader->update(m_transform, m_camera);
@@ -48,10 +49,11 @@ void FluidRenderer3D::draw(std::vector<glm::vec3> &particles, std::vector<glm::v
 	Point point{ particles };
 
 	if (m_visualMode == 1) {
+		m_colorShader->setColor(0.255f, 0.412f, 0.882f, 1.0f);
 		point.draw();
 	}
 	else if (m_visualMode == 2) {
-		m_colorShader->setColor(0.255f, 0.412f, 0.882f, 0.8f);
+		m_colorShader->setColor(0.255f, 0.412f, 0.882f, 1.0f);
 		mesh.draw();
 	}
 	else if (m_visualMode == 3) {
@@ -65,7 +67,8 @@ void FluidRenderer3D::draw(std::vector<glm::vec3> &particles, std::vector<glm::v
 	else if (m_visualMode == 4) {
 		m_normalShader->bind();
 		m_normalShader->update(m_transform, m_camera);
-		m_normalShader->setColor(0.118f, 0.565f, 1.0f, 1.0f);
+		//m_normalShader->setColor(0.118f, 0.565f, 1.0f, 1.0f);
+		m_normalShader->setColor(0.255f, 0.412f, 0.882f, 1.0f);
 		m_normalShader->setMaterialSettings(80.0f, glm::vec3{ 1.0f, 1.0f, 1.0f });
 		m_normalShader->setLight(m_gLight);
 
@@ -78,6 +81,24 @@ void FluidRenderer3D::draw(std::vector<glm::vec3> &particles, std::vector<glm::v
 	m_meshSolid->draw();
 
 	m_display->update(m_orientation, m_isPaused, m_forwardPressed, m_visualMode, m_gManipulation);
+}
+
+void FluidRenderer3D::capturePicture(std::string name) {
+
+	SDL_Surface * temp = SDL_CreateRGBSurface(SDL_SWSURFACE, WIDTH, HEIGHT, 24, 0x000000FF, 0x0000FF00, 0x00FF0000, 0);
+
+	char * pixels = new char[3 * WIDTH * HEIGHT];
+
+	glReadPixels(0, 0, WIDTH, HEIGHT, GL_RGB, GL_UNSIGNED_BYTE, pixels);
+
+	for (int i = 0; i < HEIGHT; i++)
+		std::memcpy(((char *)temp->pixels) + temp->pitch * i, pixels + 3 * WIDTH * (HEIGHT - i - 1), WIDTH * 3);
+
+	delete[] pixels;
+
+	std::string filename = name + ".bmp";
+
+	SDL_SaveBMP(temp, filename.c_str());
 }
 
 //----------------------------------------------------------------------
@@ -385,33 +406,4 @@ void FluidRenderer3D::frontLineAt(std::vector<glm::vec3> &lines, int zLoc, int c
 
 	lines.push_back(glm::vec3(2.0 * (x - crop) / maxGridSize - 1.0, 2.0 * bottomCrop / maxGridSize - 1.0, 2.0 * zLoc / maxGridSize - 1.0));
 	lines.push_back(glm::vec3(2.0 * crop / maxGridSize - 1.0, 2.0 * bottomCrop / maxGridSize - 1.0, 2.0 * zLoc / maxGridSize - 1.0));
-}
-
-
-/*
-renders the current frame buffer to a bitmap picture. stores the picture
-as "'geoFileName'-frame-'frameNumber'.bmp"
-Args:
-frame - current frame number
-*/
-void FluidRenderer3D::capturePicture(int frame) {
-
-	SDL_Surface * temp = SDL_CreateRGBSurface(SDL_SWSURFACE, WIDTH, HEIGHT, 24, 0x000000FF, 0x0000FF00, 0x00FF0000, 0);
-
-	char * pixels = new char[3 * WIDTH * HEIGHT];
-
-	glReadPixels(0, 0, WIDTH, HEIGHT, GL_RGB, GL_UNSIGNED_BYTE, pixels);
-
-	for (int i = 0; i < HEIGHT; i++)
-		std::memcpy(((char *)temp->pixels) + temp->pitch * i, pixels + 3 * WIDTH * (HEIGHT - i - 1), WIDTH * 3);
-
-	delete[] pixels;
-
-	std::string filename = "pic";
-	filename.append("-frame-");
-	filename.append(std::to_string(frame));
-	filename.append(".bmp");
-
-
-	SDL_SaveBMP(temp, filename.c_str());
 }

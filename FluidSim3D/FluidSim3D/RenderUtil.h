@@ -8,6 +8,7 @@
 #include <cassert>
 #define GLM_ENABLE_EXPERIMENTAL 
 #include <glm/gtx/transform.hpp>
+#include <glm/gtc/quaternion.hpp>
 
 
 //----------------------------------------------------------------------
@@ -33,26 +34,22 @@ public:
 
 	inline glm::mat4 GetModel() const {
 		glm::mat4 posMatrix = glm::translate(m_pos);
-		glm::mat4 rotXMatrix = glm::rotate(m_rot.x, glm::vec3(1, 0, 0));
-		glm::mat4 rotYMatrix = glm::rotate(m_rot.y, glm::vec3(0, 1, 0));
-		glm::mat4 rotZMatrix = glm::rotate(m_rot.z, glm::vec3(0, 0, 1));
 		glm::mat4 scaleMatrix = glm::scale(m_scale);
-
-		glm::mat4 rotMatrix = rotZMatrix * rotYMatrix * rotXMatrix;
+		glm::mat4 rotMatrix = glm::mat4_cast(m_rot);
 
 		return posMatrix * rotMatrix * scaleMatrix;
 	}
 
 	inline glm::vec3& GetPos() { return m_pos; }
-	inline glm::vec3& GetRot() { return m_rot; }
+	inline glm::quat& GetRot() { return m_rot; }
 	inline glm::vec3& GetScale() { return m_scale; }
 
 	inline void SetPos(const glm::vec3& pos) { m_pos = pos; }
-	inline void SetRot(const glm::vec3& rot) { m_rot = rot; }
+	inline void SetRot(const glm::quat& rot) { m_rot = rot; }
 	inline void SetScale(const glm::vec3& scale) { m_scale = scale; }
 private:
 	glm::vec3 m_pos;
-	glm::vec3 m_rot;
+	glm::quat m_rot;
 	glm::vec3 m_scale;
 };
 
@@ -86,8 +83,7 @@ private:
 	bool m_doRotation;
 
 	glm::vec3 projectOnSphere(float x, float y, float r);
-	glm::vec3 toEuler(glm::vec3 axis, float angle);
-	glm::vec3 updateOrientation(glm::vec3 rotation);
+	glm::vec3 updateOrientation(glm::quat rotation);
 
 	Transform* m_transform;
 

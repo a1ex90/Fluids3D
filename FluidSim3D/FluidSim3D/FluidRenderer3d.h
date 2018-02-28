@@ -35,8 +35,14 @@ public:
 	bool isPaused() { return m_isPaused; };
 	bool gManipulationActive() { return m_gManipulation; };
 	bool forwardPressed() { if (m_forwardPressed) { m_forwardPressed = false; return true; } return false; };
-
 	glm::vec3 currentOrientation() { return m_orientation; };
+
+	/*
+	renders the current frame buffer to a bitmap picture
+	Args:
+	name - desired filename produces "name.bmp"
+	*/
+	static void capturePicture(std::string name);
 
 private:
 	//output window
@@ -72,7 +78,7 @@ private:
 
 	void initGeom(SimUtil::Mat3Di *label, int x, int y, int z, int borderCount);
 	void initBorderLines(int x, int y, int z, int borderCount, int maxGridSize);
-	void capturePicture(int frame);
+	
 
 	void bottomLineAt(std::vector<glm::vec3> &lines, int yLoc, int crop, int x, int y, int z, int maxGridSize);
 	void sideLineAt(std::vector<glm::vec3> &lines, int xLoc, int crop, int bottomCrop, int topCrop, int x, int y, int z, int maxGridSize);

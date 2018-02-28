@@ -70,7 +70,6 @@ void FluidSolver3D::init(std::string initialGeometryFile){
 	m_w.initValues(VEL_UNKNOWN);
 
 	// read in initial geometry to populate label grid
-	//readInGeom3D(m_gridWidth, m_gridHeight, m_gridDepth, initialGeometryFile, m_label);
 	readInGeom3D(m_gridWidth, m_gridHeight, m_gridDepth, m_borderCount, e1, e2, z, initialGeometryFile, m_label);
 
 	// seed particles using label grid
@@ -106,24 +105,6 @@ void FluidSolver3D::step() {
 	// detect particles that have penetrated solid boundary and move back inside fluid
 	cleanupParticles(m_dx / 4.0f);
 
-}
-
-void FluidSolver3D::saveParticleData(std::ofstream *particleOut) {
-	if (particleOut->is_open()) {
-				// print out all particle data on same line, each pos separated by " "
-			size_t numParticles = m_particles->size();
-		if (numParticles > 0) {
-			for (int i = 0; i < numParticles - 1; i++) {
-				(*particleOut) << 2 * m_particles->at(i).pos.x / (m_gridWidth * m_dx) - 1 << " " << 2 * m_particles->at(i).pos.y / (m_gridHeight * m_dx) - 1 << " ";				
-			}
-			(*particleOut) << 2 * m_particles->at(numParticles - 1).pos.x / (m_gridWidth * m_dx) - 1 << " " << 2 * m_particles->at(numParticles - 1).pos.y / (m_gridHeight * m_dx) - 1 << "\n";
-			
-		}
-		else {
-			(*particleOut) << "\n";
-			
-		}		
-	}	
 }
 
 std::vector<glm::vec3> FluidSolver3D::particleData() {
@@ -1093,33 +1074,5 @@ std::vector<std::string> FluidSolver3D::split(std::string str, std::string token
 		}
 	}
 	return result;
-}
-
-//----------------------------------------------------------------------
-// Debugging Functions
-//----------------------------------------------------------------------
-void FluidSolver3D::gridValues(Mat3Df &grid, std::string name, int x, int y, int z) {
-	int count = 0;
-	for (int i = 0; i < x; i++) {
-		for (int j = 0; j < y; j++) {
-			for (int k = 0; k < z; k++) {
-				if (abs(grid.get(i, j, k)) > 1000) {
-					//std::cout << "Strange Gridvalues at (" << i << ", " << j << ", " << k << ") of " << grid.get(i, j, k) << "\n";
-					count++;
-				}
-			}
-		}
-	}
-	std::cout << "Count of high velocities in "<< name << ": " << count << "\n";
-}
-void FluidSolver3D::strangeParticles() {
-	for (int i = 0; i < m_particles->size(); i++) {
-		if (abs(m_particles->at(i).pos.x) > 2 * m_gridWidth * m_dx || abs(m_particles->at(i).pos.y) > 2 * m_gridHeight * m_dx || abs(m_particles->at(i).pos.z) > 2 * m_gridDepth * m_dx) {
-			std::cout << "Strange Particle NO" << i << "Pos (" << m_particles->at(i).pos.x << ", " << m_particles->at(i).pos.y << ", " << m_particles->at(i).pos.z << "\n";
-		}
-		if (abs(m_particles->at(i).vel.x) > 1000 || abs(m_particles->at(i).vel.y) > 1000 || abs(m_particles->at(i).vel.z) > 1000) {
-			std::cout << "Strange Particle NO" << i << "Vel (" << m_particles->at(i).vel.x << ", " << m_particles->at(i).vel.y << ", " << m_particles->at(i).vel.z << "\n";
-		}
-	}
 }
 
