@@ -1,4 +1,4 @@
-# Real-Time 3D Fluid Simulation
+# 3D Real-Time Fluid Simulation
 
 ![title picture](https://raw.githubusercontent.com/a1ex90/Fluids3D/master/pictures/title.png)
 
