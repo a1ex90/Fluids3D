@@ -11,7 +11,7 @@ For more detail take a look at my [paper](https://github.com/a1ex90/Fluids3D/blo
 The following include and library dependencies need to be included in the project:
 
 * [glew](http://glew.sourceforge.net/) - OpenGL Extension Wrangler Library
-* [glm](https://maven.apache.org/) - OpenGL Mathematics
+* [glm](https://glm.g-truc.net/) - OpenGL Mathematics
 * [SDL](https://www.libsdl.org/) - Simple DirectMedia Layer
 
 ## Usage
